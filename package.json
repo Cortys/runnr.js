@@ -1,0 +1,33 @@
+{
+	"name": "runnr",
+	"version": "0.1.0",
+	"description": "An automated easy to use plugin based task runner.",
+	"keywords": [
+		"task",
+		"runner",
+		"automation",
+		"plugin"
+	],
+	"license": "GPL-3.0",
+	"author": {
+		"name": "Clemens Damke",
+		"email": "clemens@cortys.de",
+		"url": "http://www.cortys.de"
+	},
+	"repository": {
+		"type":"git",
+		"url": ""
+	},
+	"main": "./start.js",
+	"bin": {
+		"runnr": "./start.js"
+	},
+	"scripts": {
+		"start": "node start.js"
+	},
+	"dependencies": {
+		"express": "4.7.x",
+		"express3-handlebars": "0.5.x",
+		"mongodb": "1.4.x"
+	}
+}
