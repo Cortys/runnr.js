@@ -27,7 +27,7 @@
 	},
 	"dependencies": {
 		"express": "4.7.x",
-		"express3-handlebars": "0.5.x",
+		"swig": "1.4.x",
 		"mongodb": "1.4.x"
 	}
 }

@@ -1,26 +1,27 @@
 var settings = require("../core/settings.js"),
 	express = require("express"),
-	exphbs = require("express3-handlebars"),
-	app, hbs;
+	swig = require("swig"),
+	app;
 
 function start() {
 	app = express();
-	hbs = exphbs.create({});
 	
-	app.engine('handlebars', hbs.engine);
-	app.set('view engine', 'handlebars');
+	app.engine("swig", swig.renderFile);
+	app.set("view engine", "swig");
+	app.set("views", settings.root + "/views");
 	
-	app.use("/", function(req, res, next) {
-		
+	app.set("view cache", false);
+	swig.setDefaults({ cache: false });
+	
+	app.use(express.static(settings.root + "/static"));
+	
+	app.use("/", function(req, res) {
+		res.render("index");
 	});
 	
 	app.listen(settings.port);
+	
+	return app;
 }
-
-start.data = {
-	get app() {
-		return app;
-	}
-};
 
 module.exports = start;

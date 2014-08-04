@@ -1,3 +1,3 @@
-module.exports = function start() {
+module.exports = function start(app) {
 	
 };
