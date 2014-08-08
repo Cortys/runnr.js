@@ -1,4 +1,4 @@
 module.exports = {
 	root: null,
-	port: 3912
+	port: process.env.PORT || 3912
 };

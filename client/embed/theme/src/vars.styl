@@ -1,0 +1,57 @@
+// FONTS:
+
+fontType = 'Roboto Light', 'Helvetica Neue', Helvetica, Arial, serif
+
+fontBig = 20px
+fontNormal = 15px
+fontSmall = 12px
+
+// COLORS:
+
+light = #fafafa
+lightGray = #808080
+darkGray = #555555
+dark = #151515
+
+// DISTANCES:
+
+far = 20px
+close = 10px
+narrow = 5px
+
+// SIZES:
+
+big = 50px
+normal = 30px
+small = 18px
+
+// CONTENT:
+
+paneCount = 2
+
+// SPEEDS:
+
+slow = 0.5s
+fast = 0.1s
+
+// MIXINS:
+
+box-shadow()
+	-moz-box-shadow: arguments
+	box-shadow: arguments
+
+shadow(pos = "bottom")
+	box-shadow: 0px (pos == "top"?-1px:1px) 3px 0px rgba(0,0,0,0.15)
+
+darkShadow()
+	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+
+transition()
+	-webkit-transition: arguments
+	-moz-transition: arguments
+	-o-transition: arguments
+	-ms-transition: arguments
+	transition: arguments
+
+fastTransition()
+	transition: all fast linear 0s
