@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html ng-app="runnr.js">
-<head ng-controller="DataController as data">
-	<meta charset="utf-8">
-	<title>{{data.title}}</title>
+<html ng-app="runnr.js" lang="en">
+<head ng-controller="MetaController as meta">
+	<meta charset="utf-8" />
 
-	<link href="embed/theme/desktop.css" rel="stylesheet" type="text/css">
+	<link rel="licence" href="license" />
 
-	<script src="embed/bower_components/angular/angular.min.js" type="text/javascript"></script>
-	<script src="embed/js/runnr.js" type="text/javascript"></script>
-	<script src="embed/js/head.js" type="text/javascript"></script>
-	<script src="embed/js/panes.js" type="text/javascript"></script>
+	<script src="frameworks/angular/angular.min.js" type="text/javascript"></script>
+	<script src="frameworks/nprogress/nprogress.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="frameworks/nprogress/nprogress.css" type="text/css" />
+
+	<script src="js/build/runnr.min.js" type="text/javascript"></script>
+
+	<title ng-bind="meta.title">Loading...</title>
+
+	<link rel="stylesheet" ng-repeat="file in meta.theme.load" ng-href="{{'themes/'+meta.theme.id+'/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
 </head>
 <body>
-	<head></head>
+	<top></top>
 	<panes></panes>
 </body>
 </html>

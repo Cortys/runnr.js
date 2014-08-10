@@ -1,0 +1,9 @@
+<header id="head" ng-controller="TopController as top">
+	<img src="img/logo.svg" alt="{{top.title}}" id="logo" />
+	<nav class="menu">
+
+	</nav>
+	<menu class="actions">
+		<button type="button" ng-repeat="action in top.actions" ng-click="action.clicked()"><img ng-src="img/actions/{{action.name}}.svg" /></button>
+	</menu>
+</header>
