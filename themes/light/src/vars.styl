@@ -1,29 +1,39 @@
 // FONTS:
 
-fontType = 'Roboto Light', 'Helvetica Neue', Helvetica, Arial, serif
-
-fontBig = 20px
-fontNormal = 15px
-fontSmall = 12px
+font = {
+	type: "'Roboto Light', Helvetica, Arial, serif",
+	big: 20px
+	normal: 15px
+	small: 12px,
+	icon: 16px
+}
 
 // COLORS:
 
-light = #fafafa
-lightGray = #d9d9d9
-darkGray = #555555
-dark = #151515
+color = {
+	light: #fafafa
+	lightGray: #d9d9d9
+	darkGray: #555555
+	dark: #151515
+}
 
 // DISTANCES:
 
-far = 20px
-close = 10px
-narrow = 5px
+distance = {
+	far: 20px
+	close: 10px
+	narrow: 5px
+}
 
 // SIZES:
 
-big = 50px
-normal = 30px
-small = 18px
+size = {
+	big: 50px
+	normal: 30px
+	small: 18px
+	border: 1px,
+	radius: 2px
+}
 
 // CONTENT:
 
@@ -31,10 +41,19 @@ paneCount = 2
 
 // SPEEDS:
 
-slow = 0.06s
-fast = 0.15s
+speed = {
+	slow: 0.1s
+	fast: 0.05s
+}
 
 // MIXINS:
+
+reset()
+	margin: 0
+	padding: 0
+	-webkit-appearance: none
+	-moz-apperance: none
+	apperance: none
 
 box-shadow()
 	-moz-box-shadow: arguments
@@ -54,7 +73,17 @@ transition()
 	transition: arguments
 
 fastTransition()
-	transition: all fast linear 0s
+	transition: all speed.fast linear 0s
 
 slowTransition()
-	transition: all fast linear 0s
+	transition: all speed.slow linear 0s
+
+bounceTransition()
+	transition: all speed.slow cubic-bezier(.36,.02,.35,2)
+
+transform()
+	-webkit-transform: arguments
+	-moz-transform: arguments
+	-o-transform: arguments
+	-ms-transform: arguments
+	transform: arguments

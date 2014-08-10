@@ -2,7 +2,7 @@
 	var app = angular.module("top", []),
 
 	TopController = function() {
-		this.title = data.title;
+		
 	};
 
 	TopController.prototype = {
@@ -31,7 +31,9 @@
 	app.directive("top", function() {
 		return {
 			restrict: "E",
-			templateUrl: "html/top.html"
+			templateUrl: "html/top.html",
+			controller: "TopController",
+			controllerAs: "top"
 		};
 	});
 

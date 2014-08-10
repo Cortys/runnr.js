@@ -1,0 +1,42 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>
+Created by FontForge 20120731 at Mon Aug 11 01:35:40 2014
+ By Clemens Damke
+Created by Clemens Damke with FontForge 2.0 (http://fontforge.sf.net)
+</metadata>
+<defs>
+<font id="icons" horiz-adv-x="187" >
+  <font-face 
+    font-family="icons"
+    font-weight="500"
+    font-stretch="normal"
+    units-per-em="512"
+    panose-1="2 0 6 3 0 0 0 0 0 0"
+    ascent="448"
+    descent="-64"
+    bbox="0 -64 512 448"
+    underline-thickness="25"
+    underline-position="-52"
+    unicode-range="U+F101-F103"
+  />
+<missing-glyph 
+d="M17 0v341h136v-341h-136zM34 17h102v307h-102v-307z" />
+    <glyph glyph-name=".notdef" 
+d="M17 0v341h136v-341h-136zM34 17h102v307h-102v-307z" />
+    <glyph glyph-name=".null" horiz-adv-x="0" 
+ />
+    <glyph glyph-name="nonmarkingreturn" horiz-adv-x="170" 
+ />
+    <glyph glyph-name="uniF101" unicode="&#xf101;" horiz-adv-x="447" 
+d="M296 -63l-122 100h-98q-32 0 -54 22.5t-22 53.5v195q0 32 22 54t54 22h295q31 0 53.5 -22t22.5 -54v-195q0 -31 -22.5 -53.5t-53.5 -22.5h-75v-100z" />
+    <glyph glyph-name="uniF102" unicode="&#xf102;" horiz-adv-x="512" 
+d="M348 431q73 -28 118.5 -93t45.5 -146q0 -106 -75 -181t-181 -75t-181 75t-75 181q0 80 44.5 144.5t116.5 93.5v-117q-59 -46 -59 -121q0 -64 45 -109t109 -45t109 45t45 109q0 78 -62 124v115zM218 448h76v-273q0 -15 -10 -25t-25 -10h-6q-15 0 -25 10t-10 25v273z" />
+    <glyph glyph-name="uniF103" unicode="&#xf103;" horiz-adv-x="511" 
+d="M481 245q13 0 21.5 -9.5t8.5 -23.5v-20v-20q0 -14 -9 -23.5t-22 -9.5h-20q-13 0 -21.5 -9t-8.5 -22q0 -12 10 -22l13 -13q10 -10 10 -23t-10 -23l-30 -30q-9 -9 -23 -9q-15 0 -24 9l-12 13q-9 10 -23 10q-13 0 -22 -9t-9 -21v-21q0 -13 -10 -23t-23 -10h-40q-13 0 -23 10
+t-10 23v21q0 12 -9 21t-22 9q-12 0 -22 -10l-13 -13q-9 -9 -24 -9q-14 0 -23 9l-30 30q-10 10 -10 23t10 23l13 13q10 9 10 22t-8.5 22t-21.5 9h-20q-14 0 -24 10t-10 23v20v20q0 13 10 23t24 10h20q13 0 21.5 9t8.5 22t-10 22l-13 13q-10 10 -10 23t10 23l30 30q9 9 24 9
+q14 0 23 -9l13 -13q10 -10 22 -10q13 0 22 9t9 21v21q0 13 10 23t23 10h40q13 0 23 -10t10 -23v-21q0 -12 9 -21t22 -9q14 0 23 10l13 13q9 9 23 9t23 -9l30 -30q10 -10 10 -23t-10 -23l-13 -13q-10 -10 -10 -22q0 -13 8.5 -22t21.5 -9h21zM364 192v0q0 44 -31.5 75.5
+t-75.5 31.5t-75.5 -31.5t-31.5 -75.5t31.5 -75.5t75.5 -31.5t75.5 31.5t31.5 75.5z" />
+  </font>
+</defs></svg>

@@ -2,10 +2,10 @@
 
 #panes
 	position: absolute
-	top: close
-	left: narrow
-	right: narrow
-	bottom: normal + close
+	top: distance.close
+	left: distance.narrow
+	right: distance.narrow
+	bottom: size.normal + distance.close
 
 	.pane
 		position: absolute
@@ -20,14 +20,14 @@
 			position: absolute
 			width: auto
 			height: auto
-			left: narrow
-			right: narrow
+			left: distance.narrow
+			right: distance.narrow
 			top: 0
 			bottom: 0
 
-			background-color: light
-			darkShadow()
-			border-radius: narrow
+			background-color: color.light
+			shadow: bottom
+			border-radius: size.radius
 
 		for visible in (1..paneCount)
 			align = (1-(visible/paneCount))*0.5
@@ -41,7 +41,7 @@
 			left: (-1/paneCount)*100%
 			right: 100%
 			opacity: 0
-		
+
 		&.posComing
 			left: 100%
 			right: (-1/paneCount)*100%

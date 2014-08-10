@@ -1,26 +1,15 @@
-// EXPOSE BASIC STATIC APP DATA TO EVERYONE
-
-var data = {
-	title: "Runnr.js"
-};
-
 (function() {
-	var app = angular.module("meta", []);
+	var app = angular.module("meta", ["themes"]);
 
-	app.controller("MetaController", function() {
-		this.title = data.title;
+	app.controller("MetaController", ["theme", function(theme) {
+		var t = this;
 
-		this.theme = {
-			name: "Light",
-			id: "light",
-			load: [
-				{
-					file: "desktop",
-					media: null
-				}
-			]
-		}
-	});
+		t.title = "";
+
+		theme.getTheme(function(theme) {
+			t.theme = theme;
+		});
+	}]);
 })();
 
 (function(){
@@ -35,7 +24,9 @@ var data = {
 	app.directive("panes", function() {
 		return {
 			restrict: "E",
-			templateUrl: "html/panes.html"
+			templateUrl: "html/panes.html",
+			controller: "PanesController",
+			controllerAs: "panes"
 		};
 	});
 })();
@@ -46,14 +37,31 @@ var data = {
 
 (function() {
 	var app = angular.module("themes", []);
-	
+
+	app.factory("theme", function() {
+		var t = {
+			name: "Light",
+			id: "light",
+			css: [
+				{
+					file: "desktop",
+					media: null
+				}
+			]
+		};
+		return {
+			getTheme: function (callback) {
+				callback(t);
+			}
+		};
+	});
 })();
 
 (function() {
 	var app = angular.module("top", []),
 
 	TopController = function() {
-		this.title = data.title;
+		
 	};
 
 	TopController.prototype = {
@@ -82,7 +90,9 @@ var data = {
 	app.directive("top", function() {
 		return {
 			restrict: "E",
-			templateUrl: "html/top.html"
+			templateUrl: "html/top.html",
+			controller: "TopController",
+			controllerAs: "top"
 		};
 	});
 

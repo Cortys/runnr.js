@@ -1,18 +1,13 @@
 (function() {
-	var app = angular.module("meta", []);
+	var app = angular.module("meta", ["themes"]);
 
-	app.controller("MetaController", function() {
-		this.title = data.title;
+	app.controller("MetaController", ["theme", function(theme) {
+		var t = this;
 
-		this.theme = {
-			name: "Light",
-			id: "light",
-			load: [
-				{
-					file: "desktop",
-					media: null
-				}
-			]
-		}
-	});
+		t.title = "";
+
+		theme.getTheme(function(theme) {
+			t.theme = theme;
+		});
+	}]);
 })();

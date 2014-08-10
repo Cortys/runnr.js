@@ -10,7 +10,9 @@
 	app.directive("panes", function() {
 		return {
 			restrict: "E",
-			templateUrl: "html/panes.html"
+			templateUrl: "html/panes.html",
+			controller: "PanesController",
+			controllerAs: "panes"
 		};
 	});
 })();

@@ -1,24 +1,38 @@
 module.exports = function(grunt) {
+	var path = require("path");
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		stylus: {
 			compile: {
 				options: {
-					compress: true
+					compress: true,
+					"resolve url": true,
+					"include css": true
 				},
 				files: {
 					"themes/light/desktop.css": "themes/light/desktop.styl"
 				}
 			}
 		},
-		concat: {
-			js: {
+		webfont: {
+			icons: {
+				src: ["themes/light/img/**/*.svg", "!themes/light/img/build/**/*.svg", "!themes/light/img/logo.svg"],
+				dest: "themes/light/img/build",
 				options: {
-					separator: "\n"
-				},
-				src: ["client/js/*.js"],
-				dest: "client/js/build/runnr.js"
+					templateOptions: {
+						baseClass: "icon",
+						classPrefix: "icon_",
+						mixinPrefix: "icon-"
+					},
+					stylesheet: "styl",
+					descent: 0,
+					ascent: 0,
+					rename: function(name) {
+						var p = path.dirname(name).split(path.sep).slice(3).join("-");
+						return (p && p+"-" || "") + path.basename(name);
+					}
+				}
 			}
 		},
 		uglify: {
@@ -32,6 +46,15 @@ module.exports = function(grunt) {
 				}]
 			}
 		},
+		concat: {
+			js: {
+				options: {
+					separator: "\n"
+				},
+				src: ["client/js/*.js"],
+				dest: "client/js/build/runnr.js"
+			}
+		},
 		watch: {
 			client: {
 				files: ["client/**/*.js", "!client/**/build/*.js"],
@@ -40,6 +63,10 @@ module.exports = function(grunt) {
 			theme: {
 				files: "themes/**/*.styl",
 				tasks: ["stylus"]
+			},
+			icons: {
+				files: "themes/img/**/*.svg",
+				tasks: ["webfont", "stylus"]
 			}
 		}
 	});
@@ -47,8 +74,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-stylus');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-webfont');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask("default", ["watch"]);
-	grunt.registerTask("build", ["stylus", "concat", "uglify"]);
+	grunt.registerTask("build", ["webfont", "stylus", "uglify", "concat"]);
 };

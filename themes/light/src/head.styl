@@ -1,7 +1,20 @@
+@import "vars"
+
 #head
 	#logo
+		reset()
 		position: absolute
-		top: 10px;
-		left: 30px;
+		top: 10px
+		left: 30px
+		width: 105px
+		height: 30px
+		cursor: pointer
+
+		background-image: url("../img/logo.svg")
+
+		bounceTransition()
+
+		&:hover
+			transform: scale(0.92)
 
 	@import "head/actions"

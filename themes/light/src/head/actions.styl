@@ -2,16 +2,35 @@
 
 .actions
 	position: absolute
-	right: far + close
+	reset()
+	right: distance.far + distance.close
 	left: auto
 	width: auto
 	height: normal
-	top: close
-	bottom: close
+	top: distance.close
+	bottom: distance.close
 
 	button
 		position: relative
-		width: normal - 1px
-		height: normal - 1px
+		reset()
+		fastTransition()
+		margin-left: distance.close
+		width: size.normal
+		height: size.normal
 		display: inline-block
 		box-sizing: border-box
+		background: none
+		border: size.border solid transparent
+		border-radius: size.normal*0.5
+		cursor: pointer
+		outline: none
+
+		text-align: center
+		line-height: 1em
+		color: color.darkGray
+
+		&:hover
+			border-color: color.darkGray
+		&:active
+			background: color.darkGray
+			color: color.light

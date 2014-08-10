@@ -1,27 +1,29 @@
 @import "vars"
 
 body
-	margin: 0
-	padding: 0
-	font-family: fontType
-	font-size: fontNormal
+	reset()
+	font-family: font.type
+	font-size: font.normal
 	cursor: default
-	background-color: lightGray
-	color: dark
+	background-color: color.lightGray
+	color: color.dark
+	-webkit-user-select: none
+	-moz-user-select: none
+	user-select: none
 
 #head
-	background-color: light
+	background-color: color.light
 	position: absolute
 	top: 0
 	left: 0
 	width: auto
 	right: 0
-	height: big
+	height: size.big
 	shadow: bottom
 
 #content
 	position: absolute
-	top: big
+	top: size.big
 	bottom: 0
 	left: 0
 	right: 0
@@ -33,4 +35,7 @@ body
 	shadow: top
 	top: auto
 	bottom: 0
-	height: normal
+	height: size.normal
+
+.icon
+	font-size: font.icon

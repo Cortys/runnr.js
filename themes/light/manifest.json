@@ -9,7 +9,7 @@
 	"description": "A simple and friendly UI theme.",
 	"author": "Clemens Damke",
 
-	"load": [
+	"css": [
 		{
 			"file": "desktop",
 			"media": null
