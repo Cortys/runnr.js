@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html ng-app="runnr.js" lang="en">
-<head ng-controller="MetaController as meta">
+<html ng-app="runnr.js" lang="en" ng-controller="MetaController as meta">
+<head>
 	<meta charset="utf-8" />
 
 	<link rel="licence" href="license" />
@@ -16,7 +16,6 @@
 	<link rel="stylesheet" ng-repeat="file in meta.theme.css" ng-href="{{'themes/'+meta.theme.id+'/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
 </head>
 <body>
-	<top></top>
-	<panes></panes>
+	<theme-html></theme-html>
 </body>
 </html>

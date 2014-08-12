@@ -68,15 +68,27 @@ module.exports = function(grunt) {
 				files: "themes/img/**/*.svg",
 				tasks: ["webfont", "stylus"]
 			}
+		},
+		nodemon: {
+			dev: {
+				script: "start.js",
+				options: {
+					watch: ["server"]
+				}
+			}
+		},
+		concurrent: {
+			target: {
+				tasks: ["watch", "nodemon"],
+				options: {
+					logConcurrentOutput: true
+				}
+			}
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-stylus');
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-webfont');
-	grunt.loadNpmTasks('grunt-contrib-watch');
+	require("load-grunt-tasks")(grunt);
 
-	grunt.registerTask("default", ["watch"]);
+	grunt.registerTask("default", ["concurrent:target"]);
 	grunt.registerTask("build", ["webfont", "stylus", "uglify", "concat"]);
 };
