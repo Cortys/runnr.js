@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="runnr.js" lang="en" ng-controller="MetaController as meta">
+<html lang="en" ng-app="runnr.js" ng-controller="MetaController as meta">
 <head>
 	<meta charset="utf-8" />
 
@@ -9,13 +9,13 @@
 	<script src="frameworks/nprogress/nprogress.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="frameworks/nprogress/nprogress.css" type="text/css" />
 
-	<script src="js/build/runnr.min.js" type="text/javascript"></script>
+	<script src="js/build/runnr.js" type="text/javascript"></script>
 
 	<title ng-bind="'Runnr.js'+meta.title">Runnr.js</title>
 
 	<link rel="stylesheet" ng-repeat="file in meta.theme.css" ng-href="{{'themes/'+meta.theme.id+'/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
 </head>
 <body>
-	<theme-html></theme-html>
+	<theme-include src="struct.html"></theme-include>
 </body>
 </html>

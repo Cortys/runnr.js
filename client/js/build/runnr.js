@@ -38,7 +38,7 @@
 (function() {
 	var app = angular.module("themes", []);
 
-	app.factory("theme", function() {
+	app.factory("theme", ["$timeout", function($timeout) {
 		var t = {
 			"manifest_version": 1,
 			"id": "light",
@@ -64,20 +64,20 @@
 				callback(t);
 			}
 		};
-	});
+	}]);
 
-	app.directive("themeHtml", ["theme", function(theme) {
-		var o = {
+	app.directive("themeInclude", ["$compile", "theme", function($compile, theme) {
+		return {
 			restrict: "E",
-			require: "^ngInclude",
 			link: function(scope, element, attrs) {
-				o.templateUrl = "themes/" + theme.id + "/"+ (attrs.href || theme.html) + ".html";
+				if(attrs.src)
+					theme.getTheme(function(theme) {
+						element.attr("ng-include", "'themes/" + theme.id + "/" + attrs.src+"'");
+						element.removeAttr("src");
+						$compile(element)(scope);
+					});
 			}
 		};
-		theme.getTheme(function(theme) {
-
-		});
-		return o;
 	}]);
 })();
 
