@@ -51,7 +51,7 @@ module.exports = function(grunt) {
 				options: {
 					separator: "\n"
 				},
-				src: ["client/js/*.js"],
+				src: ["client/js/*.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
 				dest: "client/js/build/runnr.js"
 			}
 		},

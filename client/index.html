@@ -13,9 +13,9 @@
 
 	<title ng-bind="'Runnr.js'+meta.title">Runnr.js</title>
 
-	<link rel="stylesheet" ng-repeat="file in meta.theme.css" ng-href="{{'themes/'+meta.theme.id+'/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
+	<link rel="stylesheet" ng-repeat="file in meta.theme.css" ng-href="{{'theme/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
 </head>
 <body>
-	<theme-include src="struct.html"></theme-include>
+	<theme-include></theme-include>
 </body>
 </html>

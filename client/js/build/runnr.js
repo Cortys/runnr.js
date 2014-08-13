@@ -1,7 +1,20 @@
-(function() {
-	var app = angular.module("meta", ["themes"]);
+angular.module("runnr.js", ["meta", "top", "panes"]);
 
-	app.controller("MetaController", ["theme", function(theme) {
+angular.module("meta", ["themes"]);
+
+angular.module("panes", []);
+
+angular.module("themes", []);
+
+angular.module("top", []);
+
+(function() {
+	angular.module("meta")
+		.controller("MetaController", MetaController);
+
+	MetaController.$inject = ["theme"];
+
+	function MetaController(theme) {
 		var t = this;
 
 		t.title = "";
@@ -9,36 +22,49 @@
 		theme.getTheme(function(theme) {
 			t.theme = theme;
 		});
-	}]);
+	}
+
 })();
 
 (function(){
-	var app = angular.module("panes", []),
+	angular.module("panes")
+		.controller("PanesController", PanesController);
 
-	PanesController = function() {
+	function PanesController() {
 
-	};
+	}
 
-	app.controller("PanesController", PanesController);
+})();
 
-	app.directive("panes", function() {
+(function() {
+	angular.module("themes")
+		.directive("themeInclude", themeInclude);
+
+	themeInclude.$inject = ["$compile", "theme"];
+
+	function themeInclude($compile, theme) {
 		return {
 			restrict: "E",
-			templateUrl: "html/panes.html",
-			controller: "PanesController",
-			controllerAs: "panes"
+			link: function(scope, element, attrs) {
+				if(!attrs.ngInclude)
+					theme.getTheme(function(theme) {
+						element.attr("ng-include", "'theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
+						element.removeAttr("src");
+						$compile(element)(scope);
+					});
+			}
 		};
-	});
+	}
+
 })();
 
 (function() {
-	var app = angular.module("runnr.js", ["meta", "top", "panes"]);
-})();
+	angular.module("themes")
+		.factory("theme", theme);
 
-(function() {
-	var app = angular.module("themes", []);
+	theme.$inject = ["$timeout"];
 
-	app.factory("theme", ["$timeout", function($timeout) {
+	function theme($timeout) {
 		var t = {
 			"manifest_version": 1,
 			"id": "light",
@@ -64,29 +90,17 @@
 				callback(t);
 			}
 		};
-	}]);
-
-	app.directive("themeInclude", ["$compile", "theme", function($compile, theme) {
-		return {
-			restrict: "E",
-			link: function(scope, element, attrs) {
-				if(attrs.src)
-					theme.getTheme(function(theme) {
-						element.attr("ng-include", "'themes/" + theme.id + "/" + attrs.src+"'");
-						element.removeAttr("src");
-						$compile(element)(scope);
-					});
-			}
-		};
-	}]);
+	}
+	
 })();
 
 (function() {
-	var app = angular.module("top", []),
+	angular.module("top")
+		.controller("TopController", TopController);
 
-	TopController = function() {
-		
-	};
+	function TopController() {
+
+	}
 
 	TopController.prototype = {
 		actions: [
@@ -108,16 +122,5 @@
 			}
 		]
 	};
-
-	app.controller("TopController", TopController);
-
-	app.directive("top", function() {
-		return {
-			restrict: "E",
-			templateUrl: "html/top.html",
-			controller: "TopController",
-			controllerAs: "top"
-		};
-	});
 
 })();
