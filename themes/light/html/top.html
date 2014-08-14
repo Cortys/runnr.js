@@ -2,7 +2,7 @@
 	<figure id="logo"></figure>
 	<nav class="menu" ng-controller="MenuController as menu">
 		<ul>
-			<li ng-repeat="item in menu.items"><a href=""></a></li>
+			<li ng-repeat="item in menu.items"><a href=""><i class="icon" ng-class="'icon_actions-'+item.name"></i><span>{{ item.text }}</span></a></li>
 		</ul>
 	</nav>
 	<menu class="actions" ng-controller="MenuActionController as action">

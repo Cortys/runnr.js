@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 				tasks: ["stylus"]
 			},
 			icons: {
-				files: "themes/img/**/*.svg",
+				files: "themes/light/img/**/*.svg",
 				tasks: ["webfont", "stylus"]
 			}
 		},

@@ -1,0 +1,59 @@
+@import "../vars"
+
+.menu
+	position: absolute
+	reset()
+	left: 50%
+	top: distance.close
+	bottom: distance.close
+	width: auto
+	height: size.normal
+	
+	ul
+		position: relative
+		width: auto
+		height: 100%
+		top: 0
+		left: -50%
+		right: 50%
+		list-style: none
+		
+		box-sizing: border-box
+		
+		border: size.border color.darkGray solid
+		
+		border-radius: size.normal*0.5 + 1px
+		
+		reset()
+		
+		li
+			position: relative
+			display: inline-block
+			width: auto
+			height: 100%
+			
+			reset()
+			
+			a
+				position: relative
+				display: block
+				box-sizing: border-box
+				color: color.darkGray
+				text-decoration: none
+				width: auto
+				height: 100%
+				top: 0
+				left: 0
+				line-height: size.normal - 2*size.border
+				padding-right: distance.far
+				
+				iconSurrounding = size.normal*0.5 - size.icon*0.5
+				
+				padding-left: iconSurrounding
+				
+				i
+					margin-right: iconSurrounding
+					width: size.icon
+					height: size.icon
+					text-align: center
+					vertical-align: middle

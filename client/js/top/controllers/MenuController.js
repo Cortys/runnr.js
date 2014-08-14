@@ -9,9 +9,11 @@
 	MenuController.prototype = {
 		items: [
 			{
-				name: "runners"
+				name: "runners",
+				text: "Runners"
 			}, {
-				name: "plugins"
+				name: "plugins",
+				text: "Plugins"
 			}
 		]
 	};

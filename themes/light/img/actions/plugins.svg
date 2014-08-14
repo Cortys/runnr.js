@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8053) - http://www.bohemiancoding.com/sketch -->
+    <title>themes/light/img/actions/plugins</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Runners" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="design/desktop" sketch:type="MSArtboardGroup" transform="translate(-762.000000, -17.000000)" fill="#555555">
+            <g id="head" sketch:type="MSLayerGroup">
+                <g id="menuToggle" transform="translate(646.000000, 10.000000)" sketch:type="MSShapeGroup">
+                    <g id="plugins">
+                        <path d="M128.5,11 L126.4,11 C126.1,11 125.95,10.72 126.1,10.51 C126.325,10.09 126.25,9.60000001 126.25,9.25000001 C126.25,8.27000001 125.425,7.50000001 124.375,7.50000001 C123.325,7.50000001 122.5,8.27000001 122.5,9.25000001 C122.5,9.60000001 122.725,10.09 122.95,10.51 C123.1,10.72 122.875,11 122.65,11 L119.5,11 C118.675,11 118,11.13 118,11.9 L118,13.58 C118,14 118.45,14.35 118.9,14.21 C119.275,14.07 119.65,14 119.875,14 C120.925,14 121.75,14.77 121.75,15.75 C121.75,16.73 120.925,17.5 119.875,17.5 C119.65,17.5 119.275,17.43 118.9,17.29 C118.45,17.22 118,17.5 118,17.92 L118,19.6 C118,20.37 118.675,21 119.5,21 L128.5,21 C129.325,21 130,20.37 130,19.6 L130,11.9 C130,11.13 129.325,11 128.5,11 Z"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
