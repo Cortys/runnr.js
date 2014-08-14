@@ -13,9 +13,11 @@
 
 	<title ng-bind="'Runnr.js'+meta.title">Runnr.js</title>
 
-	<link rel="stylesheet" ng-repeat="file in meta.theme.css" ng-href="{{'theme/'+file.file+'.css'}}" media="{{file.media || ''}}" type="text/css" />
+	<!-- Load theme CSS: -->
+	<link theme></link>
 </head>
 <body>
+	<!-- Load theme HTML: -->
 	<theme-include></theme-include>
 </body>
 </html>

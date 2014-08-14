@@ -1,1 +1,1 @@
-angular.module("runnr.js", ["meta", "top", "panes"]);
+angular.module("runnr.js", ["meta", "top", "panes", "themes"]);

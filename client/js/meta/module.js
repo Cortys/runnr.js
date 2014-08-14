@@ -1,1 +1,1 @@
-angular.module("meta", ["themes"]);
+angular.module("meta", []);
