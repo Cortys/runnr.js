@@ -164,7 +164,11 @@ angular.module("top", []);
 				name: "plugins",
 				text: "Plugins"
 			}
-		]
+		],
+		activeItem: "runners",
+		activateItem: function(item) {
+			this.activeItem = item.name;
+		}
 	};
 
 })();
