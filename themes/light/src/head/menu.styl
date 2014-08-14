@@ -4,8 +4,8 @@
 	position: absolute
 	reset()
 	left: 50%
-	top: distance.close
-	bottom: distance.close
+	top: (size.big - size.normal)*0.5
+	bottom: (size.big - size.normal)*0.5
 	width: auto
 	height: size.normal
 		
@@ -50,9 +50,9 @@
 				height: 100%
 				top: 0
 				left: 0
-				line-height: size.normal
-				padding-right: distance.far
 				
+				line-height: size.normal
+				padding-right: size.icon
 				padding-left: size.normal
 				
 				fastTransition()
