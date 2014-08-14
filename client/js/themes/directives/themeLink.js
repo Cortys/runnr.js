@@ -16,7 +16,6 @@
 						clone.attr("rel", "stylesheet");
 						clone.attr("type", "text/css");
 						theme.css.forEach(function(v, i) {
-							console.log(arguments);
 							clone.attr("href", "theme/"+v.file+".css");
 							clone.attr("media", v.media || undefined);
 							element.after(clone);

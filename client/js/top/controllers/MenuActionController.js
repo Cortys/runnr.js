@@ -1,12 +1,12 @@
 (function() {
 	angular.module("top")
-		.controller("TopController", TopController);
+		.controller("MenuActionController", MenuActionController);
 
-	function TopController() {
+	function MenuActionController() {
 
 	}
 
-	TopController.prototype = {
+	MenuActionController.prototype = {
 		actions: [
 			{
 				name: "messages",
@@ -18,12 +18,12 @@
 				clicked: function() {
 
 				}
-			}, {
+			}/*, {
 				name: "off",
 				clicked: function() {
 
 				}
-			}
+			}*/ // TODO: implement password protected login and logout (later usecase for the off button)
 		]
 	};
 

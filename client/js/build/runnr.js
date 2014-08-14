@@ -1,13 +1,19 @@
+/* File: client/js/runnr.js */
 angular.module("runnr.js", ["meta", "top", "panes", "themes"]);
 
+/* File: client/js/meta/module.js */
 angular.module("meta", []);
 
+/* File: client/js/panes/module.js */
 angular.module("panes", []);
 
+/* File: client/js/themes/module.js */
 angular.module("themes", []);
 
+/* File: client/js/top/module.js */
 angular.module("top", []);
 
+/* File: client/js/meta/controllers/MetaController.js */
 (function() {
 	angular.module("meta")
 		.controller("MetaController", MetaController);
@@ -26,6 +32,7 @@ angular.module("top", []);
 
 })();
 
+/* File: client/js/panes/controllers/PanesController.js */
 (function(){
 	angular.module("panes")
 		.controller("PanesController", PanesController);
@@ -36,6 +43,7 @@ angular.module("top", []);
 
 })();
 
+/* File: client/js/themes/directives/themeInclude.js */
 (function() {
 	angular.module("themes")
 		.directive("themeInclude", themeInclude);
@@ -58,6 +66,7 @@ angular.module("top", []);
 
 })();
 
+/* File: client/js/themes/directives/themeLink.js */
 (function() {
 	angular.module("themes")
 		.directive("theme", theme);
@@ -76,7 +85,6 @@ angular.module("top", []);
 						clone.attr("rel", "stylesheet");
 						clone.attr("type", "text/css");
 						theme.css.forEach(function(v, i) {
-							console.log(arguments);
 							clone.attr("href", "theme/"+v.file+".css");
 							clone.attr("media", v.media || undefined);
 							element.after(clone);
@@ -89,51 +97,33 @@ angular.module("top", []);
 
 })();
 
+/* File: client/js/themes/supply/theme.js */
 (function() {
 	angular.module("themes")
 		.factory("theme", theme);
 
-	theme.$inject = ["$timeout"];
+	theme.$inject = ["$http"];
 
-	function theme($timeout) {
-		var t = {
-			"manifest_version": 1,
-			"id": "light",
-			"type": "theme",
-			"extends": null,
-
-			"name": "Light",
-			"version": "0.1.0",
-			"description": "A simple and friendly UI theme.",
-			"author": "Clemens Damke",
-
-			"css": [
-				{
-					"file": "desktop",
-					"media": null
-				}
-			],
-
-			"html": "struct"
-		};
+	function theme($http) {
 		return {
 			getTheme: function (callback) {
-				callback(t);
+				$http.get("/theme/manifest", { responseType:"json" }).success(callback);
 			}
 		};
 	}
 	
 })();
 
+/* File: client/js/top/controllers/MenuActionController.js */
 (function() {
 	angular.module("top")
-		.controller("TopController", TopController);
+		.controller("MenuActionController", MenuActionController);
 
-	function TopController() {
+	function MenuActionController() {
 
 	}
 
-	TopController.prototype = {
+	MenuActionController.prototype = {
 		actions: [
 			{
 				name: "messages",
@@ -145,11 +135,32 @@ angular.module("top", []);
 				clicked: function() {
 
 				}
-			}, {
+			}/*, {
 				name: "off",
 				clicked: function() {
 
 				}
+			}*/ // TODO: implement password protected login and logout (later usecase for the off button)
+		]
+	};
+
+})();
+
+/* File: client/js/top/controllers/MenuController.js */
+(function() {
+	angular.module("top")
+		.controller("MenuController", MenuController);
+
+	function MenuController() {
+
+	}
+
+	MenuController.prototype = {
+		items: [
+			{
+				name: "runners"
+			}, {
+				name: "plugins"
 			}
 		]
 	};

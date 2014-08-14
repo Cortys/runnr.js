@@ -49,7 +49,9 @@ module.exports = function(grunt) {
 		concat: {
 			js: {
 				options: {
-					separator: "\n"
+					process: function(src, filepath) {
+						return "/* File: "+filepath+" */\n"+src;
+					}
 				},
 				src: ["client/js/*.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
 				dest: "client/js/build/runnr.js"
@@ -73,7 +75,8 @@ module.exports = function(grunt) {
 			dev: {
 				script: "start.js",
 				options: {
-					watch: ["server"]
+					watch: ["server"],
+					args: ["dev"]
 				}
 			}
 		},

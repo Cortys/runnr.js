@@ -7,8 +7,11 @@ function start() {
 
 	// STATIC SERVICES:
 	app.use(express.static(settings.root + "/client"));
-	app.use("/theme", express.static(settings.root + "/themes/light"));
-
+	
+	app.use("/js", require("./js.js"));
+	
+	app.use("/theme", require("./theme.js"));
+	
 	app.get("/license", function(req, res) {
 		res.sendfile(settings.root + "/LICENSE");
 	});

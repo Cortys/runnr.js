@@ -1,9 +1,11 @@
-<header id="head" ng-controller="TopController as top">
+<header id="head">
 	<figure id="logo"></figure>
-	<nav class="menu">
-
+	<nav class="menu" ng-controller="MenuController as menu">
+		<ul>
+			<li ng-repeat="item in menu.items"><a href=""></a></li>
+		</ul>
 	</nav>
-	<menu class="actions">
-		<button type="button" ng-repeat="action in top.actions" ng-click="action.clicked()"><i class="icon" ng-class="'icon_actions-'+action.name"></i></button>
+	<menu class="actions" ng-controller="MenuActionController as action">
+		<button type="button" ng-repeat="action in action.actions" ng-click="action.clicked()"><i class="icon" ng-class="'icon_actions-'+action.name"></i></button>
 	</menu>
 </header>
