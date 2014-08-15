@@ -3,7 +3,7 @@
 		.controller("MenuController", MenuController);
 
 	function MenuController() {
-
+		this.activateItem(this.items[0]);
 	}
 
 	MenuController.prototype = {
@@ -16,9 +16,9 @@
 				text: "Plugins"
 			}
 		],
-		activeItem: "runners",
+		activeItem: null,
 		activateItem: function(item) {
-			this.activeItem = item.name;
+			this.activeItem = item;
 		}
 	};
 

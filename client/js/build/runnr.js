@@ -5,7 +5,7 @@ angular.module("runnr.js", ["meta", "top", "panes", "themes"]);
 angular.module("meta", []);
 
 /* File: client/js/panes/module.js */
-angular.module("panes", []);
+angular.module("panes", ["meta"]);
 
 /* File: client/js/themes/module.js */
 angular.module("themes", []);
@@ -32,15 +32,40 @@ angular.module("top", []);
 
 })();
 
+/* File: client/js/meta/supply/messageFactory.js */
+(function() {
+	angular.module("meta")
+		.factory("messageFactory", messageFactory);
+
+	messageFactory.$inject = [];
+
+	function messageFactory() {
+		return {
+			send: function() {
+				return {
+					
+				};
+			}
+		};
+	}
+
+})();
+
 /* File: client/js/panes/controllers/PanesController.js */
 (function(){
 	angular.module("panes")
 		.controller("PanesController", PanesController);
-
-	function PanesController() {
-
+	
+	PanesController.$inject = ["$scope"];
+	
+	function PanesController($scope) {
+		
 	}
-
+	
+	PanesController.prototype = {
+		
+	};
+	
 })();
 
 /* File: client/js/themes/directives/themeInclude.js */
@@ -105,9 +130,26 @@ angular.module("top", []);
 	theme.$inject = ["$http"];
 
 	function theme($http) {
+		var themeCached = null,
+			waiting = [],
+		
+		f = function(data) {
+			themeCached = data;
+			waiting.forEach(function(c) {
+				c(data || null);
+			});
+			waiting = [];
+		};
+		
+		$http.get("/theme/manifest", { responseType:"json" }).success(f).error(f);
+		
 		return {
 			getTheme: function (callback) {
-				$http.get("/theme/manifest", { responseType:"json" }).success(callback);
+				if(themeCached)
+					return callback(themeCached);
+				
+				if(typeof callback === "function")
+					waiting.push(callback);
 			}
 		};
 	}
@@ -152,7 +194,7 @@ angular.module("top", []);
 		.controller("MenuController", MenuController);
 
 	function MenuController() {
-
+		this.activateItem(this.items[0]);
 	}
 
 	MenuController.prototype = {
@@ -165,9 +207,9 @@ angular.module("top", []);
 				text: "Plugins"
 			}
 		],
-		activeItem: "runners",
+		activeItem: null,
 		activateItem: function(item) {
-			this.activeItem = item.name;
+			this.activeItem = item;
 		}
 	};
 

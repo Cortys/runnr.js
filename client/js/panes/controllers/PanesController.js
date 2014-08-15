@@ -1,9 +1,15 @@
 (function(){
 	angular.module("panes")
 		.controller("PanesController", PanesController);
-
-	function PanesController() {
-
+	
+	PanesController.$inject = ["$scope"];
+	
+	function PanesController($scope) {
+		
 	}
-
+	
+	PanesController.prototype = {
+		
+	};
+	
 })();
