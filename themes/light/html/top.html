@@ -6,7 +6,7 @@
 				<a ng-href="{{item.name}}" ng-click="menu.activateItem(item); $event.preventDefault()">
 					<div class="bg"></div>
 					<i class="icon" ng-class="'icon_actions-'+item.name"></i>
-					<span>{{ item.text }}</span>
+					<span ng-bind="item.text"></span>
 				</a>
 			</li>
 		</ul>
