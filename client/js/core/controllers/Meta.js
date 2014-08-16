@@ -1,15 +1,15 @@
 (function() {
-	angular.module("meta")
+	angular.module("core")
 		.controller("MetaController", MetaController);
 
-	MetaController.$inject = ["theme"];
+	MetaController.$inject = ["themes.theme"];
 
 	function MetaController(theme) {
 		var t = this;
 
 		t.title = "";
 
-		theme.getTheme(function(theme) {
+		theme.getTheme().then(function(theme) {
 			t.theme = theme;
 		});
 	}

@@ -1,64 +1,126 @@
 /* File: client/js/runnr.js */
-angular.module("runnr.js", ["meta", "top", "panes", "themes"]);
+angular.module("runnr.js", ["core", "top", "panes", "themes"]);
 
-/* File: client/js/meta/module.js */
-angular.module("meta", []);
+/* File: client/js/core/module.js */
+angular.module("core", []);
 
 /* File: client/js/panes/module.js */
-angular.module("panes", ["meta"]);
+angular.module("panes", ["core"]);
 
 /* File: client/js/themes/module.js */
 angular.module("themes", []);
 
 /* File: client/js/top/module.js */
-angular.module("top", []);
+angular.module("top", ["core"]);
 
-/* File: client/js/meta/controllers/MetaController.js */
+/* File: client/js/core/controllers/Meta.js */
 (function() {
-	angular.module("meta")
+	angular.module("core")
 		.controller("MetaController", MetaController);
 
-	MetaController.$inject = ["theme"];
+	MetaController.$inject = ["themes.theme"];
 
 	function MetaController(theme) {
 		var t = this;
 
 		t.title = "";
 
-		theme.getTheme(function(theme) {
+		theme.getTheme().then(function(theme) {
 			t.theme = theme;
 		});
 	}
 
 })();
 
-/* File: client/js/meta/supply/messageFactory.js */
+/* File: client/js/core/services/messageFactory.js */
 (function() {
-	angular.module("meta")
+	angular.module("core")
 		.factory("messageFactory", messageFactory);
-
+	
 	messageFactory.$inject = [];
-
+	
 	function messageFactory() {
 		return {
-			send: function() {
-				return {
-					
-				};
+			create: function(receiver, event, data) {
+				return new Message(receiver, event, data);
+			},
+			check: function(message) {
+				return message instanceof Message;
+			}
+		};
+	}
+	
+	function Message(receiver, event, data) {
+		this.receiver = receiver;
+		this.event = event;
+		this.data = data;
+	}
+})();
+/* File: client/js/core/services/messages.js */
+(function() {
+	angular.module("core")
+		.factory("messages", messages);
+	
+	messages.$inject = ["messageFactory"];
+	
+	function messages(messageFactory) {
+		
+		var receivers = {};
+		
+		return {
+			register: function(supply) {
+				var man = new MessageMan(supply),
+					stored = receivers[man.name];
+				if(!stored)
+					receivers[man.name] = [man];
+				else
+					stored.push(man);
+				return man;
+			}
+		};
+		
+		function MessageMan(supply) {
+			try {
+				this.name = supply.$get.name;
+			} catch (e) {
+				throw "Invalid message supplier.";
+			}
+		}
+		
+		MessageMan.prototype = {
+			name: null,
+			listeners: {},
+			
+			send: function(target, event, data) { // Send Message object or create new message out of target, event and data
+				var message = messageFactory.check(target) && target || messageFactory.create(target, event, data);
+				
+				receivers[new MessageMan(target).name].forEach(function(receiver) {
+					receiver.receive(message);
+				});
+			},
+			on: function(event, listener) {
+				if(typeof listener === "function")
+					this.listeners[event] = listener;
+			},
+			receive: function(message) {
+				var c;
+				
+				if(messageFactory.check(message) && message.receiver == this.name && typeof (c = this.listeners[message.event]) === "function")
+					c(message.event, message.data);
 			}
 		};
 	}
 
 })();
 
-/* File: client/js/panes/controllers/PanesController.js */
+/* File: client/js/panes/controllers/Panes.js */
 (function(){
 	angular.module("panes")
-		.controller("PanesController", PanesController);
+		.controller("panes.PanesController", PanesController);
 	
-	PanesController.$inject = ["$scope"];
+	PanesController.$inject = ["$scope", "messageMan"];
 	
-	function PanesController($scope) {
+	function PanesController($scope, messageMan) {
 		
 	}
 	
@@ -73,14 +135,14 @@ angular.module("top", []);
 	angular.module("themes")
 		.directive("themeInclude", themeInclude);
 
-	themeInclude.$inject = ["$compile", "theme"];
+	themeInclude.$inject = ["$compile", "themes.theme"];
 
 	function themeInclude($compile, theme) {
 		return {
 			restrict: "E",
 			link: function(scope, element, attrs) {
 				if(!attrs.ngInclude)
-					theme.getTheme(function(theme) {
+					theme.getTheme().then(function(theme) {
 						element.attr("ng-include", "'theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
@@ -88,78 +150,63 @@ angular.module("top", []);
 			}
 		};
 	}
-
+	
 })();
 
 /* File: client/js/themes/directives/themeLink.js */
 (function() {
 	angular.module("themes")
-		.directive("theme", theme);
+		.directive("themeLink", themeLink);
 
-	theme.$inject = ["$compile", "theme"];
+	themeLink.$inject = ["$compile", "themes.theme"];
 
-	function theme($compile, theme) {
+	function themeLink($compile, theme) {
 		return {
 			restrict: "A",
 			transclude: "element",
-			link: function(scope, element, attrs) {
-				if("theme" in attrs)
-					theme.getTheme(function(theme) {
-						var clone = angular.element(document.createElement("link")),
-							i = 0;
-						clone.attr("rel", "stylesheet");
-						clone.attr("type", "text/css");
-						theme.css.forEach(function(v, i) {
-							clone.attr("href", "theme/"+v.file+".css");
-							clone.attr("media", v.media || undefined);
-							element.after(clone);
-							clone = clone.clone();
-						});
+			link: function(scope, element) {
+				theme.getTheme().then(function(theme) {
+					var clone = angular.element(document.createElement("link"));
+					clone.attr("rel", "stylesheet");
+					clone.attr("type", "text/css");
+					theme.css.forEach(function(v) {
+						clone.attr("href", "theme/"+v.file+".css");
+						clone.attr("media", v.media || undefined);
+						element.after(clone);
+						clone = clone.clone();
 					});
+				});
 			}
 		};
 	}
 
 })();
 
-/* File: client/js/themes/supply/theme.js */
+/* File: client/js/themes/services/theme.js */
 (function() {
 	angular.module("themes")
-		.factory("theme", theme);
+		.factory("themes.theme", theme);
 
 	theme.$inject = ["$http"];
 
 	function theme($http) {
-		var themeCached = null,
-			waiting = [],
-		
-		f = function(data) {
-			themeCached = data;
-			waiting.forEach(function(c) {
-				c(data || null);
-			});
-			waiting = [];
-		};
-		
-		$http.get("/theme/manifest", { responseType:"json" }).success(f).error(f);
+		var themePromise = $http.get("/theme/manifest", { responseType:"json" }).then(function(result) {
+			return result.data;
+		});
 		
 		return {
-			getTheme: function (callback) {
-				if(themeCached)
-					return callback(themeCached);
-				
-				if(typeof callback === "function")
-					waiting.push(callback);
+			getTheme: function () {
+				return themePromise;
 			}
 		};
 	}
 	
 })();
 
-/* File: client/js/top/controllers/MenuActionController.js */
+/* File: client/js/top/controllers/Action.js */
 (function() {
 	angular.module("top")
-		.controller("MenuActionController", MenuActionController);
+		.controller("top.ActionController", MenuActionController);
 
 	function MenuActionController() {
 
@@ -188,13 +235,17 @@ angular.module("top", []);
 
 })();
 
-/* File: client/js/top/controllers/MenuController.js */
+/* File: client/js/top/controllers/Menu.js */
 (function() {
 	angular.module("top")
-		.controller("MenuController", MenuController);
-
-	function MenuController() {
+		.controller("top.MenuController", MenuController);
+	
+	MenuController.$inject = ["messages"];
+	
+	function MenuController(messages) {
 		this.activateItem(this.items[0]);
+		
+		this.messageMan = messages.register(this);
 	}
 
 	MenuController.prototype = {

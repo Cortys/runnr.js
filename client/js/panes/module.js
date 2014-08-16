@@ -1,1 +1,1 @@
-angular.module("panes", ["meta"]);
+angular.module("panes", ["core"]);

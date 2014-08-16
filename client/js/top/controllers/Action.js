@@ -1,6 +1,6 @@
 (function() {
 	angular.module("top")
-		.controller("MenuActionController", MenuActionController);
+		.controller("top.ActionController", MenuActionController);
 
 	function MenuActionController() {
 
