@@ -1,10 +1,67 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="runnr.js" ng-controller="MetaController as meta">
+<html lang="en" ng-app="runnr.js" ng-controller="MetaController as meta" preload-theme-linking-delay="600">
 <head>
 	<meta charset="utf-8" />
 
 	<link rel="licence" href="license" />
-
+	
+	<style type="text/css" show-on-theme-preload>
+		body {
+			overflow: hidden;
+			cursor: default;
+		}
+		.spinner {
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			width: auto;
+			height: auto;
+			background-color: #808080;
+			z-index: 2147483648; /* max commonly supported z-index to guarantee .spinner will be in front of everything */
+		}
+		.spinner div {
+			position: absolute;
+			width: 40px;
+			height: 40px;
+			background-color: #ffffff;
+			
+			top: 50%;
+			left: 50%;
+			margin-top: -20px;
+			margin-left: -20px;
+			
+			opacity: 0;
+			
+			border-radius: 100%;
+			-webkit-animation: scaleout 0.6s infinite ease-in-out;
+			animation: scaleout 0.6s infinite ease-in-out;
+		}
+		
+		@-webkit-keyframes scaleout {
+			0% {
+				-webkit-transform: scale(0.0);
+				opacity: 1;
+			} 100% {
+				-webkit-transform: scale(1.0);
+				opacity: 0;
+			}
+		}
+		
+		@keyframes scaleout {
+			0% {
+				transform: scale(0.0);
+				-webkit-transform: scale(0.0);
+				opacity: 1;
+			} 100% {
+				transform: scale(1.0);
+				-webkit-transform: scale(1.0);
+				opacity: 0;
+			}
+		}
+	</style>
+	
 	<script src="frameworks/angular/angular.min.js" type="text/javascript"></script>
 	<script src="frameworks/nprogress/nprogress.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="frameworks/nprogress/nprogress.css" type="text/css" />
@@ -19,5 +76,6 @@
 <body>
 	<!-- Load theme HTML: -->
 	<theme-include></theme-include>
+	<div class="spinner" show-on-theme-preload><div></div></div>
 </body>
 </html>

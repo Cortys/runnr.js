@@ -2,13 +2,14 @@
 	angular.module("themes")
 		.directive("themeLink", themeLink);
 
-	themeLink.$inject = ["$compile", "themes.theme"];
+	themeLink.$inject = ["$compile", "$q", "themes.theme"];
 
-	function themeLink($compile, theme) {
+	function themeLink($compile, $q, theme) {
 		return {
 			restrict: "A",
 			transclude: "element",
 			link: function(scope, element) {
+				
 				theme.getTheme().then(function(theme) {
 					var clone = angular.element(document.createElement("link"));
 					clone.attr("rel", "stylesheet");

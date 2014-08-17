@@ -65,48 +65,90 @@ angular.module("top", ["core"]);
 	
 	function messages(messageFactory) {
 		
-		var receivers = {};
+		var receivers = {},
+			noDelivery = {};
 		
-		return {
-			register: function(supply) {
-				var man = new MessageMan(supply),
-					stored = receivers[man.name];
-				if(!stored)
-					receivers[man.name] = [man];
-				else
-					stored.push(man);
-				return man;
-			}
-		};
-		
-		function MessageMan(supply) {
-			try {
-				this.name = supply.$get.name;
-			} catch (e) {
-				throw "Invalid message supplier.";
-			}
+		function Deliverer(supply) {
+			this.name = supply.toString();
 		}
 		
-		MessageMan.prototype = {
+		Deliverer.prototype = {
 			name: null,
 			listeners: {},
 			
-			send: function(target, event, data) { // Send Message object or create new message out of target, event and data
-				var message = messageFactory.check(target) && target || messageFactory.create(target, event, data);
+			/* Send Message
+			 * target: registered name of the receiver
+			 * event: topic of the message
+			 * data: appended data object
+			 * minDelivery: required number of receivers. if not exceeded the message will be stored until new receivers appear. default = 1
+			 */
+			send: function(target, event, data, minDelivery) {
+				var message = messageFactory.check(target) && target || messageFactory.create(target, event, data),
+					receiverList = receivers[target] || [],
+					noDeliveryTarget, noDeliveryEvents;
 				
-				receivers[new MessageMan(target).name].forEach(function(receiver) {
+				minDelivery = (minDelivery === undefined?1:minDelivery) - receiverList.length;
+				
+				// deliver messages:
+				receiverList.forEach(function(receiver) {
 					receiver.receive(message);
 				});
+				
+				// store message, if further deliveries are necessary
+				if(minDelivery > 0) {
+					if(!(noDeliveryTarget = noDelivery[target]))
+						noDelivery[target] = noDeliveryTarget = {};
+					if(!(noDeliveryEvents = noDeliveryTarget[event]))
+						noDeliveryTarget[event] = noDeliveryEvents = [];
+					
+					noDeliveryEvents.push({
+						message: message,
+						deliveriesLeft: minDelivery
+					});
+				}
+				
+				return this;
 			},
 			on: function(event, listener) {
-				if(typeof listener === "function")
-					this.listeners[event] = listener;
+				
+				var t = this,
+					noDeliveryTarget, noDeliveryEvents, removedAll;
+				
+				if(typeof listener === "function") {
+					t.listeners[event] = listener;
+					
+					if((noDeliveryTarget = noDelivery[this.name]) && (noDeliveryEvents = noDeliveryTarget[event])) {
+						removedAll = true;
+						noDeliveryEvents.forEach(function(e, i) {
+							t.receive(e.message);
+							if(--e.deliveriesLeft <= 0)
+								delete noDeliveryEvents[i];
+							else
+								removedAll = false;
+						});
+						if(removedAll)
+							delete noDeliveryTarget[event];
+					}
+				}
+				
+				return this;
 			},
 			receive: function(message) {
 				var c;
-				
 				if(messageFactory.check(message) && message.receiver == this.name && typeof (c = this.listeners[message.event]) === "function")
 					c(message.event, message.data);
+			}
+		};
+		
+		return {
+			register: function(supply) {
+				var deliverer = new Deliverer(supply),
+					stored = receivers[deliverer.name];
+				if(!stored)
+					receivers[deliverer.name] = [deliverer];
+				else
+					stored.push(deliverer);
+				return deliverer;
 			}
 		};
 	}
@@ -118,10 +160,12 @@ angular.module("top", ["core"]);
 	angular.module("panes")
 		.controller("panes.PanesController", PanesController);
 	
-	PanesController.$inject = ["$scope", "messageMan"];
+	PanesController.$inject = ["$scope", "messages"];
 	
-	function PanesController($scope, messageMan) {
-		
+	function PanesController($scope, messages) {
+		this.messageMan = messages.register("panes.PanesController").on("goto", function(event, page) {
+			console.log(event, page);
+		});
 	}
 	
 	PanesController.prototype = {
@@ -130,23 +174,96 @@ angular.module("top", ["core"]);
 	
 })();
 
+/* File: client/js/themes/directives/preloadThemeLinkingDelay.js */
+(function() {
+	angular.module("themes")
+		.directive("preloadThemeLinkingDelay", preloadLinkingDelay);
+
+	preloadLinkingDelay.$inject = ["$q", "$timeout", "themes.theme"];
+
+	function preloadLinkingDelay($q, $timeout, theme) {
+		return {
+			restrict: "A",
+			scope: {
+				preloadDelay: "@preloadThemeLinkingDelay"
+			},
+			compile: function() {
+				var deferred = $q.defer(),
+					delay = $q.defer();
+				
+				theme.addRenderingPromise($q.all([deferred.promise, delay.promise]));
+				
+				function link() {
+					console.log(scope);
+				}
+				
+				return {
+					pre: function(scope) {
+						$timeout(function() {
+							delay.resolve();
+						}, scope.preloadDelay*1);
+					},
+					post: function() {
+						deferred.resolve();
+					}
+				};
+			}
+		};
+	}
+
+})();
+
+/* File: client/js/themes/directives/showOnThemePreload.js */
+(function() {
+	angular.module("themes")
+		.directive("showOnThemePreload", showOnThemePreload);
+
+	showOnThemePreload.$inject = ["themes.theme"];
+
+	function showOnThemePreload(theme) {
+		return {
+			restrict: "A",
+			scope: {},
+			link: function(scope, element) {
+				theme.rendered().then(function() {
+					scope.$destroy();
+				});
+				
+				scope.$on("$destroy", function(event) {
+					element.remove();
+				});
+			}
+		};
+	}
+
+})();
+
 /* File: client/js/themes/directives/themeInclude.js */
 (function() {
 	angular.module("themes")
 		.directive("themeInclude", themeInclude);
 
-	themeInclude.$inject = ["$compile", "themes.theme"];
+	themeInclude.$inject = ["$compile", "$q", "themes.theme"];
 
-	function themeInclude($compile, theme) {
+	function themeInclude($compile, $q, theme) {
 		return {
 			restrict: "E",
+			scope: {},
 			link: function(scope, element, attrs) {
-				if(!attrs.ngInclude)
+				if(!attrs.ngInclude) {
+					
+					var deferred = $q.defer();
+					theme.addRenderingPromise(deferred.promise);
+					
 					theme.getTheme().then(function(theme) {
 						element.attr("ng-include", "'theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
 					});
+					
+					scope.$on("$includeContentLoaded", deferred.resolve);
+					scope.$on("$includeContentError", deferred.reject);
+				}
 			}
 		};
 	}
@@ -158,13 +275,14 @@ angular.module("top", ["core"]);
 	angular.module("themes")
 		.directive("themeLink", themeLink);
 
-	themeLink.$inject = ["$compile", "themes.theme"];
+	themeLink.$inject = ["$compile", "$q", "themes.theme"];
 
-	function themeLink($compile, theme) {
+	function themeLink($compile, $q, theme) {
 		return {
 			restrict: "A",
 			transclude: "element",
 			link: function(scope, element) {
+				
 				theme.getTheme().then(function(theme) {
 					var clone = angular.element(document.createElement("link"));
 					clone.attr("rel", "stylesheet");
@@ -187,18 +305,36 @@ angular.module("top", ["core"]);
 	angular.module("themes")
 		.factory("themes.theme", theme);
 
-	theme.$inject = ["$http"];
+	theme.$inject = ["$http", "$q"];
 
-	function theme($http) {
-		var themePromise = $http.get("/theme/manifest", { responseType:"json" }).then(function(result) {
-			return result.data;
-		});
-		
-		return {
+	function theme($http, $q) {
+		var o = {
 			getTheme: function () {
 				return themePromise;
+			},
+			rendered: function() {
+				return renderDeferred.promise;
+			},
+			addRenderingPromise: function(promise) {
+				renderPromises++;
+				promise.then(function() {
+					if(--renderPromises <= 0)
+						renderDeferred.resolve();
+				}, function() {
+					renderDeferred.reject();
+				});
 			}
-		};
+		},
+		
+		themePromise = $http.get("/theme/manifest", { responseType:"json" }).then(function(result) {
+			return result.data;
+		}),
+		renderDeferred = $q.defer(),
+		renderPromises = 0;
+		
+		o.addRenderingPromise(themePromise);
+		
+		return o;
 	}
 	
 })();
@@ -243,9 +379,9 @@ angular.module("top", ["core"]);
 	MenuController.$inject = ["messages"];
 	
 	function MenuController(messages) {
-		this.activateItem(this.items[0]);
+		this.messageMan = messages.register("top.MenuController");
 		
-		this.messageMan = messages.register(this);
+		this.activateItem(this.items[1]);
 	}
 
 	MenuController.prototype = {
@@ -261,6 +397,8 @@ angular.module("top", ["core"]);
 		activeItem: null,
 		activateItem: function(item) {
 			this.activeItem = item;
+			
+			this.messageMan.send("panes.PanesController", "goto", item.name);
 		}
 	};
 
