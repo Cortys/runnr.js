@@ -4,10 +4,10 @@
 	position: absolute
 	reset()
 	left: 50%
-	top: (size.big - size.normal)*0.5
-	bottom: (size.big - size.normal)*0.5
+	top: 0
+	bottom: 0
 	width: auto
-	height: size.normal
+	height: size.big
 		
 	ul
 		position: relative
@@ -20,7 +20,7 @@
 		
 		overflow: visible
 		
-		border-radius: size.normal*0.5 + 1px
+		white-space: nowrap
 		
 		&, li
 			reset()
@@ -30,8 +30,6 @@
 			display: inline-block
 			width: auto
 			height: 100%
-			
-			border-radius: inherit
 			
 			overflow: visible
 			
@@ -51,8 +49,10 @@
 				top: 0
 				left: 0
 				
-				line-height: size.normal
-				padding-right: size.icon
+				cursor: pointer
+				
+				line-height: size.big
+				padding-right: size.normal * 0.5
 				padding-left: size.normal
 				
 				fastTransition()
@@ -64,24 +64,22 @@
 					vertical-align: middle
 					position: absolute
 					
-					surrounding = size.normal*0.5 - size.icon*0.5
-					
-					top: surrounding
-					left: surrounding
+					top: size.big*0.5 - size.icon*0.5
+					left: size.normal*0.5 - size.icon*0.5
 				
 				span
 					position: relative
 				
 				.bg
 					position: absolute
-					top: 0
+					top: (size.big - size.normal)*0.5
+					bottom: (size.big - size.normal)*0.5
 					left: 50%
 					right: 50%
-					bottom: 0
 					width: auto
 					height: auto
 					background-color: color.darkGray
-					border-radius: inherit
+					border-radius: size.normal * 0.5
 					bounceTransition()
 		
 			&:first-child a .bg

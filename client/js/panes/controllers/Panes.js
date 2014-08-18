@@ -2,16 +2,14 @@
 	angular.module("panes")
 		.controller("panes.PanesController", PanesController);
 	
-	PanesController.$inject = ["$scope", "messages"];
+	PanesController.$inject = ["$scope", "panes.history"];
 	
-	function PanesController($scope, messages) {
-		this.messageMan = messages.register("panes.PanesController").on("goto", function(event, page) {
-			console.log(event, page);
-		});
+	function PanesController($scope, history) {
+		this.history = history;
 	}
 	
 	PanesController.prototype = {
-		
+		history: null
 	};
 	
 })();

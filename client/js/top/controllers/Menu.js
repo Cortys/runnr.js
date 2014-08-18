@@ -2,15 +2,17 @@
 	angular.module("top")
 		.controller("top.MenuController", MenuController);
 	
-	MenuController.$inject = ["messages"];
+	MenuController.$inject = ["panes.history"];
 	
-	function MenuController(messages) {
-		this.messageMan = messages.register("top.MenuController");
-		
-		this.activateItem(this.items[1]);
+	function MenuController(panesHistory) {
+		this.panesHistory = panesHistory;
+		this.activateItem(this.items[0]);
 	}
 
 	MenuController.prototype = {
+		activeItem: null,
+		panesHistory: null,
+		
 		items: [
 			{
 				name: "runners",
@@ -20,11 +22,10 @@
 				text: "Plugins"
 			}
 		],
-		activeItem: null,
+		
 		activateItem: function(item) {
 			this.activeItem = item;
-			
-			this.messageMan.send("panes.PanesController", "goto", item.name);
+			this.panesHistory.replaceState(item);
 		}
 	};
 

@@ -1,5 +1,5 @@
 /* File: client/js/runnr.js */
-angular.module("runnr.js", ["core", "top", "panes", "themes"]);
+angular.module("runnr.js", ["core", "top", "panes", "themes", "ngAnimate"]);
 
 /* File: client/js/core/module.js */
 angular.module("core", []);
@@ -11,7 +11,7 @@ angular.module("panes", ["core"]);
 angular.module("themes", []);
 
 /* File: client/js/top/module.js */
-angular.module("top", ["core"]);
+angular.module("top", ["panes"]);
 
 /* File: client/js/core/controllers/Meta.js */
 (function() {
@@ -32,148 +32,80 @@ angular.module("top", ["core"]);
 
 })();
 
-/* File: client/js/core/services/messageFactory.js */
+/* File: client/js/core/services/History.js */
 (function() {
 	angular.module("core")
-		.factory("messageFactory", messageFactory);
-	
-	messageFactory.$inject = [];
-	
-	function messageFactory() {
-		return {
-			create: function(receiver, event, data) {
-				return new Message(receiver, event, data);
-			},
-			check: function(message) {
-				return message instanceof Message;
-			}
-		};
-	}
-	
-	function Message(receiver, event, data) {
-		this.receiver = receiver;
-		this.event = event;
-		this.data = data;
-	}
-})();
-/* File: client/js/core/services/messages.js */
-(function() {
-	angular.module("core")
-		.factory("messages", messages);
-	
-	messages.$inject = ["messageFactory"];
-	
-	function messages(messageFactory) {
+		.factory("core.History", HistoryFactory);
+
+	HistoryFactory.$inject = [];
+
+	function HistoryFactory() {
 		
-		var receivers = {},
-			noDelivery = {};
-		
-		function Deliverer(supply) {
-			this.name = supply.toString();
+		function History() {
+			this.states = [];
 		}
 		
-		Deliverer.prototype = {
-			name: null,
-			listeners: {},
+		History.prototype = {
+			states: null,
 			
-			/* Send Message
-			 * target: registered name of the receiver
-			 * event: topic of the message
-			 * data: appended data object
-			 * minDelivery: required number of receivers. if not exceeded the message will be stored until new receivers appear. default = 1
-			 */
-			send: function(target, event, data, minDelivery) {
-				var message = messageFactory.check(target) && target || messageFactory.create(target, event, data),
-					receiverList = receivers[target] || [],
-					noDeliveryTarget, noDeliveryEvents;
-				
-				minDelivery = (minDelivery === undefined?1:minDelivery) - receiverList.length;
-				
-				// deliver messages:
-				receiverList.forEach(function(receiver) {
-					receiver.receive(message);
-				});
-				
-				// store message, if further deliveries are necessary
-				if(minDelivery > 0) {
-					if(!(noDeliveryTarget = noDelivery[target]))
-						noDelivery[target] = noDeliveryTarget = {};
-					if(!(noDeliveryEvents = noDeliveryTarget[event]))
-						noDeliveryTarget[event] = noDeliveryEvents = [];
-					
-					noDeliveryEvents.push({
-						message: message,
-						deliveriesLeft: minDelivery
-					});
-				}
-				
-				return this;
+			pushState: function(state) {
+				this.states.push(state);
 			},
-			on: function(event, listener) {
-				
-				var t = this,
-					noDeliveryTarget, noDeliveryEvents, removedAll;
-				
-				if(typeof listener === "function") {
-					t.listeners[event] = listener;
-					
-					if((noDeliveryTarget = noDelivery[this.name]) && (noDeliveryEvents = noDeliveryTarget[event])) {
-						removedAll = true;
-						noDeliveryEvents.forEach(function(e, i) {
-							t.receive(e.message);
-							if(--e.deliveriesLeft <= 0)
-								delete noDeliveryEvents[i];
-							else
-								removedAll = false;
-						});
-						if(removedAll)
-							delete noDeliveryTarget[event];
-					}
-				}
-				
-				return this;
+			replaceState: function(state) {
+				this.states = [state];
 			},
-			receive: function(message) {
-				var c;
-				if(messageFactory.check(message) && message.receiver == this.name && typeof (c = this.listeners[message.event]) === "function")
-					c(message.event, message.data);
+			
+			back: function(by) {
+				if(by === undefined)
+					by = 1;
+				if(isNaN(by))
+					return;
+				this.states = this.states.slice(0, Math.max(this.states.length - by, 0));
+			},
+			
+			getState: function(back) {
+				if(back === undefined)
+					back = 0;
+				if(isNaN(back))
+					return;
+				return this.states[this.states.length-1-back];
 			}
 		};
 		
-		return {
-			register: function(supply) {
-				var deliverer = new Deliverer(supply),
-					stored = receivers[deliverer.name];
-				if(!stored)
-					receivers[deliverer.name] = [deliverer];
-				else
-					stored.push(deliverer);
-				return deliverer;
-			}
-		};
+		return History;
 	}
-
 })();
-
 /* File: client/js/panes/controllers/Panes.js */
 (function(){
 	angular.module("panes")
 		.controller("panes.PanesController", PanesController);
 	
-	PanesController.$inject = ["$scope", "messages"];
+	PanesController.$inject = ["$scope", "panes.history"];
 	
-	function PanesController($scope, messages) {
-		this.messageMan = messages.register("panes.PanesController").on("goto", function(event, page) {
-			console.log(event, page);
-		});
+	function PanesController($scope, history) {
+		this.history = history;
 	}
 	
 	PanesController.prototype = {
-		
+		history: null
 	};
 	
 })();
 
+/* File: client/js/panes/services/history.js */
+(function() {
+	angular.module("panes")
+		.factory("panes.history", history);
+		
+	history.$inject = ["core.History"];
+	
+	function history(History) {
+		
+		var history = new History();
+		
+		return history;
+	}
+})();
 /* File: client/js/themes/directives/preloadThemeLinkingDelay.js */
 (function() {
 	angular.module("themes")
@@ -184,9 +116,6 @@ angular.module("top", ["core"]);
 	function preloadLinkingDelay($q, $timeout, theme) {
 		return {
 			restrict: "A",
-			scope: {
-				preloadDelay: "@preloadThemeLinkingDelay"
-			},
 			compile: function() {
 				var deferred = $q.defer(),
 					delay = $q.defer();
@@ -198,10 +127,10 @@ angular.module("top", ["core"]);
 				}
 				
 				return {
-					pre: function(scope) {
+					pre: function(scope, element, attr) {
 						$timeout(function() {
 							delay.resolve();
-						}, scope.preloadDelay*1);
+						}, attr.preloadThemeLinkingDelay*1);
 					},
 					post: function() {
 						deferred.resolve();
@@ -343,19 +272,21 @@ angular.module("top", ["core"]);
 (function() {
 	angular.module("top")
 		.controller("top.ActionController", MenuActionController);
-
+	
+	MenuActionController.$inject = [];
+	
 	function MenuActionController() {
 
 	}
 
 	MenuActionController.prototype = {
 		actions: [
-			{
+			/*{
 				name: "messages",
 				clicked: function() {
 
 				}
-			}, {
+			},*/ { // TODO: implement messaging API for plugins
 				name: "settings",
 				clicked: function() {
 
@@ -376,15 +307,17 @@ angular.module("top", ["core"]);
 	angular.module("top")
 		.controller("top.MenuController", MenuController);
 	
-	MenuController.$inject = ["messages"];
+	MenuController.$inject = ["panes.history"];
 	
-	function MenuController(messages) {
-		this.messageMan = messages.register("top.MenuController");
-		
-		this.activateItem(this.items[1]);
+	function MenuController(panesHistory) {
+		this.panesHistory = panesHistory;
+		this.activateItem(this.items[0]);
 	}
 
 	MenuController.prototype = {
+		activeItem: null,
+		panesHistory: null,
+		
 		items: [
 			{
 				name: "runners",
@@ -394,11 +327,10 @@ angular.module("top", ["core"]);
 				text: "Plugins"
 			}
 		],
-		activeItem: null,
+		
 		activateItem: function(item) {
 			this.activeItem = item;
-			
-			this.messageMan.send("panes.PanesController", "goto", item.name);
+			this.panesHistory.replaceState(item);
 		}
 	};
 

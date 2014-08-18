@@ -7,9 +7,6 @@
 	function preloadLinkingDelay($q, $timeout, theme) {
 		return {
 			restrict: "A",
-			scope: {
-				preloadDelay: "@preloadThemeLinkingDelay"
-			},
 			compile: function() {
 				var deferred = $q.defer(),
 					delay = $q.defer();
@@ -21,10 +18,10 @@
 				}
 				
 				return {
-					pre: function(scope) {
+					pre: function(scope, element, attr) {
 						$timeout(function() {
 							delay.resolve();
-						}, scope.preloadDelay*1);
+						}, attr.preloadThemeLinkingDelay*1);
 					},
 					post: function() {
 						deferred.resolve();

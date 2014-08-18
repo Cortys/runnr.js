@@ -42,7 +42,7 @@ paneCount = 2
 // SPEEDS:
 
 speed = {
-	slow: 0.085s
+	slow: 0.1s
 	fast: 0.05s
 }
 
@@ -64,6 +64,20 @@ shadow(pos = "bottom")
 
 darkShadow()
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+
+gradient(dir, colorA, colorB)
+	background-image: -webkit-linear-gradient(dir, colorA 0%, colorB 100%);
+	background-image: -moz-linear-gradient(dir, colorA 0%, colorB 100%);
+	background-image: -ms-linear-gradient(dir, colorA 0%, colorB 100%);
+	if(dir == "left")
+		dirInverse = "to right"
+	else if(dir == "right")
+		dirInverse = "to left"
+	else if(dir == "top")
+		dirInverse = "to bottom"
+	else
+		dirInverse = "to top"
+	background-image: linear-gradient(dirInverse, colorA 0%, colorB 100%);
 
 transition()
 	-webkit-transition: arguments

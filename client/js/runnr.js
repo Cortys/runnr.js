@@ -1,1 +1,1 @@
-angular.module("runnr.js", ["core", "top", "panes", "themes"]);
+angular.module("runnr.js", ["core", "top", "panes", "themes", "ngAnimate"]);

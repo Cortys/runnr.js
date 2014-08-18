@@ -4,7 +4,7 @@
 		<nav class="menu" ng-show="menu.activeItem">
 			<ul>
 				<li ng-repeat="item in menu.items" ng-class="{ active:item === menu.activeItem }">
-					<a ng-href="{{item.name}}" ng-click="menu.activateItem(item); $event.preventDefault()">
+					<a ng-click="menu.activateItem(item); $event.preventDefault()">
 						<div class="bg"></div>
 						<i class="icon" ng-class="'icon_actions-'+item.name"></i>
 						<span ng-bind="item.text"></span>

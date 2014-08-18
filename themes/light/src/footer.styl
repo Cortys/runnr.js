@@ -1,0 +1,111 @@
+@import "vars"
+
+#breadcrumb
+	nav
+		position: absolute
+		top: 0
+		bottom: 0
+		left: 0
+		right: auto
+		width: auto
+		height: auto
+		reset()
+		
+		max-width: 100%
+		
+		overflow: visible
+		
+		ul
+			position: relative
+			top: 0
+			left: 0
+			bottom: 0
+			width: auto
+			reset()
+			list-style: none
+			
+			overflow: hidden
+			white-space: nowrap
+			text-overflow: ellipsis
+			
+			float: right
+			
+			li
+				position: relative
+				width: auto
+				height: size.normal
+				display: inline-block
+				
+				reset()
+				
+				overflow: visible
+				margin-left: distance.close * -1
+				
+				slowTransition()
+				transition: @transition, margin-right 1ms
+				
+				a
+					position: relative
+					display: block
+					width: auto
+					max-width: 100%
+					height: size.normal
+					line-height: size.normal
+					font-size: font.small
+					color: color.darkGray
+					cursor: pointer
+					padding-left: distance.close*3
+					padding-right: distance.close
+					background-repeat: no-repeat
+					background-position: right center
+					transition: inherit
+					overflow: inherit
+					
+					&:after, &:before
+						content: " "
+						position: absolute
+						display: block
+						width: 0
+						height: 0
+						border-top: size.normal solid transparent
+						border-bottom: @border-top
+						border-left: distance.close*2 solid color.light
+						margin-top: size.normal * -1
+						top: 50%
+						right: size.border - distance.close
+						z-index: 2
+						transition: inherit
+					
+					&:before
+						
+						border-left-color: color.darkGray
+						right: distance.close * -1
+						z-index: 1
+					
+					& span
+						position: relative
+						display: block
+						z-index: 3
+					
+					&:hover
+						background-color: color.darkGray
+						color: color.light
+						&:after
+							border-left-color: @background-color
+				
+				
+				&:first-child a
+					padding-left: distance.far + distance.close
+				&:last-child
+					margin-right: distance.far + distance.close
+				
+				&.ng-enter
+					margin-left: distance.close * -2
+					opacity: 0
+					a
+						max-width: 0
+				&.ng-enter-active
+					margin-left: distance.close * -1
+					opacity: 1
+					a
+						max-width: 100%

@@ -12,6 +12,10 @@
 		</div>
 	</main>
 	<footer id="breadcrumb">
-
+		<nav>
+			<ul>
+				<li ng-repeat="state in panes.history.states track by $index"><a><span ng-bind="state.text"></span></a></li>
+			</ul>
+		</nav>
 	</footer>
 </section>
