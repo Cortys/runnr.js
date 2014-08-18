@@ -12,6 +12,8 @@ function start() {
 	
 	app.use("/theme", require("./theme.js"));
 	
+	app.use("/frameworks", express.static(settings.root + "/bower_components"))
+	
 	app.get("/license", function(req, res) {
 		res.sendfile(settings.root + "/LICENSE");
 	});
