@@ -8,6 +8,7 @@
 		return {
 			restrict: "E",
 			scope: {},
+			priority: 3000,
 			link: function(scope, element, attrs) {
 				if(!attrs.ngInclude) {
 					

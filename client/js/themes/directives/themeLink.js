@@ -8,6 +8,8 @@
 		return {
 			restrict: "A",
 			transclude: "element",
+			terminal: true,
+			priority: 3001,
 			link: function(scope, element) {
 				
 				theme.getTheme().then(function(theme) {

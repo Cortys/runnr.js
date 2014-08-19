@@ -1,20 +1,15 @@
 <section id="content" ng-controller="panes.PanesController as panes">
 	<main id="panes">
-		<div class="pane visible2 pos0">
+		<div ng-repeat="state in (states = panes.history.getStates(2)) track by state.position" class="pane visible{{states.length}} pos{{$index}}">
 			<div class="inner">
-
-			</div>
-		</div>
-		<div class="pane visible2 pos1">
-			<div class="inner">
-		
+				{{state.text}}
 			</div>
 		</div>
 	</main>
 	<footer id="breadcrumb">
 		<nav>
 			<ul>
-				<li ng-repeat="state in panes.history.states track by $index"><a><span ng-bind="state.text"></span></a></li>
+				<li ng-repeat="state in panes.history.states track by state.position"><a><span ng-bind="state.text"></span></a></li>
 			</ul>
 		</nav>
 	</footer>

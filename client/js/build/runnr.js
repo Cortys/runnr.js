@@ -49,9 +49,11 @@ angular.module("top", ["panes"]);
 			states: null,
 			
 			pushState: function(state) {
+				state.position = this.states.length;
 				this.states.push(state);
 			},
 			replaceState: function(state) {
+				state.position = this.states.length;
 				this.states = [state];
 			},
 			
@@ -69,6 +71,12 @@ angular.module("top", ["panes"]);
 				if(isNaN(back))
 					return;
 				return this.states[this.states.length-1-back];
+			},
+			
+			getStates: function(back) {
+				if(isNaN(back))
+					return;
+				return this.states.slice(-back);
 			}
 		};
 		
@@ -178,6 +186,7 @@ angular.module("top", ["panes"]);
 		return {
 			restrict: "E",
 			scope: {},
+			priority: 3000,
 			link: function(scope, element, attrs) {
 				if(!attrs.ngInclude) {
 					
@@ -210,6 +219,8 @@ angular.module("top", ["panes"]);
 		return {
 			restrict: "A",
 			transclude: "element",
+			terminal: true,
+			priority: 3001,
 			link: function(scope, element) {
 				
 				theme.getTheme().then(function(theme) {

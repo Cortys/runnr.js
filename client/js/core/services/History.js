@@ -14,9 +14,11 @@
 			states: null,
 			
 			pushState: function(state) {
+				state.position = this.states.length;
 				this.states.push(state);
 			},
 			replaceState: function(state) {
+				state.position = this.states.length;
 				this.states = [state];
 			},
 			
@@ -34,6 +36,12 @@
 				if(isNaN(back))
 					return;
 				return this.states[this.states.length-1-back];
+			},
+			
+			getStates: function(back) {
+				if(isNaN(back))
+					return;
+				return this.states.slice(-back);
 			}
 		};
 		
