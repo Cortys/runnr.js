@@ -42,7 +42,7 @@
 				margin-left: distance.close * -1
 				
 				slowTransition()
-				transition: @transition, margin-right 1ms, color speed.fast, background-color speed.fast
+				transition: @transition, margin-right 1ms, unquote("color") speed.fast, unquote("background-color") speed.fast, unquote("border-left-color") speed.fast
 				
 				a
 					position: relative
