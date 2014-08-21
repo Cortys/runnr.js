@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 		stylus: {
 			compile: {
 				options: {
-					compress: true,
+					compress: false,
 					"resolve url": true,
 					"include css": true
 				},

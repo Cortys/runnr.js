@@ -11,7 +11,7 @@ angular.module("panes", ["core"]);
 angular.module("themes", []);
 
 /* File: client/js/top/module.js */
-angular.module("top", ["panes"]);
+angular.module("top", ["panes", "core"]);
 
 /* File: client/js/core/controllers/Meta.js */
 (function() {
@@ -37,9 +37,9 @@ angular.module("top", ["panes"]);
 	angular.module("core")
 		.factory("core.History", HistoryFactory);
 
-	HistoryFactory.$inject = [];
+	HistoryFactory.$inject = ["core.State"];
 
-	function HistoryFactory() {
+	function HistoryFactory(State) {
 		
 		function History() {
 			this.states = [];
@@ -47,22 +47,37 @@ angular.module("top", ["panes"]);
 		
 		History.prototype = {
 			states: null,
+			lastMove: 0,
+			
+			validateState: function(state, noId) {
+				return State.isAppendable()?state:new State(state, noId?undefined:this.states.length);
+			},
 			
 			pushState: function(state) {
-				state.position = this.states.length;
-				this.states.push(state);
+				this.states.push(this.validateState(state));
+				this.lastMove = 1;
 			},
 			replaceState: function(state) {
-				state.position = this.states.length;
-				this.states = [state];
+				this.states = [];
+				this.pushState(state);
+				this.lastMove = 0;
 			},
 			
-			back: function(by) {
+			backBy: function(by) {
 				if(by === undefined)
 					by = 1;
 				if(isNaN(by))
 					return;
 				this.states = this.states.slice(0, Math.max(this.states.length - by, 0));
+				this.lastMove = -by;
+			},
+			
+			backTo: function(to) {
+				if(isNaN(to))
+					return;
+				to = Math.min(to, this.states.length-1);
+				this.lastMove = to - this.states.length
+				this.states = this.states.slice(0, to+1);
 			},
 			
 			getState: function(back) {
@@ -81,6 +96,45 @@ angular.module("top", ["panes"]);
 		};
 		
 		return History;
+	}
+})();
+/* File: client/js/core/services/State.js */
+(function() {
+	angular.module("core")
+		.factory("core.State", StateFactory);
+
+	StateFactory.$inject = [];
+
+	function StateFactory() {
+
+		function State(data, id) {
+			this.data = State.isState(data)?state.data:data;
+			
+			Object.defineProperty(this, "id", {
+				get: function() {
+					return id;
+				},
+				set: function(val) {
+					if(id == undefined)
+						id = val;
+				}
+			});
+		}
+		
+		State.prototype = {
+			isIdentified: function() {
+				return this.id !== null;
+			}
+		};
+		
+		State.isState = function(state) {
+			return state instanceof State;
+		};
+		State.isAppendable = function(state) {
+			return State.isState(state) && state.isIdentified();
+		};
+
+		return State;
 	}
 })();
 /* File: client/js/panes/controllers/Panes.js */
@@ -103,14 +157,20 @@ angular.module("top", ["panes"]);
 /* File: client/js/panes/services/history.js */
 (function() {
 	angular.module("panes")
-		.factory("panes.history", history);
+		.factory("panes.history", historyFactory);
 		
-	history.$inject = ["core.History"];
+	historyFactory.$inject = ["core.History"];
 	
-	function history(History) {
+	function historyFactory(History) {
 		
 		var history = new History();
 		
+		history.validateState = function(state) {
+			state = History.prototype.validateState(state, true);
+			state.id = this.states.length + state.data.text;
+			return state;
+		};
+			
 		return history;
 	}
 })();

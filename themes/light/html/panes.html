@@ -1,15 +1,15 @@
 <section id="content" ng-controller="panes.PanesController as panes">
-	<main id="panes">
-		<div ng-repeat="state in (states = panes.history.getStates(2)) track by state.position" class="pane visible{{states.length}} pos{{$index}}">
-			<div class="inner">
-				{{state.text}}
+	<main id="panes" class="lastMoved{{panes.history.lastMove>0?'Left':panes.history.lastMove<0?'Right':'None'}}">
+		<div ng-repeat="state in (states = panes.history.getStates(2)) track by state.id" class="pane visible{{states.length}} prevPos{{$index+panes.history.lastMove}} pos{{$index}}">
+			<div class="inner" ng-click="panes.history.pushState({text:'test'})">
+				{{state.id}} {{state.data.text}}
 			</div>
 		</div>
 	</main>
 	<footer id="breadcrumb">
 		<nav>
 			<ul>
-				<li ng-repeat="state in panes.history.states track by state.position"><a><span ng-bind="state.text"></span></a></li>
+				<li ng-repeat="state in panes.history.states track by $index"><a ng-click="panes.history.backTo($index)"><span ng-bind="state.data.text"></span></a></li>
 			</ul>
 		</nav>
 	</footer>

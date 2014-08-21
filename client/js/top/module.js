@@ -1,1 +1,1 @@
-angular.module("top", ["panes"]);
+angular.module("top", ["panes", "core"]);

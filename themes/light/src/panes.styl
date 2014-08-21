@@ -1,20 +1,36 @@
 @import "vars"
 
+posForPos(pos, align)
+	left: ((pos/paneCount) + align)*100%
+	right: (1 - ((pos+1)/paneCount) - align)*100%
+
 #panes
 	position: absolute
 	top: distance.close
 	left: distance.narrow
 	right: distance.narrow
 	bottom: size.normal + distance.close
-
+	
+	enable3d()
+	
+	$posLeft
+		transform: translateX(-100%)
+		opacity: 0.5
+	
+	$posRight
+		transform: translateX(100%)
+		opacity: 0.5
+	
 	.pane
 		position: absolute
 		width: auto
 		height: auto
 		top: 0
 		bottom: 0
-
-		fastTransition()
+		
+		z-index: 1
+		
+		slowTransition()
 
 		.inner
 			position: absolute
@@ -28,21 +44,46 @@
 			background-color: color.light
 			shadow: bottom
 			border-radius: size.radius
-
+			
+			text-align: center
+			line-height: 100px
+			font-size: font.big
+		
 		for visible in (1..paneCount)
 			align = (1-(visible/paneCount))*0.5
 			vMin = visible*1 - 1
 			for pos in (0..vMin)
 				&.visible{visible}.pos{pos}
-					left: ((pos/paneCount) + align)*100%
-					right: (1 - ((pos+1)/paneCount) - align)*100%
-
-		&.posGone
-			left: (-1/paneCount)*100%
-			right: 100%
+					posForPos(pos, align)
+					
+					for prevPos in (-1..visible)
+						&.prevPos{prevPos}
+							&.ng-move:not(.ng-move-active)
+								posForPos(prevPos, align)
+							if prevPos >= visible
+								&.ng-enter:not(.ng-enter-active)
+									@extends #panes $posRight
+							if prevPos < 0
+								&.ng-enter:not(.ng-enter-active)
+									@extends #panes $posLeft
+	&.lastMovedLeft
+		.pane.ng-leave-active
 			opacity: 0
-
-		&.posComing
-			left: 100%
-			right: (-1/paneCount)*100%
+			z-index: 0
+	&.lastMovedRight
+		.pane.ng-leave-active
 			opacity: 0
+			z-index: 0
+	&.lastMovedNone
+		.pane
+			&.ng-leave-active
+				transform: rotate3d(1,0,0, 90deg)
+				opacity: 0
+			&.ng-enter
+				transform: rotate3d(1,0,0, -90deg)
+				slowTransition()
+				transition-delay: speed.slow
+				opacity: 0
+				&.ng-enter-active
+					transform: rotate3d(0,1,0, 0deg)
+					opacity: 1

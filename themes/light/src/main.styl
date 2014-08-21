@@ -22,7 +22,9 @@ body
 	height: size.big
 	shadow: bottom
 	
-	transform: translate3d(0, 0, 0)
+	enable3d()
+	
+	z-index: 2
 
 #content
 	position: absolute
@@ -32,6 +34,8 @@ body
 	right: 0
 	width: auto
 	height: auto
+	
+	z-index: 0
 
 #breadcrumb
 	@extend #head
@@ -39,6 +43,8 @@ body
 	top: auto
 	bottom: 0
 	height: size.normal
+	
+	z-index: 1
 
 .icon
 	font-size: size.icon

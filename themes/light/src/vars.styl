@@ -87,10 +87,10 @@ transition()
 	transition: arguments
 
 fastTransition()
-	transition: all speed.fast linear 0s
+	transition: all speed.fast linear
 
 slowTransition()
-	transition: all speed.slow linear 0s
+	transition: all speed.slow linear
 
 bounceTransition()
 	transition: all speed.slow cubic-bezier(.36,.02,.35,2)
@@ -101,3 +101,12 @@ transform()
 	-o-transform: arguments
 	-ms-transform: arguments
 	transform: arguments
+
+enable3d()
+	transform: translate3d(0,0,0)
+	p = 1500px
+	-webkit-perspective: p
+	-moz-perspective: p
+	-o-perspective: p
+	-ms-perspective: p
+	perspective: p

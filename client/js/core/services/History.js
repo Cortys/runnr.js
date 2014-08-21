@@ -2,9 +2,9 @@
 	angular.module("core")
 		.factory("core.History", HistoryFactory);
 
-	HistoryFactory.$inject = [];
+	HistoryFactory.$inject = ["core.State"];
 
-	function HistoryFactory() {
+	function HistoryFactory(State) {
 		
 		function History() {
 			this.states = [];
@@ -12,22 +12,37 @@
 		
 		History.prototype = {
 			states: null,
+			lastMove: 0,
+			
+			validateState: function(state, noId) {
+				return State.isAppendable()?state:new State(state, noId?undefined:this.states.length);
+			},
 			
 			pushState: function(state) {
-				state.position = this.states.length;
-				this.states.push(state);
+				this.states.push(this.validateState(state));
+				this.lastMove = 1;
 			},
 			replaceState: function(state) {
-				state.position = this.states.length;
-				this.states = [state];
+				this.states = [];
+				this.pushState(state);
+				this.lastMove = 0;
 			},
 			
-			back: function(by) {
+			backBy: function(by) {
 				if(by === undefined)
 					by = 1;
 				if(isNaN(by))
 					return;
 				this.states = this.states.slice(0, Math.max(this.states.length - by, 0));
+				this.lastMove = -by;
+			},
+			
+			backTo: function(to) {
+				if(isNaN(to))
+					return;
+				to = Math.min(to, this.states.length-1);
+				this.lastMove = to - this.states.length
+				this.states = this.states.slice(0, to+1);
 			},
 			
 			getState: function(back) {
