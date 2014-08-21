@@ -7,6 +7,9 @@ angular.module("core", []);
 /* File: client/js/panes/module.js */
 angular.module("panes", ["core"]);
 
+/* File: client/js/plugins/module.js */
+angular.module("plugins", []);
+
 /* File: client/js/themes/module.js */
 angular.module("themes", []);
 
@@ -98,6 +101,7 @@ angular.module("top", ["panes", "core"]);
 		return History;
 	}
 })();
+
 /* File: client/js/core/services/State.js */
 (function() {
 	angular.module("core")
@@ -137,6 +141,7 @@ angular.module("top", ["panes", "core"]);
 		return State;
 	}
 })();
+
 /* File: client/js/panes/controllers/Panes.js */
 (function(){
 	angular.module("panes")
@@ -174,6 +179,28 @@ angular.module("top", ["panes", "core"]);
 		return history;
 	}
 })();
+
+/* File: client/js/plugins/services/Plugin.js */
+(function() {
+	angular.module("plugins")
+		.factory("plugins.Plugin", PluginFactory);
+
+	PluginFactory.$inject = [];
+
+	function PluginFactory() {
+
+		function Plugin() {
+			
+		}
+
+		Plugin.prototype = {
+			
+		};
+
+		return Plugin;
+	}
+})();
+
 /* File: client/js/themes/directives/preloadThemeLinkingDelay.js */
 (function() {
 	angular.module("themes")
