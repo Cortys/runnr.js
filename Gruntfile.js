@@ -1,12 +1,12 @@
 module.exports = function(grunt) {
-	var path = require("path");
-
+	var path = require("path"),
+		isDev = !!grunt.option("debug");
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		stylus: {
 			compile: {
 				options: {
-					compress: false,
+					compress: !isDev,
 					"resolve url": true,
 					"include css": true
 				},
@@ -76,7 +76,7 @@ module.exports = function(grunt) {
 				script: "start.js",
 				options: {
 					watch: ["server"],
-					args: ["dev"]
+					args: isDev?["dev"]:[]
 				}
 			}
 		},

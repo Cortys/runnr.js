@@ -53,13 +53,21 @@
 					line-height: size.normal
 					font-size: font.small
 					color: color.darkGray
-					cursor: pointer
 					padding-left: distance.close*3
 					padding-right: distance.close
 					background-repeat: no-repeat
 					background-position: right center
 					transition: inherit
 					overflow: inherit
+					
+					& span
+						position: relative
+						display: block
+						z-index: 3
+				
+				&:not(:last-child) a
+				
+					cursor: pointer
 					
 					&:after, &:before
 						content: " "
@@ -82,17 +90,11 @@
 						right: distance.close * -1
 						z-index: 1
 					
-					& span
-						position: relative
-						display: block
-						z-index: 3
-					
 					&:active
 						background-color: color.darkGray
 						color: color.light
 						&:after
 							border-left-color: @background-color
-				
 				
 				&:first-child a
 					padding-left: distance.far + distance.close

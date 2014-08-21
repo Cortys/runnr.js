@@ -77,13 +77,8 @@ posForPos(pos, align)
 	&.lastMovedNone
 		.pane
 			&.ng-leave-active
-				transform: rotate3d(1,0,0, 90deg)
 				opacity: 0
 			&.ng-enter
-				transform: rotate3d(1,0,0, -90deg)
-				slowTransition()
-				transition-delay: speed.slow
 				opacity: 0
 				&.ng-enter-active
-					transform: rotate3d(0,1,0, 0deg)
 					opacity: 1
