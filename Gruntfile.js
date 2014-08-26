@@ -48,6 +48,7 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			js: {
+				banner: "'use strict';",
 				options: {
 					process: function(src, filepath) {
 						return "/* File: "+filepath+" */\n"+src;

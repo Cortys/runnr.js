@@ -8,15 +8,17 @@ function start() {
 	// STATIC SERVICES:
 	app.use(express.static(settings.root + "/client"));
 	
-	app.use("/js", require("./js.js"));
-	
-	app.use("/theme", require("./theme.js"));
-	
-	app.use("/frameworks", express.static(settings.root + "/bower_components"))
+	app.use("/frameworks", express.static(settings.root + "/bower_components"));
 	
 	app.get("/license", function(req, res) {
 		res.sendfile(settings.root + "/LICENSE");
 	});
+	
+	app.use("/js", require("./js.js"));
+	
+	app.use("/theme", require("./theme.js"));
+	
+	app.use("/plugin", require("./plugin.js"));
 
 	app.listen(settings.port);
 
