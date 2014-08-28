@@ -1,3 +1,5 @@
+'use strict';
+
 /* File: client/js/runnr.js */
 angular.module("runnr.js", ["core", "top", "panes", "themes", "ngAnimate"]);
 
@@ -187,7 +189,7 @@ angular.module("top", ["panes", "core"]);
 
 	PluginFactory.$inject = ["$http"];
 
-	function PluginFactory() {
+	function PluginFactory($http) {
 
 		function Plugin(id) {
 			this.id = id;
@@ -199,7 +201,11 @@ angular.module("top", ["panes", "core"]);
 			
 			onInitialized: null
 		};
-
+		
+		Plugin.isPlugin = function(plugin) {
+			return plugin instanceof Plugin;
+		};
+		
 		return Plugin;
 	}
 })();
@@ -436,3 +442,5 @@ angular.module("top", ["panes", "core"]);
 	};
 
 })();
+
+//# sourceMappingURL=runnr.js.map

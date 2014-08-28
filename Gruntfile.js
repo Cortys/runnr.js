@@ -48,14 +48,15 @@ module.exports = function(grunt) {
 		},
 		concat: {
 			js: {
-				banner: "'use strict';",
 				options: {
+					banner: "'use strict';\n\n",
+					sourceMap: true,
 					process: function(src, filepath) {
 						return "/* File: "+filepath+" */\n"+src;
 					}
 				},
 				src: ["client/js/*.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
-				dest: "client/js/build/runnr.js"
+				dest: "client/js/build/runnr.js",
 			}
 		},
 		watch: {

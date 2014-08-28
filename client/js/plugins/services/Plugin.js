@@ -4,7 +4,7 @@
 
 	PluginFactory.$inject = ["$http"];
 
-	function PluginFactory() {
+	function PluginFactory($http) {
 
 		function Plugin(id) {
 			this.id = id;
@@ -16,7 +16,11 @@
 			
 			onInitialized: null
 		};
-
+		
+		Plugin.isPlugin = function(plugin) {
+			return plugin instanceof Plugin;
+		};
+		
 		return Plugin;
 	}
 })();

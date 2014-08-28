@@ -6,7 +6,6 @@ function start() {
 	app = express();
 
 	// STATIC SERVICES:
-	app.use(express.static(settings.root + "/client"));
 	
 	app.use("/frameworks", express.static(settings.root + "/bower_components"));
 	
@@ -19,7 +18,9 @@ function start() {
 	app.use("/theme", require("./theme.js"));
 	
 	app.use("/plugin", require("./plugin.js"));
-
+	
+	app.use(express.static(settings.root + "/client"));
+	
 	app.listen(settings.port);
 
 	return app;

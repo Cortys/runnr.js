@@ -1,11 +1,17 @@
 var settings = require("../core/settings.js"),
 	express = express = require("express"),
-	jsRouter = express.Router(),
+	router = express.Router(),
 	jsPath = settings.root + "/client/js",
 	min = !settings.devMode && ".min" || "";
 
-jsRouter.get("/runnr", function(req, res) {
+router.get("/runnr.js", function(req, res) {
+	res.set("X-SourceMap", "/js/map");
 	res.sendfile(jsPath + "/build/runnr"+min+".js");
 });
 
-module.exports = jsRouter;
+if(settings.devMode)
+	router.get("/runnr.js.map", function(req, res) {
+		res.sendfile(jsPath + "/build/runnr.js.map");
+	});
+
+module.exports = router;
