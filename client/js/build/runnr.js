@@ -1,24 +1,17 @@
 'use strict';
 
-/* File: client/js/runnr.js */
 angular.module("runnr.js", ["core", "top", "panes", "themes", "ngAnimate"]);
 
-/* File: client/js/core/module.js */
 angular.module("core", []);
 
-/* File: client/js/panes/module.js */
 angular.module("panes", ["core"]);
 
-/* File: client/js/plugins/module.js */
 angular.module("plugins", []);
 
-/* File: client/js/themes/module.js */
 angular.module("themes", []);
 
-/* File: client/js/top/module.js */
 angular.module("top", ["panes", "core"]);
 
-/* File: client/js/core/controllers/Meta.js */
 (function() {
 	angular.module("core")
 		.controller("MetaController", MetaController);
@@ -37,7 +30,6 @@ angular.module("top", ["panes", "core"]);
 
 })();
 
-/* File: client/js/core/services/History.js */
 (function() {
 	angular.module("core")
 		.factory("core.History", HistoryFactory);
@@ -104,7 +96,6 @@ angular.module("top", ["panes", "core"]);
 	}
 })();
 
-/* File: client/js/core/services/State.js */
 (function() {
 	angular.module("core")
 		.factory("core.State", StateFactory);
@@ -144,7 +135,6 @@ angular.module("top", ["panes", "core"]);
 	}
 })();
 
-/* File: client/js/panes/controllers/Panes.js */
 (function(){
 	angular.module("panes")
 		.controller("panes.PanesController", PanesController);
@@ -161,7 +151,6 @@ angular.module("top", ["panes", "core"]);
 	
 })();
 
-/* File: client/js/panes/services/history.js */
 (function() {
 	angular.module("panes")
 		.factory("panes.history", historyFactory);
@@ -182,7 +171,6 @@ angular.module("top", ["panes", "core"]);
 	}
 })();
 
-/* File: client/js/plugins/services/Plugin.js */
 (function() {
 	angular.module("plugins")
 		.factory("plugins.Plugin", PluginFactory);
@@ -210,7 +198,6 @@ angular.module("top", ["panes", "core"]);
 	}
 })();
 
-/* File: client/js/themes/directives/preloadThemeLinkingDelay.js */
 (function() {
 	angular.module("themes")
 		.directive("preloadThemeLinkingDelay", preloadLinkingDelay);
@@ -246,7 +233,6 @@ angular.module("top", ["panes", "core"]);
 
 })();
 
-/* File: client/js/themes/directives/showOnThemePreload.js */
 (function() {
 	angular.module("themes")
 		.directive("showOnThemePreload", showOnThemePreload);
@@ -271,7 +257,6 @@ angular.module("top", ["panes", "core"]);
 
 })();
 
-/* File: client/js/themes/directives/themeInclude.js */
 (function() {
 	angular.module("themes")
 		.directive("themeInclude", themeInclude);
@@ -304,7 +289,6 @@ angular.module("top", ["panes", "core"]);
 	
 })();
 
-/* File: client/js/themes/directives/themeLink.js */
 (function() {
 	angular.module("themes")
 		.directive("themeLink", themeLink);
@@ -336,7 +320,6 @@ angular.module("top", ["panes", "core"]);
 
 })();
 
-/* File: client/js/themes/services/theme.js */
 (function() {
 	angular.module("themes")
 		.factory("themes.theme", theme);
@@ -375,7 +358,6 @@ angular.module("top", ["panes", "core"]);
 	
 })();
 
-/* File: client/js/top/controllers/Action.js */
 (function() {
 	angular.module("top")
 		.controller("top.ActionController", MenuActionController);
@@ -409,7 +391,6 @@ angular.module("top", ["panes", "core"]);
 
 })();
 
-/* File: client/js/top/controllers/Menu.js */
 (function() {
 	angular.module("top")
 		.controller("top.MenuController", MenuController);

@@ -50,10 +50,7 @@ module.exports = function(grunt) {
 			js: {
 				options: {
 					banner: "'use strict';\n\n",
-					sourceMap: true,
-					process: function(src, filepath) {
-						return "/* File: "+filepath+" */\n"+src;
-					}
+					sourceMap: true
 				},
 				src: ["client/js/*.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
 				dest: "client/js/build/runnr.js",
