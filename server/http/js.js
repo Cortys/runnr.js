@@ -5,7 +5,6 @@ var settings = require("../core/settings.js"),
 	min = !settings.devMode && ".min" || "";
 
 router.get("/runnr.js", function(req, res) {
-	res.set("X-SourceMap", "/js/map");
 	res.sendfile(jsPath + "/build/runnr"+min+".js");
 });
 
