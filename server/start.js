@@ -1,5 +1,5 @@
 module.exports = function start(root) {
-	require("./core/settings.js").root = root;
+	require("./config.js").root = root;
 	
 	// Start HTTP server before socket server:
 	var app = require("./http/start.js")(); // Starts HTTP server to serve rendered HTML templates + static files via express

@@ -1,8 +1,8 @@
-var settings = require("../core/settings.js"),
+var config = require("../config.js"),
 	express = express = require("express"),
 	router = express.Router(),
 	themeId = "light",
-	themePath = settings.root + "/themes/" + themeId;
+	themePath = config.root + "/themes/" + themeId;
 
 router.use(express.static(themePath));
 

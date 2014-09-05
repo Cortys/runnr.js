@@ -1,24 +1,33 @@
 var path = require("path"),
-	settings = require("../settings.js"),
+	config = require("../../config.js"),
 	Datastore = require("nedb"),
 	Q = require("Q"),
 	db;
 
-Datastore.prototype.findDeferred = function(arguments) {
-	var deferred = Q.defer();
-	
-	this.find.apply(this, [].concat(arguments, [function(err, data) {
-		if(err)
-			deferred.reject(err);
-		else
-			deferred.resolve(data);
-	}]));
-	return deferred.promise;
-};
+function deferize(name) {
+	return function() {
+		var f = this[name];
+		if(typeof f !== "function")
+			return;
+		var deferred = Q.defer();
+		console.log(arguments);
+		f.apply(this, [].concat(arguments, [function(err, data) {
+			console.log(arguments);
+			if(err)
+				deferred.reject(err);
+			else
+				deferred.resolve(data);
+		}]));
+		return deferred.promise;
+	};
+}
+
+Datastore.prototype.findDeferred = deferize("find");
+Datastore.prototype.findOneDeferred = deferize("findOne");
 
 db = {
-	settings: new Datastore({ filename:path.join(settings.userData, "settings.db"), autoload: true }),
-	plugins: new Datastore({ filename:path.join(settings.userData, "plugins.db"), autoload: true })
+	config: new Datastore({ filename:path.join(config.userData, "config.db") }),
+	plugins: new Datastore({ filename:path.join(config.userData, "plugins.db") })
 };
 
 module.exports = db;

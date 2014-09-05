@@ -1,4 +1,4 @@
-var settings = require("../core/settings.js"),
+var config = require("../config.js"),
 	express = require("express"),
 	app;
 
@@ -7,21 +7,21 @@ function start() {
 
 	// STATIC SERVICES:
 	
-	app.use("/frameworks", express.static(settings.root + "/bower_components"));
+	app.use("/frameworks", express.static(config.root + "/bower_components"));
 	
 	app.get("/license", function(req, res) {
-		res.sendfile(settings.root + "/LICENSE");
+		res.sendfile(config.root + "/LICENSE");
 	});
 	
 	app.use("/js", require("./js.js"));
 	
 	app.use("/theme", require("./theme.js"));
 	
-	app.use("/plugin", require("./plugin.js"));
+	app.use("/plugins", require("./plugins.js"));
 	
-	app.use(express.static(settings.root + "/client"));
+	app.use(express.static(config.root + "/client"));
 	
-	app.listen(settings.port);
+	app.listen(config.port);
 
 	return app;
 }
