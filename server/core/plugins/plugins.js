@@ -6,28 +6,24 @@ var db = require("../db/db.js").plugins,
 	
 plugins = {
 	getAll: function(limit) {
-		return db.findDeferred({});
+		return Q.ninvoke(db, "find", {});
 	},
 	countAll: function() {
 		
 	},
 	get: function(id) {
-		return db.findDeferred({ _id:id }).then(function(data) {
-			if(data[0])
-				return data[0];
-			return new Error("A plugin named '"+id+"' is not installed.");
+		return Q.ninvoke(db, "findOne", { _id:id }).then(function(data) {
+			if(data)
+				return data;
+			throw new Error("A plugin named '"+id+"' is not installed.");
 		});
 	}
 };
 
 function scan(dir) {
-	fs.readdir(dir, function(err, files) {
-		if(err)
-			return;
+	Q.ninvoke(fs, "readdir", dir).then(function(files) {
 		files.forEach(function(e, i) {
-			fs.readFile(path.join(dir, e, "manifest.json"), function(err, data) {
-				if(err)
-					return;
+			Q.ninvoke(fs, "readFile", path.join(dir, e, "manifest.json")).then(function(data) {
 				var plugin = JSON.parse(data);
 				plugin._id = plugin.id;
 				plugin.id = undefined;
@@ -37,13 +33,17 @@ function scan(dir) {
 	});
 }
 
-db.loadDatabase();
+function init() {
+	db.loadDatabase();
 
-plugins.getAll().then(function(data) {
-	if(data.length)
-		return;
-	scan(path.join(config.root, "corePlugins"));
-	scan(path.join(config.root, "plugins"));
-});
+	plugins.getAll().then(function(data) {
+		if(data.length)
+			return;
+		scan(path.join(config.root, "corePlugins"));
+		scan(path.join(config.root, "plugins"));
+	});
+}
+
+init();
 
 module.exports = plugins;
