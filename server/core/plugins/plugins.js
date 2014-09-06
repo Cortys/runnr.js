@@ -15,9 +15,7 @@ plugins = {
 		return db.findDeferred({ _id:id }).then(function(data) {
 			if(data[0])
 				return data[0];
-			var defer = Q.defer();
-			defer.reject(new Error("A plugin named '"+id+"' is not installed."))
-			return defer.promise;
+			return new Error("A plugin named '"+id+"' is not installed.");
 		});
 	}
 };

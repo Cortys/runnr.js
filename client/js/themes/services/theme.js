@@ -23,7 +23,7 @@
 			}
 		},
 		
-		themePromise = $http.get("/theme/manifest", { responseType:"json" }).then(function(result) {
+		themePromise = $http.get("/api/theme/manifest", { responseType:"json" }).then(function(result) {
 			return result.data;
 		}),
 		renderDeferred = $q.defer(),

@@ -275,7 +275,7 @@ angular.module("top", ["panes", "core"]);
 					theme.addRenderingPromise(deferred.promise);
 					
 					theme.getTheme().then(function(theme) {
-						element.attr("ng-include", "'theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
+						element.attr("ng-include", "'api/theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
 					});
@@ -308,7 +308,7 @@ angular.module("top", ["panes", "core"]);
 					clone.attr("rel", "stylesheet");
 					clone.attr("type", "text/css");
 					theme.css.forEach(function(v) {
-						clone.attr("href", "theme/"+v.file+".css");
+						clone.attr("href", "api/theme/"+v.file+".css");
 						clone.attr("media", v.media || undefined);
 						element.after(clone);
 						clone = clone.clone();
@@ -345,7 +345,7 @@ angular.module("top", ["panes", "core"]);
 			}
 		},
 		
-		themePromise = $http.get("/theme/manifest", { responseType:"json" }).then(function(result) {
+		themePromise = $http.get("/api/theme/manifest", { responseType:"json" }).then(function(result) {
 			return result.data;
 		}),
 		renderDeferred = $q.defer(),

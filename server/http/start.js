@@ -15,9 +15,9 @@ function start() {
 	
 	app.use("/js", require("./js.js"));
 	
-	app.use("/theme", require("./theme.js"));
+	app.use("/api/theme", require("./theme.js"));
 	
-	app.use("/plugins", require("./plugins.js"));
+	app.use("/api/plugins", require("./plugins.js"));
 	
 	app.use(express.static(config.root + "/client"));
 	
