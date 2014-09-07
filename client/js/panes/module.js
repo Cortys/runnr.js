@@ -1,1 +1,1 @@
-angular.module("panes", ["core"]);
+angular.module("panes", ["core", "plugins"]);

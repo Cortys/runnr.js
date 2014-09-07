@@ -14,7 +14,7 @@ router.param("id", function(req, res, next, id) {
 });
 
 router.route("/all").get(function(req, res) {
-	plugins.getAll({ "_id":true, "author":true }).then(function(data) {
+	plugins.getAll({ core:false }, { "author":1 }).then(function(data) {
 		res.json(data);
 	}, function() {
 		res.status(404).json([]);

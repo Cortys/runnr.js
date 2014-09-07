@@ -5,11 +5,11 @@ var db = require("../db/db.js").plugins,
 	Q = require("q"),
 	
 plugins = {
-	getAll: function(limit) {
-		return Q.ninvoke(db, "find", {});
+	getAll: function(filter, limit) {
+		return Q.npost(db, "find", arguments);
 	},
 	countAll: function() {
-		
+		return Q.ninvoke(db, "count", {});
 	},
 	get: function(id) {
 		return Q.ninvoke(db, "findOne", { _id:id }).then(function(data) {
@@ -35,9 +35,12 @@ function scan(dir) {
 
 function init() {
 	db.loadDatabase();
-
-	plugins.getAll().then(function(data) {
-		if(data.length)
+	
+	// Create indexes if not already done:
+	db.ensureIndex({ fieldName:"core" });
+	
+	plugins.countAll().then(function(count) {
+		if(count)
 			return;
 		scan(path.join(config.root, "corePlugins"));
 		scan(path.join(config.root, "plugins"));

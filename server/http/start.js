@@ -10,7 +10,12 @@ function start() {
 	app.use("/frameworks", express.static(config.root + "/bower_components"));
 	
 	app.get("/license", function(req, res) {
-		res.sendfile(config.root + "/LICENSE");
+		res.sendfile("LICENSE", {
+			root: config.root,
+			headers: {
+				"Content-Type": "text/plain"
+			}
+		});
 	});
 	
 	app.use("/js", require("./js.js"));

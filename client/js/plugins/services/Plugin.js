@@ -8,6 +8,7 @@
 
 		function Plugin(id) {
 			this.id = id;
+			console.log(id);
 		}
 
 		Plugin.prototype = {

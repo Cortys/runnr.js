@@ -7,7 +7,9 @@ var config = require("../config.js"),
 router.use(express.static(themePath));
 
 router.get("/manifest", function(req, res) {
-	res.sendfile(themePath + "/manifest.json");
+	res.sendfile("manifest.json", {
+		root: themePath
+	});
 });
 
 module.exports = router;

@@ -4,7 +4,7 @@ angular.module("runnr.js", ["core", "top", "panes", "themes", "ngAnimate"]);
 
 angular.module("core", []);
 
-angular.module("panes", ["core"]);
+angular.module("panes", ["core", "plugins"]);
 
 angular.module("plugins", []);
 
@@ -152,6 +152,31 @@ angular.module("top", ["panes", "core"]);
 })();
 
 (function() {
+	angular.module("plugins")
+		.directive("plugin", plugin);
+
+	plugin.$inject = [];
+
+	function plugin() {
+		
+		PluginCtrl.$inject = ["$scope"];
+		
+		function PluginCtrl($scope) {
+			console.log($scope.id());
+		}
+		
+		return {
+			restrict: "E",
+			scope: {
+				id: "&name"
+			},
+			controller: PluginCtrl
+		};
+	}
+
+})();
+
+(function() {
 	angular.module("panes")
 		.factory("panes.history", historyFactory);
 		
@@ -181,6 +206,7 @@ angular.module("top", ["panes", "core"]);
 
 		function Plugin(id) {
 			this.id = id;
+			console.log(id);
 		}
 
 		Plugin.prototype = {
@@ -275,7 +301,7 @@ angular.module("top", ["panes", "core"]);
 					theme.addRenderingPromise(deferred.promise);
 					
 					theme.getTheme().then(function(theme) {
-						element.attr("ng-include", "'api/theme/" + (scope.$eval(attrs.src) || theme.html+".html") +"'");
+						element.attr("ng-include", "'api/theme/" + (scope.$eval(attrs.src) || theme.html) +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
 					});

@@ -29,7 +29,8 @@
     "express": "4.7.x",
     "swig": "1.4.x",
     "nedb": "0.11.x",
-    "q": "1.0.x"
+    "q": "1.0.x",
+    "caja": "git+ssh://git@github.com:CLowbrow/node-caja-sanitizer.git"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
