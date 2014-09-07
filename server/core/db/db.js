@@ -4,8 +4,8 @@ var path = require("path"),
 	db;
 
 db = {
-	config: new Datastore({ filename:path.join(config.userData, "config.db") }),
-	plugins: new Datastore({ filename:path.join(config.userData, "plugins.db") })
+	config: new Datastore({ filename:path.join(config.userData, "config.db"), autoload:true }),
+	plugins: new Datastore({ filename:path.join(config.userData, "plugins.db"), autoload:true })
 };
 
 module.exports = db;

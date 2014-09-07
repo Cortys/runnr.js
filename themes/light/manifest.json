@@ -11,7 +11,7 @@
 
 	"css": [
 		{
-			"file": "desktop",
+			"file": "desktop.css",
 			"media": null
 		}
 	],

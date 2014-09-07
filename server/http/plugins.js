@@ -4,25 +4,34 @@ var config = require("../config.js"),
 	router = express.Router();
 
 router.param("id", function(req, res, next, id) {
-	plugins.get(id).then(function(data) {
-		req.id = id;
-		req.data = data;
-		next();
+	req.plugin = plugins.get(id);
+	next();
+});
+
+router.route("/all")
+	.get(function(req, res) {
+		plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 }).then(function(data) {
+			res.json(data);
+		}, function() {
+			res.status(404).json([]);
+		});
+	});
+
+router.route("/:id/manifest").get(function(req, res) {
+	req.plugin.manifest.then(function(manifest) {
+		res.json(manifest);
 	}, function(err) {
-		res.status(404).json({});
+		res.status(404).send(err.message);
 	});
 });
 
-router.route("/all").get(function(req, res) {
-	plugins.getAll({ core:false }, { "author":1 }).then(function(data) {
-		res.json(data);
-	}, function() {
-		res.status(404).json([]);
+router.route("/:id/client/html").get(function(req, res) {
+	res.set("Content-Type", "text/html");
+	req.plugin.client.html.then(function(html) {
+		res.send(html);
+	}, function(err) {
+		res.status(404).send(err.message);
 	});
-})
-
-router.get("/:id/manifest", function(req, res) {
-	res.json(req.data);
 });
 
 module.exports = router;
