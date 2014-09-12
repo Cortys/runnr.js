@@ -2,15 +2,13 @@
 	angular.module("plugins")
 		.directive("plugin", plugin);
 
-	plugin.$inject = ["$http", "$compile"];
+	plugin.$inject = ["$http"];
 
-	function plugin($http, $compile) {
+	function plugin($http) {
 		
 		function linker(scope, element, attrs) {
 			$http.get("/api/plugins/"+scope.id()+"/client/html").then(function(html) {
-				element.append($compile(html.data)({
-					// plugin scope
-				}));
+				element.append(html.data);
 				element.attr("loaded", "");
 			}, function() {
 				element.attr("failed", "");
