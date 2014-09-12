@@ -22,11 +22,7 @@ function scan(dir) {
 		files.forEach(function(e, i) {
 			Q.ninvoke(fs, "readFile", path.join(dir, e, "manifest.json")).then(function(data) {
 				var manifest = JSON.parse(data);
-				db.insert({
-					_id: manifest.id,
-					manifest: manifest,
-					installationLocation: dir
-				});
+				Plugin.install(manifest, dir);
 			});
 		});
 	});

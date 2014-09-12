@@ -152,31 +152,6 @@ angular.module("top", ["panes", "core"]);
 })();
 
 (function() {
-	angular.module("plugins")
-		.directive("plugin", plugin);
-
-	plugin.$inject = [];
-
-	function plugin() {
-		
-		PluginCtrl.$inject = ["$scope"];
-		
-		function PluginCtrl($scope) {
-			console.log($scope.id());
-		}
-		
-		return {
-			restrict: "E",
-			scope: {
-				id: "&name"
-			},
-			controller: PluginCtrl
-		};
-	}
-
-})();
-
-(function() {
 	angular.module("panes")
 		.factory("panes.history", historyFactory);
 		
@@ -194,6 +169,36 @@ angular.module("top", ["panes", "core"]);
 			
 		return history;
 	}
+})();
+
+(function() {
+	angular.module("plugins")
+		.directive("plugin", plugin);
+
+	plugin.$inject = ["$http", "$compile"];
+
+	function plugin($http, $compile) {
+		
+		function linker(scope, element, attrs) {
+			$http.get("/api/plugins/"+scope.id()+"/client/html").then(function(html) {
+				element.append($compile(html.data)({
+					// plugin scope
+				}));
+				element.attr("loaded", "");
+			}, function() {
+				element.attr("failed", "");
+			});
+		}
+		
+		return {
+			restrict: "E",
+			scope: {
+				id: "&name"
+			},
+			link: linker
+		};
+	}
+
 })();
 
 (function() {
@@ -425,7 +430,7 @@ angular.module("top", ["panes", "core"]);
 	
 	function MenuController(panesHistory) {
 		this.panesHistory = panesHistory;
-		this.activateItem(this.items[0]);
+		this.activateItem(this.items[1]);
 	}
 
 	MenuController.prototype = {

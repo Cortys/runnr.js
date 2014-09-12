@@ -6,7 +6,7 @@
 	
 	function MenuController(panesHistory) {
 		this.panesHistory = panesHistory;
-		this.activateItem(this.items[0]);
+		this.activateItem(this.items[1]);
 	}
 
 	MenuController.prototype = {

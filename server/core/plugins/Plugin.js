@@ -21,7 +21,14 @@ Plugin.prototype = {
 	
 	id: null,
 	db: null,
-	installationLocation: null,
+	
+	get installationLocation() {
+		
+		var t = this;
+		return this.db.then(function(db) {
+			return db.installationLocation();
+		});
+	},
 	
 	get manifest() {
 		
@@ -37,11 +44,14 @@ Plugin.prototype = {
 		get html() {
 			
 			var t = this;
-			console.log(this);
-			return t.parent.manifest.then(function(manifest) {
-				return Q.ninvoke(fs, "readFile", path.join(t.parent.installationLocation, manifest._id, manifest.plugin.client));
+			
+			return t.parent.db.then(function(db) {
+				
+				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, db.manifest.plugin.client));
 			}).then(function(buffer) {
+				
 				return sanitizer.sanitize(buffer, function(a) {
+					console.log(a);
 					return a;
 				}, function(a) {
 					return a;
@@ -50,5 +60,15 @@ Plugin.prototype = {
 		}
 	}
 };
+
+Plugin.install = function install(manifest, installationLocation) {
+	db.insert({
+		_id: manifest.id,
+		manifest: manifest,
+		installationLocation: installationLocation
+	});
+	
+	return manifest.id;
+}
 
 module.exports = Plugin;

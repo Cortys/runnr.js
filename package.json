@@ -28,9 +28,9 @@
   "dependencies": {
     "express": "4.7.x",
     "swig": "1.4.x",
-    "nedb": "0.11.x",
+    "nedb": "git+ssh://git@github.com:Cortys/nedb.git",
     "q": "1.0.x",
-    "caja": "git+ssh://git@github.com:CLowbrow/node-caja-sanitizer.git"
+    "caja": "git+ssh://git@github.com:Cortys/node-caja-sanitizer.git"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
