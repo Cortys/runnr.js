@@ -314,6 +314,25 @@ body {
   transform: translateX(100%);
   opacity: 0.5;
 }
+#panes plugin {
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+#panes plugin iframe {
+  position: absolute;
+  width: auto;
+  height: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-style: none;
+}
 #panes .pane {
   position: absolute;
   width: auto;

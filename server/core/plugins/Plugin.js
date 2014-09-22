@@ -1,8 +1,7 @@
 var path = require("path"),
 	fs = require("fs"),
 	Q = require("q"),
-	db = require("../db/db.js").plugins,
-	sanitizer = require("html-css-sanitizer");
+	db = require("../db/db.js").plugins;
 
 function Plugin(id) {
 	
@@ -24,7 +23,6 @@ Plugin.prototype = {
 	
 	get installationLocation() {
 		
-		var t = this;
 		return this.db.then(function(db) {
 			return db.installationLocation();
 		});
@@ -32,7 +30,6 @@ Plugin.prototype = {
 	
 	get manifest() {
 		
-		var t = this;
 		return this.db.then(function(db) {
 			return db.manifest;
 		});
@@ -48,20 +45,13 @@ Plugin.prototype = {
 			return t.parent.db.then(function(db) {
 				
 				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, db.manifest.plugin.client));
-			}).then(function(buffer) {
-				
-				return sanitizer.sanitize(buffer, function(a) {
-					console.log(a);
-					return a;
-				}, function(a) {
-					return a;
-				});
 			});
 		}
 	}
 };
 
 Plugin.install = function install(manifest, installationLocation) {
+	
 	db.insert({
 		_id: manifest.id,
 		manifest: manifest,
