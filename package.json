@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "express": "4.7.x",
+    "body-parser": "1.9.x",
     "swig": "1.4.x",
     "nedb": "git+ssh://git@github.com:Cortys/nedb.git",
     "q": "1.0.x",

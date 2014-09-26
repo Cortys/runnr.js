@@ -8,6 +8,8 @@ router.param("id", function(req, res, next, id) {
 	next();
 });
 
+router.use(require("./apiSecurity.js"));
+
 router.route("/all")
 	.all(function(req, res) {
 		plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 }).then(function(data) {
