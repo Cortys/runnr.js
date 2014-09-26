@@ -3,4 +3,4 @@
 node_modules
 bower_components
 client/js/build
-themes/light/desktop.css
+themes/*/desktop.css
