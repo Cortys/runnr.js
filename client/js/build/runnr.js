@@ -6,7 +6,7 @@ angular.module("core", []);
 
 angular.module("panes", ["core", "plugins"]);
 
-angular.module("plugins", []);
+angular.module("plugins", ["core"]);
 
 angular.module("themes", []);
 
@@ -135,6 +135,24 @@ angular.module("top", ["panes", "core"]);
 	}
 })();
 
+(function() {
+	angular.module("core")
+		.factory("core.api", api);
+
+	api.$inject = ["$http"];
+
+	function api($http) {
+
+		var api = {
+			get: function(url) {
+				return $http.post("/api/"+url, { api:true });
+			}
+		};
+
+		return api;
+	}
+})();
+
 (function(){
 	angular.module("panes")
 		.controller("panes.PanesController", PanesController);
@@ -173,37 +191,37 @@ angular.module("top", ["panes", "core"]);
 
 (function() {
 	angular.module("plugins")
-		.directive("plugin", plugin);
+		.directive("pluginRenderer", pluginRenderer);
 
-	plugin.$inject = ["$http", "$compile"];
+	pluginRenderer.$inject = ["$http", "$compile"];
 
-	function plugin($http, $compile) {
-		
+	function pluginRenderer($http, $compile) {
+
 		function linker(scope, element, attrs) {
-			$http.get("/api/plugins/"+scope.id()+"/client/html").then(function(html) {
-				
+			scope.plugin().client.html.then(function(html) {
+
 				/*var pluginScope = scope.$new(true);
-				
+
 				pluginScope.i = 3;*/
-				
+
 				var frame = document.createElement("iframe");
-				
+
 				frame.srcdoc = html.data;
-				frame.sandbox = "";
+				frame.sandbox = "allow-scripts";
 				frame.setAttribute("seamless", "");
-				
+
 				element.append(frame);
-				
+
 				element.attr("loaded", "");
 			}, function() {
 				element.attr("failed", "");
 			});
 		}
-		
+
 		return {
 			restrict: "E",
 			scope: {
-				id: "&name"
+				plugin: "&plugin"
 			},
 			terminal: true,
 			link: linker
@@ -216,27 +234,54 @@ angular.module("top", ["panes", "core"]);
 	angular.module("plugins")
 		.factory("plugins.Plugin", PluginFactory);
 
-	PluginFactory.$inject = ["$http"];
+	PluginFactory.$inject = ["plugins.api"];
 
-	function PluginFactory($http) {
+	function PluginFactory(pluginsApi) {
 
 		function Plugin(id) {
 			this.id = id;
+
+			this.client = pluginsApi.client(id);
+
 			console.log(id);
 		}
 
 		Plugin.prototype = {
 			name: null,
 			id: null,
-			
-			onInitialized: null
+
+			onInitialized: null,
+
+			client: null,
 		};
-		
+
 		Plugin.isPlugin = function(plugin) {
 			return plugin instanceof Plugin;
 		};
-		
+
 		return Plugin;
+	}
+})();
+
+(function() {
+	angular.module("plugins")
+		.factory("plugins.api", api);
+
+	api.$inject = ["core.api"];
+
+	function api(coreApi) {
+
+		var api = {
+			client: function(id) {
+				return {
+					get html() {
+						return coreApi.get("plugins/"+id+"/"+"client/html");
+					}
+				};
+			}
+		};
+
+		return api;
 	}
 })();
 
@@ -402,15 +447,15 @@ angular.module("top", ["panes", "core"]);
 
 (function() {
 	angular.module("top")
-		.controller("top.ActionController", MenuActionController);
-	
-	MenuActionController.$inject = [];
-	
-	function MenuActionController() {
+		.controller("top.ActionController", TopActionController);
+
+	TopActionController.$inject = [];
+
+	function TopActionController() {
 
 	}
 
-	MenuActionController.prototype = {
+	TopActionController.prototype = {
 		actions: [
 			/*{
 				name: "messages",
@@ -436,28 +481,33 @@ angular.module("top", ["panes", "core"]);
 (function() {
 	angular.module("top")
 		.controller("top.MenuController", MenuController);
-	
-	MenuController.$inject = ["panes.history"];
-	
-	function MenuController(panesHistory) {
+
+	MenuController.$inject = ["panes.history", "plugins.Plugin"];
+
+	function MenuController(panesHistory, Plugin) {
 		this.panesHistory = panesHistory;
+
+		this.items = [
+			{
+				text: "Runners",
+				name: "runners",
+				plugin: new Plugin("runners")
+			}, {
+				text: "Plugins",
+				name: "plugins",
+				plugin: new Plugin("plugins")
+			}
+		];
+
 		this.activateItem(this.items[1]);
 	}
 
 	MenuController.prototype = {
 		activeItem: null,
 		panesHistory: null,
-		
-		items: [
-			{
-				name: "runners",
-				text: "Runners"
-			}, {
-				name: "plugins",
-				text: "Plugins"
-			}
-		],
-		
+
+		items: [],
+
 		activateItem: function(item) {
 			this.activeItem = item;
 			this.panesHistory.replaceState(item);

@@ -9,7 +9,7 @@ router.param("id", function(req, res, next, id) {
 });
 
 router.route("/all")
-	.get(function(req, res) {
+	.all(function(req, res) {
 		plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 }).then(function(data) {
 			res.json(data);
 		}, function() {
@@ -17,7 +17,7 @@ router.route("/all")
 		});
 	});
 
-router.route("/:id/manifest").get(function(req, res) {
+router.route("/:id/manifest").all(function(req, res) {
 	req.plugin.manifest.then(function(manifest) {
 		res.json(manifest);
 	}, function(err) {
@@ -25,7 +25,7 @@ router.route("/:id/manifest").get(function(req, res) {
 	});
 });
 
-router.route("/:id/client/html").get(function(req, res) {
+router.route("/:id/client/html").all(function(req, res) {
 	res.set("Content-Type", "text/html");
 	req.plugin.client.html.then(function(html) {
 		res.send(html);

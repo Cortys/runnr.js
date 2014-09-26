@@ -1,14 +1,14 @@
 (function() {
 	angular.module("top")
-		.controller("top.ActionController", MenuActionController);
-	
-	MenuActionController.$inject = [];
-	
-	function MenuActionController() {
+		.controller("top.ActionController", TopActionController);
+
+	TopActionController.$inject = [];
+
+	function TopActionController() {
 
 	}
 
-	MenuActionController.prototype = {
+	TopActionController.prototype = {
 		actions: [
 			/*{
 				name: "messages",
