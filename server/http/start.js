@@ -1,5 +1,7 @@
-var config = require("../config.js"),
+var config = require("../config"),
 	express = require("express"),
+	https = require("https"),
+	security = require("../core/security"),
 	app;
 
 function start() {
@@ -18,15 +20,25 @@ function start() {
 		});
 	});
 
-	app.use("/js", require("./js.js"));
+	app.use("/js", require("./js"));
 
-	app.use("/api/theme", require("./theme.js"));
+	app.use("/api/theme", require("./theme"));
 
-	app.use("/api/plugins", require("./plugins.js"));
+	app.use("/api/plugins", require("./plugins"));
 
 	app.use(express.static(config.root + "/client"));
 
-	app.listen(config.port);
+	security.get().then(function(key) {
+		https.createServer({
+			key: key.serviceKey,
+			cert: key.certificate,
+			ca: key.certificate,
+			rejectUnauthorized: false,
+			requestCert: false
+		}, app).listen(config.port);
+	}, function(err) {
+		console.error("Could not start HTTPS server. "+err);
+	});
 
 	return app;
 }

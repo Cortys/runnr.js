@@ -1,10 +1,10 @@
-var db = require("../db/db.js").plugins,
-	config = require("../../config.js"),
+var db = require("./db").plugins,
+	config = require("../config"),
 	fs = require("fs"),
 	path = require("path"),
 	Q = require("q"),
-	Plugin = require("./Plugin.js"),
-	
+	Plugin = require("./plugins/Plugin"),
+
 plugins = {
 	getRaw: function(filter, limit) {
 		return Q.npost(db, "find", arguments);
@@ -29,14 +29,14 @@ function scan(dir) {
 }
 
 function init() {
-	
+
 	plugins.countAll().then(function(count) {
 		if(count)
 			return;
-		
+
 		// Create indexes if not already done:
 		db.ensureIndex({ fieldName:"manifest.core" });
-		
+
 		scan(path.join(config.root, "corePlugins"));
 		scan(path.join(config.root, "plugins"));
 	});

@@ -1,5 +1,5 @@
-var config = require("../config.js"),
-	express = express = require("express"),
+var config = require("../config"),
+	express = require("express"),
 	router = express.Router(),
 	jsPath = config.root + "/client/js",
 	min = !config.devMode && ".min" || "";

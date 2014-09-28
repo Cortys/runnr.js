@@ -1,5 +1,5 @@
-var config = require("../config.js"),
-	express = express = require("express"),
+var config = require("../config"),
+	express = require("express"),
 	router = express.Router();
 
 function err(res) {

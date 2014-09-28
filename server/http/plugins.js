@@ -1,6 +1,6 @@
-var config = require("../config.js"),
-	express = express = require("express"),
-	plugins = require("../core/plugins/plugins.js"),
+var config = require("../config"),
+	express = require("express"),
+	plugins = require("../core/plugins"),
 	router = express.Router();
 
 router.param("id", function(req, res, next, id) {
@@ -8,7 +8,7 @@ router.param("id", function(req, res, next, id) {
 	next();
 });
 
-router.use(require("./apiSecurity.js"));
+router.use(require("./apiSecurity"));
 
 router.route("/all")
 	.all(function(req, res) {
