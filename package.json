@@ -24,7 +24,7 @@
         "runnr": "./start.js"
     },
     "scripts": {
-        "postinstall": "grunt build",
+        "prepublish": "grunt build",
         "start": "node start.js"
     },
     "dependencies": {
