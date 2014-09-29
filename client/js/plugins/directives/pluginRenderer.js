@@ -9,15 +9,10 @@
 		function linker(scope, element, attrs) {
 			scope.plugin().client.html.then(function(html) {
 
-				/*var pluginScope = scope.$new(true);
-
-				pluginScope.i = 3;*/
-
 				var frame = document.createElement("iframe");
 
 				frame.srcdoc = html.data;
 				frame.sandbox = "allow-scripts";
-				frame.setAttribute("seamless", "");
 
 				element.append(frame);
 
