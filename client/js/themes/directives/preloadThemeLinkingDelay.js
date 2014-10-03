@@ -2,21 +2,17 @@
 	angular.module("themes")
 		.directive("preloadThemeLinkingDelay", preloadLinkingDelay);
 
-	preloadLinkingDelay.$inject = ["$q", "$timeout", "themes.theme"];
+	preloadLinkingDelay.$inject = ["$q", "$timeout", "themes.api"];
 
-	function preloadLinkingDelay($q, $timeout, theme) {
+	function preloadLinkingDelay($q, $timeout, themeApi) {
 		return {
 			restrict: "A",
 			compile: function() {
 				var deferred = $q.defer(),
 					delay = $q.defer();
-				
-				theme.addRenderingPromise($q.all([deferred.promise, delay.promise]));
-				
-				function link() {
-					console.log(scope);
-				}
-				
+
+				themeApi.addRenderingPromise($q.all([deferred.promise, delay.promise]));
+
 				return {
 					pre: function(scope, element, attr) {
 						$timeout(function() {

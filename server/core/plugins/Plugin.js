@@ -24,7 +24,7 @@ Plugin.prototype = {
 	get installationLocation() {
 
 		return this.db.then(function(db) {
-			return db.installationLocation();
+			return db.installationLocation;
 		});
 	},
 
@@ -44,9 +44,19 @@ Plugin.prototype = {
 
 			return t.parent.db.then(function(db) {
 
-				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, db.manifest.plugin.client));
+				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, "client", db.manifest.plugin.client)).then(function(html) {
+					var result = html;
+					return result;
+				});
+			});
+		},
+
+		raw: function(file) {
+			return this.parent.db.then(function(db) {
+				return path.join(db.installationLocation, db.manifest.id, "client", file);
 			});
 		}
+
 	}
 };
 
@@ -59,6 +69,6 @@ Plugin.install = function install(manifest, installationLocation) {
 	});
 
 	return manifest.id;
-}
+};
 
 module.exports = Plugin;

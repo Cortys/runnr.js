@@ -1,1 +1,1 @@
-angular.module("plugins", ["core"]);
+angular.module("plugins", ["core", "themes"]);

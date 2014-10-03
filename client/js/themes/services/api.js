@@ -1,15 +1,21 @@
 (function() {
 	angular.module("themes")
-		.factory("themes.theme", theme);
+		.factory("themes.api", api);
 
-	theme.$inject = ["$http", "$q"];
+	api.$inject = ["$http", "$q", "core.api"];
 
-	function theme($http, $q) {
+	function api($http, $q, coreApi) {
 		var o = {
-			getTheme: function () {
+
+			raw: function(url, useSuper) {
+				var v = "theme/raw/"+url;
+				return useSuper?coreApi.raw(v):v;
+			},
+
+			get theme() {
 				return themePromise;
 			},
-			rendered: function() {
+			get rendered() {
 				return renderDeferred.promise;
 			},
 			addRenderingPromise: function(promise) {
@@ -22,16 +28,16 @@
 				});
 			}
 		},
-		
-		themePromise = $http.get("/api/theme/manifest", { responseType:"json" }).then(function(result) {
+
+		themePromise = coreApi.get("theme/manifest", { responseType:"json" }).then(function(result) {
 			return result.data;
 		}),
 		renderDeferred = $q.defer(),
 		renderPromises = 0;
-		
+
 		o.addRenderingPromise(themePromise);
-		
+
 		return o;
 	}
-	
+
 })();

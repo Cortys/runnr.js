@@ -14,6 +14,7 @@ function start() {
 	app.get("/license", function(req, res) {
 		res.sendfile("LICENSE", {
 			root: config.root,
+			lastModified: false,
 			headers: {
 				"Content-Type": "text/plain"
 			}
@@ -22,11 +23,13 @@ function start() {
 
 	app.use("/js", require("./js"));
 
-	app.use("/api/theme", require("./theme"));
+	app.use("/api/theme", require("./themes"));
 
 	app.use("/api/plugins", require("./plugins"));
 
-	app.use(express.static(config.root + "/client"));
+	app.use(express.static(config.root + "/client", {
+		lastModified: false
+	}));
 
 	security.get().then(function(key) {
 		https.createServer({

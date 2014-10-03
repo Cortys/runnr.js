@@ -2,14 +2,14 @@
 	angular.module("core")
 		.controller("MetaController", MetaController);
 
-	MetaController.$inject = ["themes.theme"];
+	MetaController.$inject = ["themes.api"];
 
-	function MetaController(theme) {
+	function MetaController(themeApi) {
 		var t = this;
 
 		t.title = "";
 
-		theme.getTheme().then(function(theme) {
+		themeApi.theme.then(function(theme) {
 			t.theme = theme;
 		});
 	}

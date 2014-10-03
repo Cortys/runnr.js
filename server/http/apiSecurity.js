@@ -9,7 +9,7 @@ function err(res) {
 router.use(require("body-parser").json());
 
 router.use(function(req, res, next) {
-	if(req.body && req.body.api)
+	if(req.method != "GET" && req.body && req.body.api)
 		next();
 	else
 		err(res);

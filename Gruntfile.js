@@ -11,7 +11,8 @@ module.exports = function(grunt) {
 					"include css": true
 				},
 				files: {
-					"themes/light/desktop.css": "themes/light/desktop.styl"
+					"themes/light/desktop.css": "themes/light/desktop.styl",
+					"themes/light/plugin.css": "themes/light/plugin.styl"
 				}
 			}
 		},

@@ -10,28 +10,28 @@ posForPos(pos, align)
 	left: distance.narrow
 	right: distance.narrow
 	bottom: size.normal + distance.close
-	
+
 	enable3d()
-	
+
 	$posLeft
 		transform: translateX(-100%)
 		opacity: 0.5
-	
+
 	$posRight
 		transform: translateX(100%)
 		opacity: 0.5
-	
+
 	@import "panes/plugin"
-	
+
 	.pane
 		position: absolute
 		width: auto
 		height: auto
 		top: 0
 		bottom: 0
-		
+
 		z-index: 1
-		
+
 		slowTransition()
 
 		.inner
@@ -43,17 +43,19 @@ posForPos(pos, align)
 			top: 0
 			bottom: 0
 
+			overflow: hidden
+
 			background-color: color.light
 			shadow: bottom
 			border-radius: size.radius
-		
+
 		for visible in (1..paneCount)
 			align = (1-(visible/paneCount))*0.5
 			vMin = visible*1 - 1
 			for pos in (0..vMin)
 				&.visible{visible}.pos{pos}
 					posForPos(pos, align)
-					
+
 					for prevPos in (-1..visible)
 						&.prevPos{prevPos}
 							&.ng-move:not(.ng-move-active)

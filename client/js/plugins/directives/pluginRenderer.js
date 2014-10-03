@@ -11,7 +11,7 @@
 
 				var frame = document.createElement("iframe");
 
-				frame.srcdoc = html.data;
+				frame.srcdoc = html;
 				frame.sandbox = "allow-scripts";
 
 				element.append(frame);

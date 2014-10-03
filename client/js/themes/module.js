@@ -1,1 +1,1 @@
-angular.module("themes", []);
+angular.module("themes", ["core"]);
