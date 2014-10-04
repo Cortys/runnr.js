@@ -18,12 +18,12 @@
 							var html = data[0],
 								theme = data[1],
 								result,
-								base = "<base href='"+pluginsApi.absoluteRaw(id)+"' target='_top' />",
+								base = "<base href='"+pluginsApi.absoluteRaw(id, "")+"' target='_top' />",
 								link = "";
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file, true)+'" media="'+(v.media || '')+'" />';
 							});
-							result = html.replace(/(<head[^>]*>)/, "$1"+link+base);
+							result = html.replace(/(<head[^>]*>)/, "$1"+base+link);
 							return result;
 						});
 					}

@@ -4,6 +4,9 @@ var config = require("../config"),
 	themes = require("../core/themes");
 
 router.use("/raw", function(req, res, next) {
+	res.set({
+		"Access-Control-Allow-Origin": "*"
+	});
 	res.sendfile(themes.current.raw(req.url));
 });
 

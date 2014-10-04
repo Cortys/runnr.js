@@ -10,7 +10,10 @@ function start() {
 	// STATIC SERVICES:
 
 	app.use(function(req, res, next) {
-		res.set("Content-Security-Policy: default-src 'self'");
+		res.set({
+			"Content-Security-Policy": "default-src 'self'",
+			"Access-Control-Allow-Origin": req.protocol+"://"+req.hostname
+		});
 		next();
 	});
 

@@ -17,7 +17,7 @@
 			},
 
 			get: function(url, data) {
-				if(data == null)
+				if(data === undefined)
 					data = {};
 				data.api = true;
 				return $http.post(this.raw(url), data);
