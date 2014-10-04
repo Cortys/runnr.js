@@ -9,6 +9,11 @@ function start() {
 
 	// STATIC SERVICES:
 
+	app.use(function(req, res, next) {
+		res.set("Content-Security-Policy: default-src 'self'");
+		next();
+	});
+
 	app.use("/frameworks", express.static(config.root + "/bower_components"));
 
 	app.get("/license", function(req, res) {

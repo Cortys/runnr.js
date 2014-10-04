@@ -12,7 +12,6 @@ router.param("rawFile", function(req, res, next, file) {
 	(file=="html"?req.plugin.client.html:req.plugin.client.raw(file)).then(function(rawFile) {
 		if(file == "html") {
 			res.type("html");
-			console.log(rawFile);
 			res.send(rawFile);
 		}
 		else {

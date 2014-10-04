@@ -4,7 +4,6 @@ var config = require("../config"),
 	themes = require("../core/themes");
 
 router.use("/raw", function(req, res, next) {
-	console.log(themes.current.raw(req.url));
 	res.sendfile(themes.current.raw(req.url));
 });
 

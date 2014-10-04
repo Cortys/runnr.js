@@ -4,7 +4,7 @@
 
 	themeInclude.$inject = ["$compile", "$q", "themes.api"];
 
-	function themeInclude($compile, $q, themeApi) {
+	function themeInclude($compile, $q, themesApi) {
 		return {
 			restrict: "E",
 			scope: {},
@@ -13,10 +13,10 @@
 				if(!attrs.ngInclude) {
 
 					var deferred = $q.defer();
-					themeApi.addRenderingPromise(deferred.promise);
+					themesApi.addRenderingPromise(deferred.promise);
 
-					themeApi.theme.then(function(theme) {
-						element.attr("ng-include", "'"+ themeApi.raw(scope.$eval(attrs.src) || theme.html, true) +"'");
+					themesApi.theme.then(function(theme) {
+						element.attr("ng-include", "'"+ themesApi.raw(scope.$eval(attrs.src) || theme.html, true) +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
 					});

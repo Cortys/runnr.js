@@ -4,12 +4,12 @@
 
 	showOnThemePreload.$inject = ["themes.api"];
 
-	function showOnThemePreload(themeApi) {
+	function showOnThemePreload(themesApi) {
 		return {
 			restrict: "A",
 			scope: {},
 			link: function(scope, element) {
-				themeApi.rendered.then(function() {
+				themesApi.rendered.then(function() {
 					scope.$destroy();
 				});
 
