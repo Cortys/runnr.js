@@ -13,7 +13,10 @@ plugins = {
 		return Q.ninvoke(db, "count", {});
 	},
 	get: function(id) {
-		return new Plugin(id);
+		var p = new Plugin(id);
+		return p.db.then(function() {
+			return p;
+		});
 	}
 };
 

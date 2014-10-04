@@ -4,8 +4,12 @@ var config = require("../config"),
 	router = express.Router();
 
 router.param("id", function(req, res, next, id) {
-	req.plugin = plugins.get(id);
-	next();
+	plugins.get(id).then(function(plugin) {
+		req.plugin = plugin;
+		next();
+	}, function(err) {
+		res.status(404).send(err.message);
+	});
 });
 
 router.param("rawFile", function(req, res, next, file) {

@@ -11,8 +11,9 @@ function start() {
 
 	app.use(function(req, res, next) {
 		res.set({
-			"Content-Security-Policy": "default-src 'self'",
-			"Access-Control-Allow-Origin": req.protocol+"://"+req.hostname
+			"Content-Security-Policy": "default-src 'self'", // Only access resources that are part of runnr.js
+			"Access-Control-Allow-Origin": req.protocol+"://"+req.hostname, // Only grant runnr.js pages access to resources
+			"X-Frame-Options": "DENY" // Never render runnr.js pages in frames - plugin pages are not affected because of srcdoc-iframes
 		});
 		next();
 	});
