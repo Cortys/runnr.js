@@ -10,6 +10,8 @@
 			return "plugins/"+id+"/"+"client/"+url;
 		}, o = {
 
+			connector: "/js/plugins/connector.js",
+
 			absoluteRaw: function(id, url) {
 				return coreApi.absoluteRaw(rawGen(id, url));
 			},

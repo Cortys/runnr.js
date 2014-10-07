@@ -20,11 +20,12 @@
 								result,
 								meta = "<meta http-equiv=\"Content-Security-Policy\" content=\""+html.headers["content-security-policy"]+"\" />",
 								base = "<base href='"+pluginsApi.absoluteRaw(id, "")+"' target='_self' />",
+								script = "<script src='"+pluginsApi.connector+"' type='text/javascript'></script>",
 								link = "";
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file, true)+'" media="'+(v.media || '')+'" />';
 							});
-							result = html.html.replace(/(<head[^>]*>)/, "$1"+meta+base+link);
+							result = html.html.replace(/(<head[^>]*>)/, "$1"+meta+base+script+link);
 							return result;
 						});
 					}

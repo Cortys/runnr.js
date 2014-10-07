@@ -61,12 +61,12 @@ Plugin.prototype = {
 };
 
 Plugin.install = function install(manifest, installationLocation) {
-
-	db.insert({
-		_id: manifest.id,
-		manifest: manifest,
-		installationLocation: installationLocation
-	});
+	if(manifest.id != "all" && manifest.id != "connector") // Plugins named 'all' and 'connector' are not allowed because the plugin http API already uses these identifiers.
+		db.insert({
+			_id: manifest.id,
+			manifest: manifest,
+			installationLocation: installationLocation
+		});
 
 	return manifest.id;
 };

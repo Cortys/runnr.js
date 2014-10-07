@@ -21,14 +21,15 @@ router.param("rawFile", function(req, res, next, file) {
 			};
 			res.type("html");
 			res.set({
-				"Content-Security-Policy": "default-src "+prefix(api.frameworks+"/")+" "+prefix(api.themes+"/")+" "+prefix(api.plugins+"/"+req.plugin.id+"/")+"; frame-src 'none'; connect-src 'none'"
+				"Content-Security-Policy": "default-src "+prefix(api.frameworks+"/")+" "+prefix(api.themes+"/")+" "+prefix(api.plugins+"/"+req.plugin.id+"/")+" "+prefix(api.js+"/plugins/")+"; frame-src 'none'; connect-src 'none'"
 			});
 			res.send(rawFile);
 		}
-		else {
+		else if(file != "manifest.json") {
 			res.sendfile(rawFile);
 		}
-		next();
+		else
+			next();
 	});
 });
 

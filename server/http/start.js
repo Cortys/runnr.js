@@ -35,8 +35,6 @@ function start() {
 
 	app.use(api.themes, require("./themes"));
 
-	console.log(api);
-
 	app.use(api.plugins, require("./plugins"));
 
 	app.use(api.default, express.static(config.root + "/client", {

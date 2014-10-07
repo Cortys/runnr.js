@@ -44,6 +44,12 @@ module.exports = function(grunt) {
 					src: ["**/*.js", "!*.min.js"],
 					dest: "client/js/build",
 					ext: ".min.js"
+				}, {
+					expand: true,
+					cwd: "client/js/",
+					src: ["pluginConnector.js"],
+					dest: "client/js/build",
+					ext: ".min.js"
 				}]
 			}
 		},
@@ -53,7 +59,7 @@ module.exports = function(grunt) {
 					banner: "'use strict';\n\n",
 					sourceMap: true
 				},
-				src: ["client/js/*.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
+				src: ["client/js/runnr.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
 				dest: "client/js/build/runnr.js",
 			}
 		},

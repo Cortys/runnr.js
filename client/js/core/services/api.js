@@ -2,14 +2,14 @@
 	angular.module("core")
 		.factory("core.api", api);
 
-	api.$inject = ["$http", "$location"];
+	api.$inject = ["$http"];
 
-	function api($http, $location) {
+	function api($http) {
 
 		var o = {
 
 			absoluteRaw: function(url) {
-				return $location.protocol()+"://"+$location.host()+":"+$location.port()+this.raw(url);
+				return this.raw(url);
 			},
 
 			raw: function(url) {
