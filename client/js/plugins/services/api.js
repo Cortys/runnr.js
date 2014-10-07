@@ -23,7 +23,10 @@
 				return {
 					get html() {
 						return coreApi.get(t.raw(id, "html")).then(function(html) {
-							return html.data;
+							return {
+								html: html.data,
+								headers: html.headers()
+							};
 						});
 					}
 				};

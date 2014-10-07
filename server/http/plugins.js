@@ -1,6 +1,7 @@
 var config = require("../config"),
 	express = require("express"),
 	plugins = require("../core/plugins"),
+	api = require("./api"),
 	router = express.Router();
 
 router.param("id", function(req, res, next, id) {
@@ -15,7 +16,13 @@ router.param("id", function(req, res, next, id) {
 router.param("rawFile", function(req, res, next, file) {
 	(file=="html"?req.plugin.client.html:req.plugin.client.raw(file)).then(function(rawFile) {
 		if(file == "html") {
+			var prefix = function prefix(url) {
+				return req.protocol+"://"+req.hostname+":"+config.port+url;
+			};
 			res.type("html");
+			res.set({
+				"Content-Security-Policy": "default-src "+prefix(api.frameworks+"/")+" "+prefix(api.themes+"/")+" "+prefix(api.plugins+"/"+req.plugin.id+"/")+"; frame-src 'none'; connect-src 'none'"
+			});
 			res.send(rawFile);
 		}
 		else {

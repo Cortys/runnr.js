@@ -2,6 +2,7 @@ var config = require("../config"),
 	express = require("express"),
 	https = require("https"),
 	security = require("../core/security"),
+	api = require("./api"),
 	app;
 
 function start() {
@@ -11,16 +12,16 @@ function start() {
 
 	app.use(function(req, res, next) {
 		res.set({
-			"Content-Security-Policy": "default-src 'self'", // Only access resources that are part of runnr.js
-			"Access-Control-Allow-Origin": req.protocol+"://"+req.hostname, // Only grant runnr.js pages access to resources
-			"X-Frame-Options": "DENY" // Never render runnr.js pages in frames - plugin pages are not affected because of srcdoc-iframes
+			"Content-Security-Policy": "default-src 'self'", // Only access resources that are part of runnr.js (limit on request)
+			"Access-Control-Allow-Origin": req.protocol+"://"+req.hostname, // Only grant runnr.js pages access to resources (limit on response)
+			"X-Frame-Options": "DENY" // Never render runnr.js pages in frames - plugin pages are not affected because of srcdoc-iframes (limit on response)
 		});
 		next();
 	});
 
-	app.use("/frameworks", express.static(config.root + "/bower_components"));
+	app.use(api.frameworks, express.static(config.root + "/bower_components"));
 
-	app.get("/license", function(req, res) {
+	app.get(api.license, function(req, res) {
 		res.sendfile("LICENSE", {
 			root: config.root,
 			lastModified: false,
@@ -30,13 +31,15 @@ function start() {
 		});
 	});
 
-	app.use("/js", require("./js"));
+	app.use(api.js, require("./js"));
 
-	app.use("/api/theme", require("./themes"));
+	app.use(api.themes, require("./themes"));
 
-	app.use("/api/plugins", require("./plugins"));
+	console.log(api);
 
-	app.use(express.static(config.root + "/client", {
+	app.use(api.plugins, require("./plugins"));
+
+	app.use(api.default, express.static(config.root + "/client", {
 		lastModified: false
 	}));
 
