@@ -9,14 +9,16 @@ router.param("id", function(req, res, next, id) {
 		req.plugin = plugin;
 		next();
 	}, function(err) {
-		res.status(404).send(err.message);
+		res.status(404);
 	});
 });
 
-router.param("rawFile", function(req, res, next, file) {
-	(file=="html"?req.plugin.client.html:req.plugin.client.raw(file)).then(function(rawFile) {
-		if(file == "html") {
-			var prefix = function prefix(url) {
+router.use("/:id/client/", function(req, res, next) {
+	var file = req.path;
+	(file=="/html"?req.plugin.client.html:req.plugin.client.raw(file)).then(function(rawFile) {
+		var prefix;
+		if(file == "/html") {
+			prefix = function prefix(url) {
 				return req.protocol+"://"+req.hostname+":"+config.port+url;
 			};
 			res.type("html");
@@ -25,15 +27,14 @@ router.param("rawFile", function(req, res, next, file) {
 			});
 			res.send(rawFile);
 		}
-		else if(file != "manifest.json") {
+		else if(file != "manifest.json")
 			res.sendfile(rawFile);
-		}
 		else
 			next();
+	}, function(err) {
+		res.status(404);
 	});
 });
-
-router.use("/:id/client/:rawFile", function(req, res) {});
 
 router.use(require("./apiSecurity"));
 
@@ -41,7 +42,7 @@ router.route("/:id/manifest").all(function(req, res) {
 	req.plugin.manifest.then(function(manifest) {
 		res.json(manifest);
 	}, function(err) {
-		res.status(404).send(err.message);
+		res.status(404);
 	});
 });
 
