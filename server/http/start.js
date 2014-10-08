@@ -37,7 +37,12 @@ function start() {
 
 	app.use(api.plugins, require("./plugins"));
 
-	app.use(api.default, express.static(config.root + "/client", {
+	app.use(function(req, res, next) {
+		res.set({
+			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
+		});
+		next();
+	}).use(api.default, express.static(config.root + "/client", {
 		lastModified: false
 	}));
 
