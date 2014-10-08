@@ -9,7 +9,7 @@ router.param("id", function(req, res, next, id) {
 		req.plugin = plugin;
 		next();
 	}, function(err) {
-		res.status(404);
+		res.status(404).send();
 	});
 });
 
@@ -32,7 +32,7 @@ router.use("/:id/client/", function(req, res, next) {
 		else
 			next();
 	}, function(err) {
-		res.status(404);
+		res.status(404).send();
 	});
 });
 
@@ -42,7 +42,7 @@ router.route("/:id/manifest").all(function(req, res) {
 	req.plugin.manifest.then(function(manifest) {
 		res.json(manifest);
 	}, function(err) {
-		res.status(404);
+		res.status(404).send();
 	});
 });
 
