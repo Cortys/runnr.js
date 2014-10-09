@@ -11,8 +11,6 @@ posForPos(pos, align)
 	right: distance.narrow
 	bottom: size.normal + distance.close
 
-	enable3d()
-
 	$posLeft
 		transform: translateX(-100%)
 		opacity: 0.5
@@ -31,6 +29,8 @@ posForPos(pos, align)
 		bottom: 0
 
 		z-index: 1
+		
+		enable3d()
 
 		slowTransition()
 

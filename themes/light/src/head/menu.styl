@@ -8,7 +8,7 @@
 	bottom: 0
 	width: auto
 	height: size.big
-		
+
 	ul
 		position: relative
 		width: auto
@@ -17,29 +17,29 @@
 		left: -50%
 		right: 50%
 		list-style: none
-		
+
 		overflow: visible
-		
+
 		white-space: nowrap
-		
+
 		&, li
 			reset()
-		
+
 		li
 			position: relative
 			display: inline-block
 			width: auto
 			height: 100%
-			
+
 			overflow: visible
-			
+
 			z-index: 0
-			
+
 			a
 				position: relative
-				
+
 				border-radius: inherit
-				
+
 				display: block
 				box-sizing: border-box
 				color: color.darkGray
@@ -48,52 +48,69 @@
 				height: 100%
 				top: 0
 				left: 0
-				
-				cursor: pointer
-				
+
 				line-height: size.big
 				padding-right: size.normal * 0.5
 				padding-left: size.normal
-				
+
 				fastTransition()
-				
+
 				i
 					width: size.icon
 					height: size.icon
 					text-align: center
 					vertical-align: middle
 					position: absolute
-					
+
 					top: size.big*0.5 - size.icon*0.5
 					left: size.normal*0.5 - size.icon*0.5
-				
+
 				span
 					position: relative
-				
+
+				.bgWrap, .clickBox
+					position: absolute
+					top: 0
+					bottom: 0
+					width: auto
+					height: auto
+					left: 0
+					right: 0
+					overflow: hidden
+
+				.clickBox
+					cursor: pointer
+					z-index: 1
+
 				.bg
 					position: absolute
 					top: (size.big - size.normal)*0.5
 					bottom: (size.big - size.normal)*0.5
-					left: 50%
-					right: 50%
-					width: auto
+					width: 50%
 					height: auto
+					left: 0
 					background-color: color.darkGray
 					border-radius: size.normal * 0.5
+					enable3d()
 					bounceTransition()
-		
-			&:first-child a .bg
-				left: 100%
-				right: (- size.normal)
-			
-			&:last-child a .bg
-				left: (- size.normal)
-				right: 100%
-			
+
+			&:first-child
+				a .bgWrap
+					left: -100%
+				a .bg
+					transform: translate3d(200%, 0, 0)
+				&.active a .bg
+					transform: translate3d(100%, 0, 0)
+
+			&:last-child
+				a .bgWrap
+					right: -100%
+				a .bg
+					transform: translate3d(-100%, 0, 0)
+				&.active a .bg
+					transform: translate3d(0, 0, 0)
+
 			&.active
 				z-index: 1
 				a
 					color: color.light
-					.bg
-						left: 0
-						right: 0

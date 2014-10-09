@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="runnr.js" ng-controller="MetaController as meta" preload-theme-linking-delay="1000">
+<html lang="en" ng-app="runnr.js" ng-controller="MetaController as meta" preload-theme-linking-delay="450">
 <head>
 	<meta charset="utf-8" />
 
@@ -44,28 +44,28 @@
 		  margin-right: 3px;
 		  display: inline-block;
 
-		  -webkit-animation: stretchdelay 1s infinite ease-in-out;
-		  animation: stretchdelay 1s infinite ease-in-out;
+		  -webkit-animation: stretchdelay 0.5s infinite ease-in-out;
+		  animation: stretchdelay 0.5s infinite ease-in-out;
 		}
 
 		.spinner .rect2 {
-		  -webkit-animation-delay: -0.9s;
-		  animation-delay: -0.9s;
+		  -webkit-animation-delay: -0.45s;
+		  animation-delay: -0.45s;
 		}
 
 		.spinner .rect3 {
-		  -webkit-animation-delay: -0.8s;
-		  animation-delay: -0.8s;
+		  -webkit-animation-delay: -0.4s;
+		  animation-delay: -0.4s;
 		}
 
 		.spinner .rect4 {
-		  -webkit-animation-delay: -0.7s;
-		  animation-delay: -0.7s;
+		  -webkit-animation-delay: -0.35s;
+		  animation-delay: -0.35s;
 		}
 
 		.spinner .rect5 {
-		  -webkit-animation-delay: -0.6s;
-		  animation-delay: -0.6s;
+		  -webkit-animation-delay: -0.3s;
+		  animation-delay: -0.3s;
 		  margin-right: 0;
 		}
 
@@ -85,11 +85,6 @@
 		}
 	</style>
 
-	<script src="frameworks/angular/angular.min.js" type="text/javascript"></script>
-	<script src="frameworks/angular-animate/angular-animate.min.js" type="text/javascript"></script>
-
-	<script src="js/runnr.js" type="text/javascript"></script>
-
 	<title ng-bind="meta.title || 'Runnr.js'">Runnr.js</title>
 
 	<!-- Load theme CSS: -->
@@ -101,5 +96,10 @@
 	<div class="spinner" show-on-theme-preload>
 		<div><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
 	</div>
+
+	<script src="frameworks/angular/angular.min.js" type="text/javascript"></script>
+	<script src="frameworks/angular-animate/angular-animate.min.js" type="text/javascript"></script>
+
+	<script src="js/runnr.js" type="text/javascript"></script>
 </body>
 </html>

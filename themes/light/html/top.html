@@ -4,10 +4,13 @@
 		<nav class="menu" ng-show="menu.activeItem">
 			<ul>
 				<li ng-repeat="item in ::menu.items" ng-class="{ active:item === menu.activeItem }">
-					<a ng-click="menu.activateItem(item); $event.preventDefault()">
-						<div class="bg"></div>
+					<a>
+						<div class="bgWrap">
+							<div class="bg"></div>
+						</div>
 						<i class="icon" ng-class="::'icon_actions-'+item.name"></i>
 						<span ng-bind="::item.text"></span>
+						<div class="clickBox" ng-click="menu.activateItem(item)"></div>
 					</a>
 				</li>
 			</ul>

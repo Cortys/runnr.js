@@ -9,6 +9,7 @@
 	height: size.normal
 	top: (size.big - size.normal)*0.5
 	bottom: (size.big - size.normal)*0.5
+	z-index: 2
 
 	button
 		position: relative
@@ -28,6 +29,8 @@
 		text-align: center
 		line-height: 1em
 		color: color.darkGray
+
+		enable3d()
 
 		&:hover
 			border-color: color.darkGray
