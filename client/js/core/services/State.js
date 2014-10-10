@@ -8,24 +8,24 @@
 
 		function State(data, id) {
 			this.data = State.isState(data)?state.data:data;
-			
+
 			Object.defineProperty(this, "id", {
 				get: function() {
 					return id;
 				},
 				set: function(val) {
-					if(id == undefined)
+					if(id == null)
 						id = val;
 				}
 			});
 		}
-		
+
 		State.prototype = {
 			isIdentified: function() {
 				return this.id !== null;
 			}
 		};
-		
+
 		State.isState = function(state) {
 			return state instanceof State;
 		};
