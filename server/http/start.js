@@ -1,5 +1,6 @@
 var config = require("../config"),
 	express = require("express"),
+	swig = require("swig"),
 	https = require("https"),
 	security = require("../core/security"),
 	api = require("./api"),
@@ -19,9 +20,7 @@ function start() {
 		next();
 	});
 
-	app.use(api.frameworks, express.static(config.root + "/bower_components"));
-
-	app.get(api.license, function(req, res) {
+	app.get(api.base+api.license, function(req, res) {
 		res.sendfile("LICENSE", {
 			root: config.root,
 			lastModified: false,
@@ -31,20 +30,26 @@ function start() {
 		});
 	});
 
-	app.use(api.js, require("./js"));
+	app.use(api.frameworks.base, express.static(config.root + "/bower_components"));
 
-	app.use(api.themes, require("./themes"));
+	app.use(api.js.base, require("./js"));
 
-	app.use(api.plugins, require("./plugins"));
+	app.use(api.themes.base, require("./themes"));
 
-	app.use(function(req, res, next) {
+	app.use(api.plugins.base, require("./plugins"));
+
+	app.use(api.base+api.default, function(req, res, next) {
 		res.set({
 			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
 		});
 		next();
-	}).use(api.default, express.static(config.root + "/client", {
+	}).use(api.base+api.default, express.static(config.root + "/client", {
 		lastModified: false
 	}));
+
+	app.get(api.api, function(req, res) {
+		res.json(api);
+	});
 
 	security.get().then(function(key) {
 		https.createServer({

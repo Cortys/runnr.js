@@ -4,13 +4,39 @@ var api = {
 	api: "/api"
 };
 
-api.default = api.base+"/";
-api.js = api.base+"/js";
-api.frameworks = api.base+"/frameworks";
-api.license = api.base+"/license";
+api.default = "/";
+api.license = "/license";
 
-api.themes = api.api+"/theme";
-api.plugins = api.api+"/plugins";
+// Non exchangable content: '' prefix
+api.js = {
+	base: api.base+"/js",
+	main: "/runnr.js",
+	mainMap: "/runnr.js.map",
+	connectors: {
+		base: "/connectors",
+		common: "/common.js",
+		plugin: "/plugin.js",
+		runner: "/runner.js"
+	}
+};
+api.frameworks = {
+	base: api.base+"/frameworks"
+};
+
+// Customizable content: '/api' prefix
+api.themes = {
+	base: api.api+"/theme",
+	manifest: "/manifest",
+	raw: "/raw"
+};
+api.plugins = {
+	base: api.api+"/plugins",
+	all: "/all",
+	plugin: {
+		manifest: "/manifest",
+		client: "/client"
+	}
+};
 
 Object.freeze(api);
 
