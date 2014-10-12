@@ -1,12 +1,12 @@
 module.exports = function(grunt) {
-	var path = require("path"),
-		isDev = !!grunt.option("debug");
+	var path = require("path");
+
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		stylus: {
 			compile: {
 				options: {
-					compress: !isDev,
+					compress: true,
 					"resolve url": true,
 					"include css": true
 				},
@@ -78,17 +78,30 @@ module.exports = function(grunt) {
 			}
 		},
 		nodemon: {
+			normal: {
+				script: "start.js",
+				options: {
+					watch: ["server"],
+					args: []
+				}
+			},
 			dev: {
 				script: "start.js",
 				options: {
 					watch: ["server"],
-					args: isDev?["dev"]:[]
+					args: ["dev"]
 				}
 			}
 		},
 		concurrent: {
-			target: {
-				tasks: ["watch", "nodemon"],
+			normal: {
+				tasks: ["watch", "nodemon:normal"],
+				options: {
+					logConcurrentOutput: true
+				}
+			},
+			dev: {
+				tasks: ["watch", "nodemon:dev"],
 				options: {
 					logConcurrentOutput: true
 				}
@@ -98,6 +111,7 @@ module.exports = function(grunt) {
 
 	require("load-grunt-tasks")(grunt);
 
-	grunt.registerTask("default", ["concurrent:target"]);
+	grunt.registerTask("default", ["concurrent:normal"]);
+	grunt.registerTask("dev", ["concurrent:dev"]);
 	grunt.registerTask("build", ["webfont", "stylus", "uglify", "concat"]);
 };

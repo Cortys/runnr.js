@@ -8,22 +8,22 @@
 
 		var o = {
 
-			absoluteRaw: function(url) {
-				return $location.protocol()+"://"+$location.host()+":"+$location.port()+this.raw(url);
-			},
+				absolute: $location.protocol()+"://"+$location.host()+":"+location.port,
 
-			raw: function(url) {
-				return "/api/"+url;
-			},
+				api: $http.get("/api").then(function(data) {
+					return (o.apiRaw = data.data);
+				}),
 
-			get: function(url, data) {
-				if(data === undefined)
-					data = {};
-				data.api = true;
-				return $http.post(this.raw(url), data);
-			}
+				apiRaw: null,
+
+				get: function(url, data) {
+					var t = this;
+					if(data === undefined)
+						data = {};
+					data.api = true;
+					return $http.post(url, data);
+				}
 		};
-
 		return o;
 	}
 })();

@@ -6,19 +6,15 @@
 
 	function api(coreApi) {
 
-		var rawGen = function(id, url) {
-			return "plugins/"+id+"/"+"client/"+url;
-		}, o = {
+		var o = {
 
-			connector: "/js/plugins/connector.js",
+			api: coreApi.api.then(function(api) {
+				return api.plugins;
+			}),
 
-			absoluteRaw: function(id, url) {
-				return coreApi.absoluteRaw(rawGen(id, url));
-			},
+			apiRaw: null,
 
-			raw: function(id, url, useSuper) {
-				return useSuper?coreApi.raw(rawGen(id, url)):rawGen(id, url);
-			},
+			connector: null,
 
 			client: function(id) {
 				var t = this;
@@ -34,6 +30,21 @@
 				};
 			}
 		};
+
+		coreApi.api.then(function(api) {
+			o.apiRaw = api.plugins;
+
+			o.raw = function(id, url) {
+				return this.apiRaw.base+"/"+id+this.apiRaw.plugin.client+"/"+url;
+			};
+
+			o.absoluteRaw = function(id, url) {
+				return coreApi.absolute+this.raw(id, url);
+			};
+
+			o.connector = api.js.base+api.js.connectors.base+api.js.connectors.plugin;
+
+		});
 
 		return o;
 	}

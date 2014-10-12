@@ -9,8 +9,6 @@ var config = require("../config"),
 function start() {
 	app = express();
 
-	// STATIC SERVICES:
-
 	app.use(function(req, res, next) {
 		res.set({
 			"Content-Security-Policy": "default-src 'self'", // Only access resources that are part of runnr.js (limit on request)
@@ -20,7 +18,7 @@ function start() {
 		next();
 	});
 
-	app.get(api.base+api.license, function(req, res) {
+	app.get(api.license, function(req, res) {
 		res.sendfile("LICENSE", {
 			root: config.root,
 			lastModified: false,
@@ -38,17 +36,31 @@ function start() {
 
 	app.use(api.plugins.base, require("./plugins"));
 
-	app.use(api.base+api.default, function(req, res, next) {
+	app.get(api.api, function(req, res) {
+		res.json(api);
+	});
+
+	// MAIN PAGE:
+
+	app.engine("html", swig.renderFile);
+
+	app.set("view engine", "html");
+	app.set("view cache", true);
+
+	swig.setDefaults({
+		varControls: ["{{{{", "}}}}"],
+		tagControls: ["{{{%", "%}}}"],
+		cmtControls: ["{{{#", "#}}}"],
+		cache: false
+	});
+
+	app.set("views", config.root+ "/client");
+
+	app.use(api.default, function(req, res, next) {
 		res.set({
 			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
 		});
-		next();
-	}).use(api.base+api.default, express.static(config.root + "/client", {
-		lastModified: false
-	}));
-
-	app.get(api.api, function(req, res) {
-		res.json(api);
+		res.render("index", api);
 	});
 
 	security.get().then(function(key) {

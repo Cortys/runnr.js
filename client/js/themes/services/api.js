@@ -7,10 +7,11 @@
 	function api($http, $q, coreApi) {
 		var o = {
 
-			raw: function(url, useSuper) {
-				var v = "theme/raw/"+url;
-				return useSuper?coreApi.raw(v):v;
-			},
+			api: coreApi.api.then(function(api) {
+				return api.themes;
+			}),
+
+			apiRaw: null,
 
 			get theme() {
 				return themePromise;
@@ -29,7 +30,14 @@
 			}
 		},
 
-		themePromise = coreApi.get("theme/manifest", { responseType:"json" }).then(function(result) {
+		themePromise = o.api.then(function(api) {
+			o.apiRaw = api;
+
+			o.raw = function(url) {
+				return api.base+api.raw+"/"+url;
+			};
+			return coreApi.get(api.base+api.manifest, { responseType:"json" });
+		}).then(function(result) {
 			return result.data;
 		}),
 		renderDeferred = $q.defer(),

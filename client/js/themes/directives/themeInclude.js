@@ -16,7 +16,7 @@
 					themesApi.addRenderingPromise(deferred.promise);
 
 					themesApi.theme.then(function(theme) {
-						element.attr("ng-include", "'"+ themesApi.raw(scope.$eval(attrs.src) || theme.html, true) +"'");
+						element.attr("ng-include", "'"+ themesApi.raw(scope.$eval(attrs.src) || theme.html) +"'");
 						element.removeAttr("src");
 						$compile(element)(scope);
 					});

@@ -4,8 +4,8 @@ var api = {
 	api: "/api"
 };
 
-api.default = "/";
-api.license = "/license";
+api.default = api.base+"/";
+api.license = api.base+"/license";
 
 // Non exchangable content: '' prefix
 api.js = {
