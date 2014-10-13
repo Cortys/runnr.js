@@ -56,15 +56,15 @@ function start() {
 
 	app.set("views", config.root+ "/client");
 
-	app.use(api.default, function(req, res, next) {
+	app.get(api.default, function(req, res, next) {
 		res.set({
 			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
 		});
 		res.render("index", api);
 	});
 
-	security.get().then(function(key) {
-		https.createServer({
+	return security.get().then(function(key) {
+		return https.createServer({
 			key: key.serviceKey,
 			cert: key.certificate,
 			ca: key.certificate,
@@ -75,7 +75,6 @@ function start() {
 		console.error("Could not start HTTPS server. "+err);
 	});
 
-	return app;
 }
 
 module.exports = start;
