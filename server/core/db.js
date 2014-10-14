@@ -9,4 +9,6 @@ db = {
 	security: new Datastore({ filename:path.join(config.userData, "security.db"), autoload:true })
 };
 
+console.log("Established database connection.");
+
 module.exports = db;

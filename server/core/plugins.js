@@ -34,6 +34,7 @@ function scan(dir) {
 function init() {
 
 	plugins.countAll().then(function(count) {
+		console.log("Plugin database ready.");
 		if(count)
 			return;
 
@@ -42,6 +43,8 @@ function init() {
 
 		scan(path.join(config.root, "corePlugins"));
 		scan(path.join(config.root, "plugins"));
+
+		console.log("Initialized new plugin db.");
 	});
 }
 

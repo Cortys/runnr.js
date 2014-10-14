@@ -1,7 +1,7 @@
 var config = require("../config"),
 	express = require("express"),
 	router = express.Router(),
-	api = require("./api").themes,
+	api = require("../api").themes,
 	Q = require("q"),
 	themes = require("../core/themes");
 

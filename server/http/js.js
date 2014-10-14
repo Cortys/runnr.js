@@ -1,7 +1,7 @@
 var config = require("../config"),
 	express = require("express"),
 	router = express.Router(),
-	api = require("./api").js,
+	api = require("../api").js,
 	jsPath = config.root + "/client/js/",
 	min = !config.devMode && ".min" || "";
 

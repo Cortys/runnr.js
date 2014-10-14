@@ -20,7 +20,8 @@ api.js = {
 	}
 };
 api.frameworks = {
-	base: api.base+"/frameworks"
+	base: api.base+"/frameworks",
+	socket: "/socket.io"
 };
 
 // Customizable content: '/api' prefix

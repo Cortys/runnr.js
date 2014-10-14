@@ -1,7 +1,7 @@
 var config = require("../config"),
 	express = require("express"),
 	plugins = require("../core/plugins"),
-	api = require("./api"),
+	api = require("../api"),
 	Q = require("q"),
 	router = express.Router();
 
