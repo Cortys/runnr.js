@@ -21,7 +21,8 @@ function start() {
 		}));
 	} catch(err) {
 		console.error("Starting HTTP server failed, due to insufficient session security entropy. Reattempting...");
-		start();
+		setTimeout(start, 5);
+		return;
 	}
 
 	// Set Default headers:
