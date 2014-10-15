@@ -30,14 +30,15 @@
     "dependencies": {
         "express": "4.7.x",
         "express-session": "1.8.x",
+        "cookie": "0.1.x",
+        "cookie-signature": "1.0.x",
         "swig": "1.4.x",
         "body-parser": "1.9.x",
         "socket.io": "1.1.x",
         "pem": "1.4.x",
         "async": "0.9.x",
         "nedb": "Cortys/nedb",
-        "q": "1.0.x",
-        "caja": "Cortys/node-caja-sanitizer"
+        "q": "1.0.x"
     },
     "devDependencies": {
         "grunt": "^0.4.5",

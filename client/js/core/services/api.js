@@ -2,9 +2,9 @@
 	angular.module("core")
 		.factory("core.api", api);
 
-	api.$inject = ["$http", "$location"];
+	api.$inject = ["$http", "$location", "core.socket"];
 
-	function api($http, $location) {
+	function api($http, $location, socket) {
 
 		var o = {
 

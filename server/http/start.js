@@ -6,15 +6,18 @@ var config = require("../config"),
 	https = require("https"),
 	security = require("../core/security"),
 	api = require("../api"),
-	app;
+	app, secret;
 
 function start() {
 	app = express();
 	console.log("Starting HTTP server.");
 	try {
 		// Use sessions:
+
+		secret = crypto.randomBytes(256).toString();
+
 		app.use(session({
-			secret: crypto.randomBytes(256).toString(),
+			secret: secret,
 			cookie: { path: "/", httpOnly: true, secure: true, maxAge: null },
 			resave: true,
 			saveUninitialized: true
@@ -84,7 +87,8 @@ function start() {
 
 	// Start server:
 	return security.get().then(function(key) {
-		return https.createServer({
+
+		var server = https.createServer({
 			key: key.serviceKey,
 			cert: key.certificate,
 			ca: key.certificate,
@@ -93,6 +97,10 @@ function start() {
 		}, app).listen(config.port, function() {
 			console.log("Server started on port "+config.port+".");
 		});
+
+		server.sessionSecret = secret;
+
+		return server;
 	}, function(err) {
 		console.error("Could not start HTTPS server. "+err);
 	});
