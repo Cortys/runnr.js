@@ -1,2 +1,2 @@
-Runnr.js
-========
+![runnr.js](logo.png)
+
