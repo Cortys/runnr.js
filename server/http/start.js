@@ -1,6 +1,7 @@
 var config = require("../config"),
 	crypto = require("crypto"),
 	express = require("express"),
+	favicon = require("serve-favicon"),
 	session = require("express-session"),
 	swig = require("swig"),
 	https = require("https"),
@@ -27,6 +28,8 @@ function start() {
 		setTimeout(start, 5);
 		return;
 	}
+
+	app.use(favicon(config.root+"/client/favicon.ico"));
 
 	// Set Default headers:
 	app.use(function(req, res, next) {

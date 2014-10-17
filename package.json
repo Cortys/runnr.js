@@ -30,6 +30,7 @@
     "dependencies": {
         "express": "4.7.x",
         "express-session": "1.8.x",
+        "serve-favicon": "2.1.x",
         "cookie": "0.1.x",
         "cookie-signature": "1.0.x",
         "swig": "1.4.x",
