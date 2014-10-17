@@ -7,5 +7,6 @@
 	function socket($location) {
 		var connection = io($location.protocol()+"://"+$location.host()+":"+location.port);
 		console.log(connection);
+		return null;
 	}
 }());
