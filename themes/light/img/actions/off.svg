@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.0.4 (8053) - http://www.bohemiancoding.com/sketch -->
-    <title>themes/light/img/actions/off</title>
-    <desc>Created with Sketch.</desc>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs></defs>
-    <g id="Runners" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="design/desktop" sketch:type="MSArtboardGroup" transform="translate(-1447.000000, -17.000000)" fill="#555555">
-            <g id="head" sketch:type="MSLayerGroup">
-                <g id="menuActions" transform="translate(1360.000000, 10.000000)" sketch:type="MSShapeGroup">
+    <g id="Runners" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="design/desktop" transform="translate(-1447.000000, -17.000000)" fill="#555555">
+            <g id="head">
+                <g id="menuActions" transform="translate(1360.000000, 10.000000)">
                     <g id="off">
                         <path d="M97.8648649,7.52824807 C100.868078,8.68047483 103,11.5912688 103,15 C103,19.4182782 99.4182782,23 95,23 C90.5817218,23 87,19.4182782 87,15 C87,11.6323149 89.0808879,8.75064751 92.027027,7.57063434 L92.027027,11.2175024 C90.9078588,12.0983666 90.1891892,13.4652561 90.1891892,15 C90.1891892,17.6569376 92.3430624,19.8108108 95,19.8108108 C97.6569376,19.8108108 99.8108108,17.6569376 99.8108108,15 C99.8108108,13.416391 99.0456489,12.0114953 97.8648649,11.1348526 L97.8648649,7.52824807 L97.8648649,7.52824807 Z M93.8108108,7 L93.8108108,15.5178993 C93.8108108,16.1274683 94.3036123,16.6216216 94.9164464,16.6216216 L95.0835536,16.6216216 C95.6941793,16.6216216 96.1891892,16.1312561 96.1891892,15.5178993 L96.1891892,7 L93.8108108,7 Z"></path>
                     </g>
