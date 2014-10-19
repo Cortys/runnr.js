@@ -79,14 +79,14 @@ module.exports = function(grunt) {
 		},
 		nodemon: {
 			normal: {
-				script: "start.js",
+				script: "index.js",
 				options: {
 					watch: ["server"],
 					args: []
 				}
 			},
 			dev: {
-				script: "start.js",
+				script: "index.js",
 				options: {
 					watch: ["server"],
 					args: ["dev"]

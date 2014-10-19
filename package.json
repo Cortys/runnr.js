@@ -19,13 +19,13 @@
         "url": "https://github.com/Cortys/runnr.js.git"
     },
     "preferGlobal": true,
-    "main": "./start.js",
+    "main": "./index.js",
     "bin": {
-        "runnr": "./start.js"
+        "runnr": "./index.js"
     },
     "scripts": {
         "prepublish": "grunt build",
-        "start": "node start.js"
+        "start": "node index.js"
     },
     "dependencies": {
         "express": "4.7.x",

@@ -1,9 +1,9 @@
-var db = require("./db").plugins,
-	config = require("../config"),
+var db = require("../db").plugins,
+	config = require("../../config"),
 	fs = require("fs"),
 	path = require("path"),
 	Q = require("q"),
-	Plugin = require("./plugins/Plugin"),
+	Plugin = require("./Plugin"),
 
 plugins = {
 	getRaw: function(filter, limit) {

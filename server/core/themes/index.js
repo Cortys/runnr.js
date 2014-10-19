@@ -1,7 +1,7 @@
-var config = require("../config"),
+var config = require("../../config"),
 	themeId = "light",
 
-	Theme = require("./themes/Theme"),
+	Theme = require("./Theme"),
 
 	currentTheme = new Theme(themeId),
 
