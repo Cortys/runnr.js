@@ -1,13 +1,16 @@
 var Q = require("q"),
-	Api = require("./Api");
+	Api = require("./Api"),
+	api;
 
 // Base:
 
 var apiBase = {
-		plugins: require("../plugins"),
-		theme: require("../themes")
-	};
+	theme: require("../themes"),
+	plugins: require("../plugins")
+};
 
 Api.prototype.expose(apiBase, null, apiBase);
 
-module.exports = new Api("api", apiBase);
+api = new Api("api", apiBase);
+
+module.exports = api;

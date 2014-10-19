@@ -10,12 +10,6 @@
 
 				absolute: $location.protocol()+"://"+$location.host()+":"+location.port,
 
-				api: $http.get("/api").then(function(data) {
-					return (o.apiRaw = data.data);
-				}),
-
-				apiRaw: null,
-
 				get: function(url, data) {
 					var t = this;
 					if(data === undefined)

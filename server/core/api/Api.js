@@ -7,26 +7,32 @@ var Q = require("q"),
 			if(object && typeof object != "object") // if non null object
 				return null;
 		},
-		staticRoute: function(object) {
+		staticRoute: function(object) { // given key-value pair (or promise to one) is mapped to a route function
 			var res;
 			if((res = this._validate(object)) !== undefined)
 				return res;
+			object = Q(object);
 			return function(route) {
-				var res;
-				if(typeof (res = object[route]) == "object")
-					return Q(res);
-				else
-					return Q.reject(new Error("'"+route+"' not found."));
+				return object.then(function(object) {
+					var res;
+					if(typeof (res = object[route]) == "object")
+						return res;
+					else
+						throw new Error("'"+route+"' not found.");
+				});
 			};
 		},
-		staticContent: function(object) {
+		staticContent: function(object) { // given key-value pair (or promise to one) is mapped to a content function
 			var res;
 			if((res = this._validate(object)) !== undefined)
 				return res;
+			object = Q(object);
 			return function(content, data) {
 				if(data !== undefined)
 					return Q.reject(new Error("'"+content+"' is read-only."));
-				return Q(object[content]);
+				return object.then(function (object) {
+					return Q(object[content]);
+				});
 			};
 		}
 	};
@@ -50,6 +56,8 @@ Api.prototype = {
 
 	route: function(location) {
 		var t = this;
+		if(location == null || location === "")
+			return t;
 		return new Api(t.name+"/"+location, t._basePromise.then(function(base) {
 			if(typeof base._exposed.router != "function")
 				throw new Error("This route cannot be routed.");
@@ -76,7 +84,7 @@ Api.prototype = {
 			content: helper.staticContent(content),
 			router: helper.staticRoute(router)
 		};
-		return api;
+		return this;
 	},
 
 	// public static helpers:

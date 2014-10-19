@@ -6,15 +6,16 @@ var config = require("../config"),
 	swig = require("swig"),
 	https = require("https"),
 	security = require("../core/security"),
-	api = require("../api"),
+	api = require("./api"),
 	app, secret;
 
 function start() {
 	app = express();
-	console.log("Starting HTTP server.");
-	try {
-		// Use sessions:
 
+	console.log("Starting HTTP server.");
+
+	// Use sessions:
+	try {
 		secret = crypto.randomBytes(256).toString();
 
 		app.use(session({
@@ -24,7 +25,7 @@ function start() {
 			saveUninitialized: true
 		}));
 	} catch(err) {
-		console.error("Starting HTTP server failed, due to insufficient session security entropy. Reattempting...");
+		console.error("Starting HTTP server failed due to insufficient session security entropy. Reattempting...");
 		setTimeout(start, 5);
 		return;
 	}
@@ -42,7 +43,7 @@ function start() {
 	});
 
 	// License:
-	app.get(api.license, function(req, res) {
+	app.get("/license", function(req, res) {
 		res.sendfile("LICENSE", {
 			root: config.root,
 			lastModified: false,
@@ -53,20 +54,13 @@ function start() {
 	});
 
 	// Content:
-	app.use(api.frameworks.base, express.static(config.root + "/bower_components"));
+	app.use("/frameworks", express.static(config.root + "/bower_components"));
 
-	app.use(api.js.base, require("./js"));
+	app.use("/js", require("./js"));
 
-	app.use(api.themes.base, require("./themes"));
-
-	app.use(api.plugins.base, require("./plugins"));
-
-	app.get(api.api, function(req, res) {
-		res.json(api);
-	});
+	app.use("/api", require("./api"));
 
 	// Main page:
-
 	app.engine("html", swig.renderFile);
 
 	app.set("view engine", "html");
@@ -81,7 +75,7 @@ function start() {
 
 	app.set("views", config.root+ "/client");
 
-	app.get(api.default, function(req, res, next) {
+	app.get("/", function(req, res, next) {
 		res.set({
 			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
 		});

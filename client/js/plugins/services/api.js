@@ -8,12 +8,6 @@
 
 		var o = {
 
-			api: coreApi.api.then(function(api) {
-				return api.plugins;
-			}),
-
-			apiRaw: null,
-
 			connector: null,
 
 			client: function(id) {
@@ -31,20 +25,15 @@
 			}
 		};
 
-		coreApi.api.then(function(api) {
-			o.apiRaw = api.plugins;
+		o.raw = function(id, url) {
+			return "/api/plugins/"+id+this.apiRaw.plugin.client+"/"+url;
+		};
 
-			o.raw = function(id, url) {
-				return this.apiRaw.base+"/"+id+this.apiRaw.plugin.client+"/"+url;
-			};
+		o.absoluteRaw = function(id, url) {
+			return coreApi.absolute+this.raw(id, url);
+		};
 
-			o.absoluteRaw = function(id, url) {
-				return coreApi.absolute+this.raw(id, url);
-			};
-
-			o.connector = api.js.base+api.js.connectors.base+api.js.connectors.plugin;
-
-		});
+		o.connector = "/js/connectors/common.js";
 
 		return o;
 	}
