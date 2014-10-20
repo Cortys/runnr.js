@@ -28,7 +28,7 @@
 			}
 		},
 
-		themePromise = coreApi.get(o.raw("manifest"), { responseType:"json" }).then(function(result) {
+		themePromise = coreApi.get(o.raw("?manifest"), { responseType:"json" }).then(function(result) {
 			return result.data;
 		}),
 		renderDeferred = $q.defer(),

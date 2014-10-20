@@ -2,10 +2,15 @@ var config = require("../../config"),
 	path = require("path"),
 	fs = require("fs"),
 	Q = require("q"),
+
+	api = require("../api/tools"),
+
 	themePath = config.root + "/themes";
 
 function Theme(id) {
 	this.id = id;
+
+	api.expose(this);
 }
 
 Theme.prototype = {

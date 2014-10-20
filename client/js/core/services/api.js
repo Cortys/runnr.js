@@ -15,7 +15,7 @@
 					if(data === undefined)
 						data = {};
 					data.api = true;
-					return $http.post(url, data);
+					return $http.get(url, data);
 				}
 		};
 		return o;

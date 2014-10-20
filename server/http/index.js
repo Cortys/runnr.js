@@ -6,7 +6,7 @@ var config = require("../config"),
 	swig = require("swig"),
 	https = require("https"),
 	security = require("../core/security"),
-	api = require("./api"),
+	api = require("../api"),
 	app, secret;
 
 function start() {

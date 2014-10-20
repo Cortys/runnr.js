@@ -9,7 +9,7 @@ var apiBase = {
 	plugins: require("../plugins")
 };
 
-Api.prototype.expose(apiBase, null, apiBase);
+Api.prototype.expose(apiBase, apiBase, null); // apiBase exposes itself as a static router. No content is provided.
 
 api = new Api("api", apiBase);
 
