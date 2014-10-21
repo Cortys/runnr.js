@@ -37,7 +37,7 @@ var Q = require("q"),
 			object = Q(object);
 			return function(content, data) {
 				if(data !== undefined)
-					return Q.reject(new Error("'"+content+"' is read-only."));
+					throw new Error("'"+content+"' is read-only.");
 				return object.then(function (object) {
 					if(!(content in object) || typeof object[content] == "function" || (""+content).charAt(0) == "_")
 						throw new Error("'"+content+"' could not be found.");
@@ -65,7 +65,9 @@ var Q = require("q"),
 		}
 	};
 
-function Exposer() {}
+function Exposer() {
+
+}
 Exposer.prototype = Object.create(null);
 
 function Api(name, basePromise) {
@@ -128,14 +130,12 @@ Api.prototype = {
 				o = router._exposed;
 			else {
 				o = new Exposer();
-				console.log("new", router, "|||", content);
-				if(router === content === undefined)
+				if(router === content && router === undefined)
 					router = content = object;
 				o.router = helper.dynamicRouteCast(router);
 				o.content = helper.dynamicContentCast(content);
 				Object.freeze(o);
 			}
-			console.log(o);
 			Object.defineProperty(object, "_exposed", { value: o });
 			return this;
 		}

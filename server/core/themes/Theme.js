@@ -10,22 +10,17 @@ var config = require("../../config"),
 function Theme(id) {
 	this.id = id;
 
+	this.manifest = this._manifest;
+
 	api.expose(this);
 }
 
 Theme.prototype = {
 	id: null,
 
-	get manifest() {
-		var t = this;
-		return Q.ninvoke(fs, "readFile", path.join(themePath, t.id, "manifest.json")).then(function(data) {
-			var manifest = JSON.parse(data);
-			Object.defineProperty(t, "manifest", {
-				value: Q(manifest),
-				writable: false,
-				configurable: false
-			});
-			return manifest;
+	get _manifest() {
+		return Q.ninvoke(fs, "readFile", path.join(themePath, this.id, "manifest.json")).then(function(data) {
+			return JSON.parse(data);
 		});
 	},
 

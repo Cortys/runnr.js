@@ -20,6 +20,8 @@ router.all("*", function(req, res, next) {
 	var i = req.url.indexOf("?"),
 		content = i<0?undefined:querystring.unescape(req.url.substr(i+1));
 	req.api.get(content).then(function(content) {
+		if(typeof content == "number")
+			content += "";
 		res.send(content);
 	}, function(err) {
 		if(typeof err != "object")
