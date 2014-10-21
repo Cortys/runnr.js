@@ -30,7 +30,7 @@ router.all("*", function(req, res, next) {
 		Object.defineProperty(err, "type", { value:err.type, enumerable:true });
 		res.status(404).json(err);
 	});
-}).post("*", function(req, res, next) {
+}).put("*", function(req, res, next) {
 
 });
 

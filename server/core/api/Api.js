@@ -65,9 +65,7 @@ var Q = require("q"),
 		}
 	};
 
-function Exposer() {
-
-}
+function Exposer() {}
 Exposer.prototype = Object.create(null);
 
 function Api(name, basePromise) {
