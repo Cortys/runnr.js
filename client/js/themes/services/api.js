@@ -5,32 +5,40 @@
 	api.$inject = ["$http", "$q", "core.api"];
 
 	function api($http, $q, coreApi) {
-		var o = {
-
-			raw: function(url) {
-				return "/api/theme/"+url;
+		var o = Object.create(coreApi.route("theme"), {
+			theme: {
+				get: function() {
+					return themePromise;
+				}
+			},
+			rendered: {
+				get: function() {
+					return renderDeferred.promise;
+				}
 			},
 
-			get theme() {
-				return themePromise;
+			raw: {
+				value: function(content) {
+					return raw.url.get(content);
+				}
 			},
-			get rendered() {
-				return renderDeferred.promise;
-			},
-			addRenderingPromise: function(promise) {
-				renderPromises++;
-				promise.then(function() {
-					if(--renderPromises <= 0)
-						renderDeferred.resolve();
-				}, function() {
-					renderDeferred.reject();
-				});
+
+			addRenderingPromise: {
+				value: function(promise) {
+					renderPromises++;
+					promise.then(function() {
+						if(--renderPromises <= 0)
+							renderDeferred.resolve();
+					}, function() {
+						renderDeferred.reject();
+					});
+				}
 			}
-		},
-
-		themePromise = coreApi.get(o.raw("?manifest"), { responseType:"json" }).then(function(result) {
-			return result.data;
 		}),
+		
+		raw = o.route("raw"),
+
+		themePromise = o.get("manifest"),
 		renderDeferred = $q.defer(),
 		renderPromises = 0;
 

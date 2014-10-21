@@ -24,7 +24,7 @@
 			_routeCache: null,
 
 			get _route() {
-				return this._routeCache || (this._routeCache = this._parent?this._parent.route.concat([name]):[name]);
+				return this._routeCache || (this._routeCache = this._parent?this._parent._route.concat([this.name]):[this.name]);
 			},
 
 			route: function(route) {
@@ -33,12 +33,11 @@
 
 			get: function(content) {
 				var t = this;
+				console.log(t._route);
 				return $http.get(t.url.get(content), {}).then(function(data) {
-					console.log(data);
-					return data;
+					return data.data;
 				}, function(err) {
-					console.error(err);
-					return err;
+					return err.data;
 				});
 			},
 
@@ -56,11 +55,11 @@
 			_routeCache: null,
 
 			get _route() {
-				return this._routeCache || (this._routeCache = this.api._route.join("/"));
+				return this._routeCache || (this._routeCache = this._api._route.join("/"));
 			},
 
 			get: function(content) {
-				return "/"+this._route+"?"+String.urlEncode(content);
+				return "/"+this._route+"?"+encodeURI(content);
 			},
 
 			send: function(content, data) {

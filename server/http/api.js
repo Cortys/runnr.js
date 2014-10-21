@@ -1,6 +1,7 @@
 var express = require("express"),
 	router = express.Router(),
 	querystring = require("querystring"),
+	stream = require("stream"),
 	api = require("../core/api");
 
 router.all("*", function(req, res, next) {
@@ -20,6 +21,8 @@ router.all("*", function(req, res, next) {
 	var i = req.url.indexOf("?"),
 		content = i<0?undefined:querystring.unescape(req.url.substr(i+1));
 	req.api.get(content).then(function(content) {
+		if(content instanceof stream.Readable)
+			return content.pipe(res);
 		if(typeof content == "number")
 			content += "";
 		res.send(content);

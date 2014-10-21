@@ -25,7 +25,7 @@ Theme.prototype = {
 	},
 
 	raw: function(file) {
-		return path.join(themePath, this.id, file);
+		return fs.createReadStream(path.join(themePath, this.id, file));
 	}
 };
 
