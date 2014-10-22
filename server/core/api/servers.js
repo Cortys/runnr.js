@@ -35,57 +35,51 @@ var Q = require("q"),
 	helper = require("./helper"),
 
 	isPropertyPublic = function(object, name) {
-		return Object.hasOwnProperty(object, name) && Object.getOwnPropertyDescriptor(object, name).enumerable && (""+name).charAt(0) != "_";
+		return object.propertyIsEnumerable(name) && (""+name).charAt(0) != "_";
 	},
 
-	// STATIC OBJECT EXPOSAL: allows read-only access to object properties, static routing
-	staticServer = new AbstractServer(function router(route) {
-		return Q(this).then(function(object) {
-			var res;
-			if(isPropertyPublic(object, route) && typeof (res = object[route]) == "object")
-				return res;
-			else
-				throw new Error("'"+route+"' could not found.");
-		});
-	}, function provider(content, data) {
-		if(data !== undefined)
-			throw new Error("'"+content+"' is read-only.");
-		return dynamicServer._provider.call(this, content);
-	}, true),
-
-	// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties, static routing
-	dynamicServer = new AbstractServer(staticServer._router, function provider(content, data) {
+	objectServer = function(name, data) {
 		return Q(this).then(function (object) {
-			if(!isPropertyPublic(object, content))
-				throw new Error("'"+content+"' could not be found.");
+			console.log(object, name, object.propertyIsEnumerable(name));
+			if(!isPropertyPublic(object, name))
+				throw new Error("'"+name+"' could not be found.");
 			if(data !== undefined)
-				object[content] = data;
-			return Q(object[content]);
+				object[name] = data;
+			return Q(object[name]);
 		});
-	}, true),
+	},
 
-servers = {
-	static: staticServer,
+	servers = {
 
-	dynamic: dynamicServer,
-
-	// EXPOSE FILE SYSTEM: read-only access, no routing
-	fs: new AbstractServer(null, function provider(pathMap, options) {
-		var map;
-		if(typeof pathMap == "string")
-			map = function(content) {
-				return path.join(pathMap, content);
-			};
-		else if(typeof pathMap != "function")
-			throw new Error("File system server map has to be of type string or function.");
-		else
-			map = pathMap;
-		return function(content, data) {
+		// STATIC OBJECT EXPOSAL: allows read-only access to object properties, static routing
+		static: new AbstractServer(objectServer, function provider(content, data) {
 			if(data !== undefined)
-				throw new Error("File system server does not allow writing access.");
-			return fs.createReadStream(pathMap(content), options);
-		};
-	})
-};
+				throw new Error("'"+content+"' is read-only.");
+			return objectServer.call(this, content);
+		}, true),
+
+		// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties, static routing
+		dynamic: new AbstractServer(objectServer, objectServer, true),
+
+		filtered: new AbstractServer(),
+
+		// FILE SYSTEM EXPOSAL: read-only access, no routing
+		fs: new AbstractServer(null, function provider(pathMap, options) {
+			var map;
+			if(typeof pathMap == "string")
+				map = function(content) {
+					return path.join(pathMap, content);
+				};
+			else if(typeof pathMap != "function")
+				throw new Error("File system server map has to be of type string or function.");
+			else
+				map = pathMap;
+			return function(content, data) {
+				if(data !== undefined)
+					throw new Error("File system server does not allow writing access.");
+				return fs.createReadStream(pathMap(content), options);
+			};
+		})
+	};
 
 module.exports = servers;

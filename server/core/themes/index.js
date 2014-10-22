@@ -2,7 +2,7 @@ var config = require("../../config"),
 
 	//api,
 
-	api = require("../api/tools"),
+	api = require("../api"),
 
 	themeId = "light",
 

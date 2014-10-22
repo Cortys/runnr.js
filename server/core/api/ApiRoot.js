@@ -25,8 +25,20 @@ ApiRoot.prototype.publish = function(name, exposed) {
 
 	if(name in this._routes)
 		throw new Error("The route '"+name+"' is already used.");
-
+	console.log(exposed._exposed.published);
+	exposed._exposed.published = name;
+	console.log(exposed._exposed.published);
 	this._routes[name] = exposed;
+
+	return this;
+};
+
+ApiRoot.prototype.unpublish = function(exposed) {
+	if(!helper.isExposed(exposed) || exposed._exposed.published === undefined)
+		throw new TypeError("Given object was not published.");
+
+	exposed._exposed.published = undefined;
+	delete this._routes[exposed._exposed.published];
 
 	return this;
 };
@@ -48,8 +60,12 @@ function Offer(object, baseApi) {
 	var routers = this._routers = [],
 		providers = this._providers = [],
 		server = Offer.server,
-		router = server.bind(undefined, routers),
-		provider = server.bind(undefined, providers),
+		router = function(route) {
+			return server.call(this, routers, arguments);
+		},
+		provider = function(route) {
+			return server.call(this, providers, arguments);
+		},
 
 		o = helper.exposer({
 			router: { value: router },
@@ -60,7 +76,7 @@ function Offer(object, baseApi) {
 
 }
 
-Offer.server = function(arr) {
+Offer.server = function(arr, args) {
 
 	if(arr.length === 0)
 		throw helper.EMPTY;
@@ -70,7 +86,7 @@ Offer.server = function(arr) {
 	arr.forEach(function(s) {
 		if(!curr)
 			try {
-				curr = s.apply(t, Array.prototype.slice.call(arguments, 1));
+				curr = s.apply(t, args);
 				if(!Q.isPromiseAlike(curr))
 					return false;
 			} catch(err) {
@@ -78,7 +94,7 @@ Offer.server = function(arr) {
 			}
 		else
 			curr.then(undefined, function(err) {
-				return s.apply(t, Array.prototype.slice.call(arguments, 1).concat([err]));
+				return s.apply(t, [].concat(args, [err]));
 			});
 	});
 	return curr;
@@ -103,7 +119,7 @@ Offer.prototype = {
 	router: function(router) {
 		var a = arguments.length;
 		for(var i = 0; i < a; i++)
-			this._pushRouter(helper.routeCast(arguments[i]));
+			this._pushRouter(helper.routerCast(arguments[i], true));
 
 		return this;
 	},
@@ -111,7 +127,7 @@ Offer.prototype = {
 	provider: function(provider) {
 		var a = arguments.length;
 		for(var i = 0; i < a; i++)
-			this._pushProvider(helper.providerCast(arguments[i]));
+			this._pushProvider(helper.providerCast(arguments[i], true));
 
 		return this;
 	},
@@ -122,8 +138,8 @@ Offer.prototype = {
 			var v = arguments[i];
 			if(!helper.isExposed(v))
 				throw new TypeError("Provided redirect target [index = "+i+"] is not exposed.");
-			this._pushRouter(v._exposed.router);
-			this._pushProvider(v._exposed.provider);
+			this._pushRouter(v._exposed.router.bind(v));
+			this._pushProvider(v._exposed.provider.bind(v));
 		}
 
 		return this;
@@ -132,6 +148,13 @@ Offer.prototype = {
 	publish: function(name) {
 
 		this._base.publish(name, this._object);
+
+		return this;
+	},
+
+	unpublish: function() {
+
+		this._base.unpublish(this._object);
 
 		return this;
 	}

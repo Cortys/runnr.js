@@ -3,7 +3,7 @@ var config = require("../../config"),
 	fs = require("fs"),
 	Q = require("q"),
 
-	api = require("../api/tools"),
+	api = require("../api"),
 
 	themePath = config.root + "/themes";
 
@@ -12,7 +12,7 @@ function Theme(id) {
 
 	this.manifest = this._manifest;
 
-	api.expose(this);
+	api.offer(this).provider(api.serve.static.content());
 }
 
 Theme.prototype = {
