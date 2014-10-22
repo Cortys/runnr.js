@@ -16,6 +16,7 @@ themes = {
 	}
 };
 
-api.expose(themes, themes.current);
+api.offer(themes).redirect(themes.current).publish("theme");
+console.log(api._routes);
 
 module.exports = themes;
