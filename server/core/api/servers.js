@@ -40,7 +40,6 @@ var Q = require("q"),
 
 	objectServer = function(name, data) {
 		return Q(this).then(function (object) {
-			console.log(object, name, object.propertyIsEnumerable(name));
 			if(!isPropertyPublic(object, name))
 				throw new Error("'"+name+"' could not be found.");
 			if(data !== undefined)
@@ -61,6 +60,9 @@ var Q = require("q"),
 		// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties, static routing
 		dynamic: new AbstractServer(objectServer, objectServer, true),
 
+
+
+		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers
 		filtered: new AbstractServer(),
 
 		// FILE SYSTEM EXPOSAL: read-only access, no routing

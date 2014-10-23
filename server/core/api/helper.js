@@ -35,6 +35,5 @@ helper.providerCast = helper.cast.bind(helper, "provider");
 
 function Exposer() {}
 Exposer.prototype = Object.create(null);
-Exposer.prototype.constructor = Exposer;
 
 module.exports = helper;
