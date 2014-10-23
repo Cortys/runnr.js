@@ -1,7 +1,6 @@
 var ApiRoot = require("./ApiRoot"),
-	servers = require("./servers"),
 	api = new ApiRoot("api");
 
-api.serve = servers;
+api.serve = require("./servers")(api);
 
 module.exports = api;

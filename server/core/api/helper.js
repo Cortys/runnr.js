@@ -24,7 +24,7 @@ var Q = require("q"),
 		},
 
 		isExposed: function(object) {
-			return object && typeof object == "object" && "_exposed" in object && object._exposed instanceof Exposer;
+			return object && (typeof object == "object" || typeof object == "function") && "_exposed" in object && object._exposed instanceof Exposer;
 		},
 
 		EMPTY: new Error()

@@ -1,6 +1,6 @@
 var Api = require("./Api"),
 	helper = require("./helper"),
-	serve = require("./servers"),
+	serve = require("./servers")(),
 	Offer = require("./Offer"),
 	ChainedOffer = require("./ChainedOffer");
 

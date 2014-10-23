@@ -60,7 +60,29 @@ var Q = require("q"),
 		// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties, static routing
 		dynamic: new AbstractServer(objectServer, objectServer, true),
 
+		// SERVE A DYNAMICALLY CREATED EXPOSED OBJECT: exposed at a given name
+		exposed: function exposed(name, chained) {
+			var f = function(route) {
+				if(route == name)
+					return f;
+				throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
+			}, offer = this._root[chained?"chainedOffer":"offer"](f);
 
+			f.provider = function() {
+				offer.provider.apply(offer, arguments);
+				return f;
+			};
+			f.router = function() {
+				offer.router.apply(offer, arguments);
+				return f;
+			};
+			f.redirect = function() {
+				offer.redirect.apply(offer, arguments);
+				return f;
+			};
+
+			return f;
+		},
 
 		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers
 		filtered: new AbstractServer(),
@@ -84,4 +106,8 @@ var Q = require("q"),
 		})
 	};
 
-module.exports = servers;
+module.exports = function init(apiRoot) {
+	if(typeof apiRoot != "object")
+		return servers;
+	return Object.create(servers, { _root: { value: apiRoot } });
+};

@@ -21,8 +21,15 @@ router.all("*", function(req, res, next) {
 	var i = req.url.indexOf("?"),
 		content = i<0?undefined:querystring.unescape(req.url.substr(i+1));
 	req.api.get(content).then(function(content) {
-		if(content instanceof stream.Readable)
+		if(content instanceof stream.Readable) {
+			console.log(content);
+			setTimeout(function() {
+				content.on("error", function(err) {
+					res.status(404).send();
+				});
+			}, 500);
 			return content.pipe(res);
+		}
 		if(typeof content == "number")
 			content += "";
 		res.send(content);
