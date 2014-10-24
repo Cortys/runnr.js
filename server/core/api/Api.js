@@ -19,8 +19,9 @@ Api.prototype = {
 
 	route: function(location) {
 		var t = this;
-		if(location == null || location === "")
+		if(!location)
 			return t;
+
 		return new Api(t.name+"/"+location, t._basePromise.then(function(base) {
 			try {
 				if(typeof base._exposed.router != "function")
@@ -32,7 +33,7 @@ Api.prototype = {
 				throw err;
 			}
 		}).then(undefined, function(err) {
-			if(typeof err == "object") {
+			if(typeof err == "object" && !("location" in err)) {
 				err.type = "route";
 				err.location = t.name;
 				err.route = location;

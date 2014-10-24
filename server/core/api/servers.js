@@ -37,6 +37,8 @@ var Q = require("q"),
 	},
 
 	objectServer = function(name, data) {
+		if(typeof name != "string")
+			throw new TypeError("'"+name+"' is not of type string.");
 		return Q(this).then(function (object) {
 			if(!isPropertyPublic(object, name))
 				throw new Error("'"+name+"' could not be found.");
@@ -84,7 +86,7 @@ var Q = require("q"),
 
 		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers
 		filtered: function filtered(filter) {
-			return function() {
+			return function(name) {
 
 			};
 		},
@@ -100,7 +102,7 @@ var Q = require("q"),
 				throw new Error("File system server map has to be of type string or function.");
 			else
 				map = pathMap;
-			
+
 			return function(content, data) {
 				if(data !== undefined)
 					throw new Error("File system server does not allow writing access.");

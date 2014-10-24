@@ -14,7 +14,7 @@ router.all("*", function(req, res, next) {
 		go = function() {
 			if(!word.length)
 				return;
-			req.api = req.api.route(word);
+			req.api = req.api.route(querystring.unescape(word));
 			word = "";
 		};
 
