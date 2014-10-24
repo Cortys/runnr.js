@@ -12,14 +12,12 @@ function Theme(id) {
 
 	this.manifest = this._manifest;
 
-	var r = api.serve.exposed("raw").provider(this.raw.bind(this));
-
-	console.log(r);
-
 	api.offer(this).provider(
 		api.serve.static.content()
 	).router(
-		r
+		api.serve.exposed("raw").provider(
+			api.serve.fs.content(this.raw.bind(this))
+		)
 	);
 }
 
@@ -33,9 +31,7 @@ Theme.prototype = {
 	},
 
 	raw: function(file) {
-		var s = fs.createReadStream(path.join(themePath, this.id, file));
-		s.on("error", function(err) {});
-		return s;
+		return path.join(themePath, this.id, file);
 	}
 };
 

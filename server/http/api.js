@@ -5,31 +5,45 @@ var express = require("express"),
 	api = require("../core/api");
 
 router.all("*", function(req, res, next) {
-	var routes = req.path.split("/");
+	var path = req.url,
+		i = 0,
+		l = path.length,
+		location = path.charAt(0),
+		word = "",
+
+		go = function() {
+			if(!word.length)
+				return;
+			req.api = req.api.route(word);
+			word = "";
+		};
+
 	req.api = api;
-	routes.forEach(function(location) {
-		if(location) {
-			req.api = req.api.route(location);
-			if(location == "theme")
-				req.getEnabled = true;
+
+	for(; i < l; location = path.charAt(++i)) {
+		if(location == "/") {
+			go();
+			if(i > 0 && path.charAt(i-1) == "/")
+				break;
+		} else if(location == "?") {
+			go();
+			break;
 		}
-	});
+		else
+			word += location;
+	}
+	req.requestedContent = querystring.unescape(path.substr(i+1));
 	next();
 }).get("*", function(req, res, next) {
-	if(!req.getEnabled)
-		return res.status(404).send();
-	var i = req.url.indexOf("?"),
-		content = i<0?undefined:querystring.unescape(req.url.substr(i+1));
-	req.api.get(content).then(function(content) {
-		if(content instanceof stream.Readable) {
-			console.log(content);
-			setTimeout(function() {
-				content.on("error", function(err) {
-					res.status(404).send();
-				});
-			}, 500);
+
+	req.api.get(req.requestedContent).then(function(content) {
+
+		if(content instanceof api.File)
+			return res.sendfile(content.path);
+
+		if(content instanceof stream.Readable)
 			return content.pipe(res);
-		}
+
 		if(typeof content == "number")
 			content += "";
 		res.send(content);

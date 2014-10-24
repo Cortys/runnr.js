@@ -1,11 +1,8 @@
 function AbstractServer(router, provider, thisBinding) {
-	var m = false;
-	if(typeof router != "function" && (m = true))
-		this.router = this._null;
-	if(typeof provider != "function" && (m = true))
-		this.provider = this._null;
-	if(m) return;
-
+	if(typeof router != "function")
+		router = this._null;
+	if(typeof provider != "function")
+		provider = this._null;
 	if(thisBinding) {
 		this._router = router;
 		this._provider = provider;
@@ -29,8 +26,9 @@ AbstractServer.prototype = {
 };
 
 var Q = require("q"),
-	fs = require("fs"),
 	path = require("path"),
+
+	File = require("./File"),
 
 	helper = require("./helper"),
 
@@ -85,10 +83,14 @@ var Q = require("q"),
 		},
 
 		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers
-		filtered: new AbstractServer(),
+		filtered: function filtered(filter) {
+			return function() {
+
+			};
+		},
 
 		// FILE SYSTEM EXPOSAL: read-only access, no routing
-		fs: new AbstractServer(null, function provider(pathMap, options) {
+		fs: new AbstractServer(null, function provider(pathMap) {
 			var map;
 			if(typeof pathMap == "string")
 				map = function(content) {
@@ -98,10 +100,11 @@ var Q = require("q"),
 				throw new Error("File system server map has to be of type string or function.");
 			else
 				map = pathMap;
+			
 			return function(content, data) {
 				if(data !== undefined)
 					throw new Error("File system server does not allow writing access.");
-				return fs.createReadStream(pathMap(content), options);
+				return new File(map.call(this, content));
 			};
 		})
 	};
