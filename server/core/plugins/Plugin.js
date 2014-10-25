@@ -1,4 +1,5 @@
 var path = require("path"),
+	api = require("../api"),
 	fs = require("fs"),
 	Q = require("q"),
 	db = require("../db").plugins;
@@ -14,6 +15,12 @@ function Plugin(id) {
 	});
 
 	this.client.parent = this;
+	
+	api.offer(this).router(
+		api.serve.route("client").redirect(
+			api.serve.static.exposed(this.client)
+		)
+	);
 }
 
 Plugin.prototype = {

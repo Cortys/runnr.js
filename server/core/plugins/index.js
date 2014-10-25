@@ -1,5 +1,6 @@
 var db = require("../db").plugins,
 	config = require("../../config"),
+	api = require("../api"),
 	fs = require("fs"),
 	path = require("path"),
 	Q = require("q"),
@@ -19,6 +20,15 @@ plugins = {
 		});
 	}
 };
+
+api.offer(plugins)
+	.router(plugins.get)
+	.provider(api.serve.static.content({
+		get all() {
+			return plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 });
+		}
+	}))
+	.publish("plugins");
 
 function scan(dir) {
 	Q.ninvoke(fs, "readdir", dir).then(function(files) {

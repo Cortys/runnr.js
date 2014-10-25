@@ -23,6 +23,10 @@ var Q = require("q"),
 			return exposer;
 		},
 
+		isExposable: function(object) {
+			return object != null && (typeof object == "object" || typeof object == "function");
+		},
+
 		isExposed: function(object) {
 			return object && (typeof object == "object" || typeof object == "function") && "_exposed" in object && object._exposed instanceof Exposer;
 		},

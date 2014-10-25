@@ -1,16 +1,14 @@
-function AbstractServer(router, provider, thisBinding) {
+function AbstractServer(router, provider, redirector) {
 	if(typeof router != "function")
 		router = this._null;
 	if(typeof provider != "function")
 		provider = this._null;
-	if(thisBinding) {
-		this._router = router;
-		this._provider = provider;
-	}
-	else {
-		this.routes = router;
-		this.content = provider;
-	}
+	if(typeof redirector != "function")
+		redirector = this._null;
+
+	this._router = router;
+	this._provider = provider;
+	this.exposed = redirector;
 }
 
 AbstractServer.prototype = {
@@ -38,61 +36,95 @@ var Q = require("q"),
 
 	objectServer = function(name, data) {
 		if(typeof name != "string")
-			throw new TypeError("'"+name+"' is not of type string.");
-		return Q(this).then(function (object) {
-			if(!isPropertyPublic(object, name))
+			throw new TypeError("'"+name+"' has to be of type string.");
+		return Q(this).then(function(object) {
+			if(!isPropertyPublic(object, name) || typeof object[name] == "function")
 				throw new Error("'"+name+"' could not be found.");
 			if(data !== undefined)
 				object[name] = data;
 			return Q(object[name]);
 		});
 	},
+	
+	redirector = function redirector(object) {
+		
+		if(!helper.isExposable(object))
+			throw new TypeError("Only objects and functions can be exposed.");
+		
+		var t = this,
+			o = Object.create(null),
+			offer = t._parent._root.offer(o),
+			
+			provider = t.content(object),
+			router = t.routes(object);
+		
+		offer.provider(t.content(object)).router(function(route) {
+			if(typeof route != "string")
+				throw new TypeError("'"+route+"' has to be of type string.");
+			return Q(object).then(function(object) {
+				if(!isPropertyPublic(object, name) || typeof object[name] != "function")
+					throw new Error("'"+route+"' could not be found.");
+				var exposed = Object.create(null);
+				t._parent._root.offer(exposed).provider(object[route].bind(object));
+				return exposed;
+			});
+		});
+	
+		return o;
+	},
 
 	servers = {
 
-		// STATIC OBJECT EXPOSAL: allows read-only access to object properties, static routing
+		// STATIC OBJECT EXPOSAL: allows read-only access to object properties -> provider, router, redirector
 		static: new AbstractServer(objectServer, function provider(content, data) {
 			if(data !== undefined)
 				throw new Error("'"+content+"' is read-only.");
 			return objectServer.call(this, content);
-		}, true),
+		}, redirector),
 
-		// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties, static routing
-		dynamic: new AbstractServer(objectServer, objectServer, true),
+		// DYNAMIC OBJECT EXPOSAL: allows writing access to object properties -> provider, router, redirector
+		dynamic: new AbstractServer(objectServer, objectServer, redirector),
 
-		// SERVE A DYNAMICALLY CREATED EXPOSED OBJECT: exposed at a given name
-		exposed: function exposed(name, chained) {
+		// SERVE A DYNAMICALLY CREATED EXPOSED OBJECT: exposed at a given name -> router
+		route: function route(name, baseContext, chained) {
 			var f = function(route) {
-				if(route == name)
+					if(route == name)
+						return f;
+					throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
+				}, convert = function(n, args) {
+					for(var i = 0, l = args.length, c; i < l; i++) {
+						c = args[i];
+						if(typeof c == "function")
+							c = c.bind(context);
+						offer[n].call(offer, c);
+					}
 					return f;
-				throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
-			}, offer = this._root[chained?"chainedOffer":"offer"](f);
+				},
+				offer = this._root[chained?"chainedOffer":"offer"](f),
+				context = baseContext || Object.create(null);
 
 			f.provider = function() {
-				offer.provider.apply(offer, arguments);
-				return f;
+				return convert("provider", arguments);
 			};
 			f.router = function() {
-				offer.router.apply(offer, arguments);
-				return f;
+				return convert("router", arguments);
 			};
 			f.redirect = function() {
-				offer.redirect.apply(offer, arguments);
-				return f;
+				return convert("redirect", arguments);
 			};
 
 			return f;
 		},
 
-		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers
+		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers -> provider, router
 		filtered: function filtered(filter) {
 			return function(name) {
-
+				// TODO
 			};
 		},
 
-		// FILE SYSTEM EXPOSAL: read-only access, no routing
-		fs: new AbstractServer(null, function provider(pathMap) {
+		// FILE SYSTEM EXPOSAL: read-only access -> provider
+		fs: function fs(pathMap) {
 			var map;
 			if(typeof pathMap == "string")
 				map = function(content) {
@@ -108,11 +140,13 @@ var Q = require("q"),
 					throw new Error("File system server does not allow writing access.");
 				return new File(map.call(this, content));
 			};
-		})
+		}
 	};
 
 module.exports = function init(apiRoot) {
 	if(typeof apiRoot != "object")
 		return servers;
-	return Object.create(servers, { _root: { value: apiRoot } });
+	var o = Object.create(servers, { _root: { value: apiRoot } });
+	o.static._parent = o.dynamic._parent = o;
+	return o;
 };

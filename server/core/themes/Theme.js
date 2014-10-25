@@ -15,8 +15,8 @@ function Theme(id) {
 	api.offer(this).provider(
 		api.serve.static.content()
 	).router(
-		api.serve.exposed("raw").provider(
-			api.serve.fs.content(this.raw.bind(this))
+		api.serve.route("raw", this).provider(
+			api.serve.fs(this.raw)
 		)
 	);
 }

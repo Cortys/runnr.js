@@ -1,7 +1,7 @@
 var helper = require("./helper");
 
 function Offer(object, baseApi, onlyInit) {
-	if(object == null || typeof object != "object" && typeof object != "function" || object instanceof Offer)
+	if(!helper.isExposable(object) || object instanceof Offer)
 		throw new TypeError("Only objects and functions can be exposed.");
 
 	if(helper.isExposed(object))
