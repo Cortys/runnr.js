@@ -8,16 +8,14 @@ function ChainedOffer(object, baseApi) {
 	var routers = this._routers = [],
 		providers = this._providers = [],
 		server = ChainedOffer.server,
-		router = function(route) {
-			return server.call(this, routers, arguments);
-		},
-		provider = function(route) {
-			return server.call(this, providers, arguments);
-		},
 
 		o = helper.exposer({
-			router: { value: router },
-			provider: { value: provider }
+			router: { value: function() {
+				return server.call(this, routers, arguments);
+			} },
+			provider: { value: function() {
+				return server.call(this, providers, arguments);
+			} }
 		});
 
 	Object.defineProperty(object, "_exposed", { value: o });
@@ -31,12 +29,10 @@ ChainedOffer.server = function(arr, args) {
 
 	var t = this,
 		curr;
-	arr.forEach(function(s) {
+	for(var i = 0, l = arr.length, s = l?arr[0]:null; i < l; s=arr[++i])
 		if(!curr)
 			try {
-				curr = s.apply(t, args);
-				if(!Q.isPromiseAlike(curr))
-					return false;
+				curr = Q(s.apply(t, args));
 			} catch(err) {
 				curr = Q.reject(err);
 			}
@@ -44,7 +40,7 @@ ChainedOffer.server = function(arr, args) {
 			curr.then(undefined, function(err) {
 				return s.apply(t, [].concat(args, [err]));
 			});
-	});
+
 	return curr;
 };
 

@@ -89,7 +89,6 @@ var Q = require("q"),
 		route: function route(name, baseContext, chained) {
 
 			var f = function(route) {
-					console.log(process.hrtime(), name, route);
 					if(route == name)
 						return o;
 					throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
@@ -117,7 +116,6 @@ var Q = require("q"),
 			f.redirector = function() {
 				return convert("redirector", arguments);
 			};
-			console.log("A");
 			return f;
 		},
 
