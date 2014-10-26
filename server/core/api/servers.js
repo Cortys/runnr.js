@@ -45,31 +45,31 @@ var Q = require("q"),
 			return Q(object[name]);
 		});
 	},
-	
+
 	redirector = function redirector(object) {
-		
+
 		if(!helper.isExposable(object))
 			throw new TypeError("Only objects and functions can be exposed.");
-		
+
 		var t = this,
 			o = Object.create(null),
 			offer = t._parent._root.offer(o),
-			
+
 			provider = t.content(object),
 			router = t.routes(object);
-		
+
 		offer.provider(t.content(object)).router(function(route) {
 			if(typeof route != "string")
 				throw new TypeError("'"+route+"' has to be of type string.");
 			return Q(object).then(function(object) {
-				if(!isPropertyPublic(object, name) || typeof object[name] != "function")
+				if(!isPropertyPublic(object, route) || typeof object[route] != "function")
 					throw new Error("'"+route+"' could not be found.");
 				var exposed = Object.create(null);
 				t._parent._root.offer(exposed).provider(object[route].bind(object));
 				return exposed;
 			});
 		});
-	
+
 		return o;
 	},
 
@@ -87,21 +87,26 @@ var Q = require("q"),
 
 		// SERVE A DYNAMICALLY CREATED EXPOSED OBJECT: exposed at a given name -> router
 		route: function route(name, baseContext, chained) {
+
 			var f = function(route) {
+					console.log(process.hrtime(), name, route);
 					if(route == name)
-						return f;
+						return o;
 					throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
 				}, convert = function(n, args) {
-					for(var i = 0, l = args.length, c; i < l; i++) {
-						c = args[i];
-						if(typeof c == "function")
-							c = c.bind(context);
-						offer[n].call(offer, c);
-					}
+					if(baseContext)
+						for(var i = 0, l = args.length, c; i < l; i++) {
+							c = args[i];
+							if(typeof c == "function")
+								c = c.bind(baseContext);
+							offer[n].call(offer, c);
+						}
+					else
+						offer[n].apply(offer, args);
 					return f;
 				},
-				offer = this._root[chained?"chainedOffer":"offer"](f),
-				context = baseContext || Object.create(null);
+				o = Object.create(null),
+				offer = this._root[chained?"chainedOffer":"offer"](o);
 
 			f.provider = function() {
 				return convert("provider", arguments);
@@ -109,10 +114,10 @@ var Q = require("q"),
 			f.router = function() {
 				return convert("router", arguments);
 			};
-			f.redirect = function() {
-				return convert("redirect", arguments);
+			f.redirector = function() {
+				return convert("redirector", arguments);
 			};
-
+			console.log("A");
 			return f;
 		},
 
@@ -138,7 +143,9 @@ var Q = require("q"),
 			return function(content, data) {
 				if(data !== undefined)
 					throw new Error("File system server does not allow writing access.");
-				return new File(map.call(this, content));
+				return Q(map.call(this, content)).then(function(result) {
+					return new File(result);
+				});
 			};
 		}
 	};

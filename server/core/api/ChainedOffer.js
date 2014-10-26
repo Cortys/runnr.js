@@ -76,7 +76,7 @@ ChainedOffer.prototype = Object.create(Offer.prototype, {
 		return this;
 	} },
 
-	redirect: { value: function(exposed) {
+	redirector: { value: function(exposed) {
 		var a = arguments.length;
 		for(var i = 0; i < a; i++) {
 			var v = arguments[i];

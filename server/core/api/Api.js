@@ -2,9 +2,12 @@ var Q = require("q"),
 
 	helper = require("./helper");
 
+Q.longStackSupport = false;
+
 function Api(name, basePromise) {
 	this.name = name;
 	this._basePromise = Q(basePromise).then(function(base) {
+		console.log("got "+name);
 		if(!helper.isExposed(base))
 			throw new TypeError("This route is not exposed.");
 		return base;
@@ -22,17 +25,24 @@ Api.prototype = {
 		if(!location)
 			return t;
 
+		console.log("route to: ", location, ", at "+t.name);
+
 		return new Api(t.name+"/"+location, t._basePromise.then(function(base) {
 			try {
 				if(typeof base._exposed.router != "function")
 					throw helper.EMPTY;
+				console.log(process.hrtime(), "step before, to: ", location, ", at "+t.name);
 				return base._exposed.router.call(base, location);
 			} catch(err) {
 				if(err == helper.EMPTY)
 					throw new Error("This route has no router.");
 				throw err;
 			}
-		}).then(undefined, function(err) {
+		}).then(function(r) {
+			console.log(process.hrtime(), "step ", r);
+			return r;
+		}, function(err) {
+			console.trace(err);
 			if(typeof err == "object" && !("location" in err)) {
 				err.type = "route";
 				err.location = t.name;

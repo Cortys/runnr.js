@@ -15,9 +15,13 @@ function Plugin(id) {
 	});
 
 	this.client.parent = this;
-	
+
 	api.offer(this).router(
-		api.serve.route("client").redirect(
+		api.serve.route("client", undefined, true).router(
+			api.serve.route("raw", this.client).provider(
+				api.serve.fs(this.client.raw)
+			)
+		).redirector(
 			api.serve.static.exposed(this.client)
 		)
 	);
