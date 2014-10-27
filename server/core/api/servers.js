@@ -30,8 +30,10 @@ var Q = require("q"),
 
 	helper = require("./helper"),
 
-	isPropertyPublic = function(object, name) {
-		return object.propertyIsEnumerable(name) && (""+name).charAt(0) != "_";
+	isPropertyPublic = function(object, name, fast) {
+		if(!object)
+			return false;
+		return (fast || (""+name).charAt(0) != "_") && (object.propertyIsEnumerable(name) || isPropertyPublic(Object.getPrototypeOf(object), name, true));
 	},
 
 	objectServer = function(name, data) {
@@ -53,10 +55,7 @@ var Q = require("q"),
 
 		var t = this,
 			o = Object.create(null),
-			offer = t._parent._root.offer(o),
-
-			provider = t.content(object),
-			router = t.routes(object);
+			offer = t._parent._root.offer(o);
 
 		offer.provider(t.content(object)).router(function(route) {
 			if(typeof route != "string")

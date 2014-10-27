@@ -23,6 +23,10 @@
 			_depth: 0,
 			_routeCache: null,
 
+			get parent() {
+				return this._parent;
+			},
+
 			get _route() {
 				var p;
 				return this._routeCache || (
@@ -36,7 +40,6 @@
 			},
 
 			get: function(content) {
-
 				return $http.get(this.url.get(content), {}).then(function(data) {
 					return data.data;
 				}, function(err) {
@@ -56,13 +59,26 @@
 		UrlEncoder.prototype = {
 
 			_routeCache: null,
+			_absoluteCache: null,
 
-			get _route() {
+			get route() {
 				return this._routeCache || (this._routeCache = this._api._route.join("/"));
 			},
 
-			get: function(content) {
-				return "/"+this._route+"//"+encodeURI(content);
+			get absolute() {
+				return this._absoluteCache || (this._absoluteCache = $location.protocol()+"://"+$location.host()+":"+location.port+this.route+"/");
+			},
+
+			get relative() {
+				return this.route+"/";
+			},
+
+			get: function(content, absolute) {
+				return this[absolute?"absolute":"relative"]+"/"+(content && encodeURI(content) || "");
+			},
+
+			getAbsolute: function(content) {
+				return this.get(content, true);
 			},
 
 			send: function(content, data) {
@@ -70,6 +86,11 @@
 			}
 		};
 
-		return new Api("api", null);
+		var root = new Api("", null),
+			start = root.route("api");
+
+		start.root = root;
+
+		return start;
 	}
 })();

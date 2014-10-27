@@ -14,7 +14,7 @@ function Plugin(id) {
 		throw new Error("A plugin named '"+id+"' is not installed.");
 	});
 
-	this.client.parent = this;
+	this.client = Object.create(this.client, { parent: { value: this } });
 
 	api.offer(this).router(
 		api.serve.route("client", undefined, true).router(
@@ -56,8 +56,7 @@ Plugin.prototype = {
 			return t.parent.db.then(function(db) {
 
 				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, "client", db.manifest.plugin.client)).then(function(html) {
-					var result = html;
-					return result;
+					return html;
 				});
 			});
 		},

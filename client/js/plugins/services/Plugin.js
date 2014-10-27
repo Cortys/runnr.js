@@ -2,14 +2,15 @@
 	angular.module("plugins")
 		.factory("plugins.Plugin", PluginFactory);
 
-	PluginFactory.$inject = ["plugins.api", "themes.api", "$q"];
+	PluginFactory.$inject = ["core.api", "plugins.api", "themes.api", "$q"];
 
-	function PluginFactory(pluginsApi, themesApi, $q) {
+	function PluginFactory(api, pluginsApi, themesApi, $q) {
 
 		function Plugin(id) {
 			this.id = id;
 
-			var client = pluginsApi.client(id);
+			var client = pluginsApi.client(id),
+				pluginPath = client.route("raw").url.getAbsolute();
 
 			this.client = Object.create(client, {
 				html: {
@@ -18,14 +19,14 @@
 							var html = data[0],
 								theme = data[1],
 								result,
-								meta = "<meta http-equiv=\"Content-Security-Policy\" content=\""+html.headers["content-security-policy"]+"\" />",
-								base = "<base href='"+client.url.get()+"' target='_self' />",
+								meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+api.root.route("frameworks").url.absolute+" "+themesApi.url.absolute+" "+pluginPath+" "+api.root.route("js").route("connectors").url.absolute+"; frame-src 'none'; connect-src 'none'\" />",
+								base = "<base href='"+pluginPath+"' target='_self' />",
 								script = "<script src='"+pluginsApi.connector+"' type='text/javascript'></script>",
 								link = "";
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
 							});
-							result = html.html.replace(/(<head[^>]*>)/, "$1"+meta+base+script+link);
+							result = html.replace(/(<head[^>]*>)/, "$1"+meta+base+script+link);
 							return result;
 						});
 					}
