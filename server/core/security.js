@@ -1,5 +1,5 @@
 var db = require("./db").security,
-	Q = require("q"),
+	B = require("bluebird"),
 	pem = require("pem"),
 	config = require("../config"),
 
@@ -7,24 +7,24 @@ var db = require("./db").security,
 
 security = {
 	generate: function() {
-		return Q.ninvoke(pem, "createCertificate", {
+		return pem.createCertificateAsync({
 			days:365,
 			selfSigned:true,
 			organization: config.name,
 			organizationUnit: config.name+" Security",
 		}).then(function(key) {
-			return Q.ninvoke(db, "remove", {}, { multi:true }).then(function() {
+			return db.removeAsync({}, { multi:true }).then(function() {
 				return key;
 			});
 		}).then(function(key) {
 			key.created = new Date();
-			return Q.ninvoke(db, "insert", key);
+			return db.insertAsync(key);
 		});
 	},
 
 	read: function() {
 		var t = this;
-		return Q.ninvoke(db, "find", {}).then(function(entries) {
+		return db.findAsync({}).then(function(entries) {
 			if(!entries.length)
 				throw null;
 			var r = entries[0],
@@ -37,14 +37,16 @@ security = {
 			return t.generate();
 		}).then(function(key) {
 			if(cache === null)
-				cache = key;
+				cache = B.resolve(key);
 			return key;
 		});
 	},
 
 	get: function() {
-		return cache?Q(cache):this.read();
+		return cache || this.read();
 	}
 };
+
+B.promisifyAll(pem);
 
 module.exports = security;

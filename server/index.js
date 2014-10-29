@@ -1,4 +1,9 @@
 module.exports = function start(root) {
+
+	var B = require("bluebird");
+
+	B.promisifyAll(require("fs"));
+
 	require("./config").root = root;
 
 	// Start HTTP server before socket server:

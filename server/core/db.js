@@ -1,7 +1,10 @@
 var path = require("path"),
+	B = require("bluebird"),
 	config = require("../config"),
 	Datastore = require("nedb"),
 	db;
+
+B.promisifyAll(Datastore.prototype);
 
 db = {
 	config: new Datastore({ filename:path.join(config.userData, "config.db"), autoload:true }),

@@ -3,15 +3,13 @@ var db = require("../db").plugins,
 	api = require("../api").api,
 	fs = require("fs"),
 	path = require("path"),
-	Q = require("q"),
 	Plugin = require("./Plugin"),
 
 plugins = {
-	getRaw: function(filter, limit) {
-		return Q.npost(db, "find", arguments);
-	},
+	getRaw: db.findAsync,
+
 	countAll: function() {
-		return Q.ninvoke(db, "count", {});
+		return db.countAsync({});
 	},
 	get: function(id) {
 		var p = new Plugin(id);
@@ -31,9 +29,9 @@ api.offer(plugins)
 	.publish("plugins");
 
 function scan(dir) {
-	Q.ninvoke(fs, "readdir", dir).then(function(files) {
+	fs.readdirAsync(dir).then(function(files) {
 		files.forEach(function(e, i) {
-			Q.ninvoke(fs, "readFile", path.join(dir, e, "manifest.json")).then(function(data) {
+			fs.readFileAsync(path.join(dir, e, "manifest.json")).then(function(data) {
 				var manifest = JSON.parse(data);
 				Plugin.install(manifest, dir);
 			});

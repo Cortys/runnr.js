@@ -1,14 +1,13 @@
 var path = require("path"),
 	api = require("../api").api,
 	fs = require("fs"),
-	Q = require("q"),
 	db = require("../db").plugins;
 
 function Plugin(id) {
 
 	this.id = id;
 
-	this.db = Q.ninvoke(db, "findOne", { _id:this.id }).then(function(data) {
+	this.db = db.findOneAsync({ _id:this.id }).then(function(data) {
 		if(data)
 			return data;
 		throw new Error("A plugin named '"+id+"' is not installed.");
@@ -55,7 +54,7 @@ Plugin.prototype = {
 
 			return t.parent.db.then(function(db) {
 
-				return Q.ninvoke(fs, "readFile", path.join(db.installationLocation, db.manifest.id, "client", db.manifest.plugin.client)).then(function(html) {
+				return fs.readFileAsync(path.join(db.installationLocation, db.manifest.id, "client", db.manifest.plugin.client)).then(function(html) {
 					return html;
 				});
 			});

@@ -1,7 +1,6 @@
 var config = require("../../config"),
 	path = require("path"),
 	fs = require("fs"),
-	Q = require("q"),
 
 	api = require("../api").api,
 
@@ -25,7 +24,7 @@ Theme.prototype = {
 	id: null,
 
 	get _manifest() {
-		return Q.ninvoke(fs, "readFile", path.join(themePath, this.id, "manifest.json")).then(function(data) {
+		return fs.readFileAsync(path.join(themePath, this.id, "manifest.json")).then(function(data) {
 			return JSON.parse(data);
 		});
 	},
