@@ -33,11 +33,7 @@ router.all("*", function(req, res, next) {
 			go();
 			if(i > 0 && path.charAt(i-1) == "!")
 				break;
-		} else if(location == "?") {
-			go();
-			break;
-		}
-		else if(location != "!")
+		} else if(location != "!")
 			word += location;
 	}
 	req.requestedContent = querystring.unescape(path.substr(i+1));
