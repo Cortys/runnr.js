@@ -13,7 +13,7 @@
 			} }
 		});
 
-		o.connector = "/js/connectors/common.js";
+		o.connector = coreApi.root.route("js").route("connector").url;
 
 		return o;
 	}

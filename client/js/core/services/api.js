@@ -66,15 +66,15 @@
 			},
 
 			get absolute() {
-				return this._absoluteCache || (this._absoluteCache = $location.protocol()+"://"+$location.host()+":"+location.port+this.route+"/");
+				return this._absoluteCache || (this._absoluteCache = $location.protocol()+"://"+$location.host()+":"+location.port+this.route);
 			},
 
 			get relative() {
-				return this.route+"/";
+				return this.route;
 			},
 
 			get: function(content, absolute) {
-				return this[absolute?"absolute":"relative"]+"/"+(content && encodeURI(content) || "");
+				return this[absolute?"absolute":"relative"]+"!/"+(content && encodeURI(content) || "");
 			},
 
 			getAbsolute: function(content) {
@@ -90,6 +90,7 @@
 			start = root.route("api");
 
 		start.root = root;
+		root.api = start;
 
 		return start;
 	}

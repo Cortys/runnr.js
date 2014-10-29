@@ -1,19 +1,27 @@
 var Api = require("./Api"),
 	helper = require("./helper"),
-	serve = require("./servers")(),
+	servers = require("./servers"),
 	Offer = require("./Offer"),
 	ChainedOffer = require("./ChainedOffer");
 
-function ApiRoot(name) {
+function ApiRoot(name, publishTo) {
 
 	this._routes = {};
 
-	this.offer(this._routes).router(serve.static.routes());
+	this.serve = servers(this);
+
+	this.offer(this._routes).router(this.serve.static.routes());
+
+	if(publishTo instanceof ApiRoot)
+	publishTo.publish(name, this._routes);
 
 	Api.call(this, name, this._routes);
 }
 
 ApiRoot.prototype = Object.create(Api.prototype, {
+
+	File: { value: require("./File") },
+
 	publish: { value: function publish(name, exposed) {
 
 		if(typeof name != "string")

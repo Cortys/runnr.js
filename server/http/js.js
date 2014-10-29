@@ -1,22 +1,20 @@
 var config = require("../config"),
-	express = require("express"),
-	router = express.Router(),
-	api = require("../api").js,
 	jsPath = config.root + "/client/js/",
 	min = !config.devMode && ".min" || "";
 
+function js(api) {
 
-router.get(api.main, function(req, res) {
-	res.sendfile(jsPath + "build/runnr"+min+".js");
-});
+	var o = {};
 
-router.get(api.connectors.base+api.connectors.plugin, function(req, res, next) {
-	res.sendfile(jsPath + (config.devMode?"":"build/")+"pluginConnector"+min+".js");
-});
+	api.chainedOffer(o).provider(
+		api.serve.fs(function(file) {
+			if(file == "runnr.js")
+				return jsPath + "build/runnr"+min+".js";
+			if(file == "runnr.js.map")
+				return jsPath + "build/runnr"+min+".js.map";
+			return jsPath + file;
+		})
+	).publish("js");
+}
 
-if(config.devMode)
-	router.get(api.mainMap, function(req, res) {
-		res.sendfile(jsPath + "build/runnr.js.map");
-	});
-
-module.exports = router;
+module.exports = js;

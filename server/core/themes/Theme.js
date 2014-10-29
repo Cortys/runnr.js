@@ -3,7 +3,7 @@ var config = require("../../config"),
 	fs = require("fs"),
 	Q = require("q"),
 
-	api = require("../api"),
+	api = require("../api").api,
 
 	themePath = config.root + "/themes";
 

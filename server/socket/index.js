@@ -1,8 +1,7 @@
 var socketIo = require("socket.io"),
 	cookie = require("cookie"),
 	signature = require("cookie-signature"),
-	config = require("../config"),
-	api = require("../api");
+	config = require("../config");
 
 function start(app) {
 	var io = socketIo(app);

@@ -1,6 +1,6 @@
 var db = require("../db").plugins,
 	config = require("../../config"),
-	api = require("../api"),
+	api = require("../api").api,
 	fs = require("fs"),
 	path = require("path"),
 	Q = require("q"),

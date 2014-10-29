@@ -1,5 +1,5 @@
 var path = require("path"),
-	api = require("../api"),
+	api = require("../api").api,
 	fs = require("fs"),
 	Q = require("q"),
 	db = require("../db").plugins;

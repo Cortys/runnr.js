@@ -6,7 +6,11 @@ var config = require("../config"),
 	swig = require("swig"),
 	https = require("https"),
 	security = require("../core/security"),
-	api = require("../api"),
+	urlEncoder = {
+		url: function(route, content) {
+			return "/"+route+"!/"+content;
+		}
+	},
 	app, secret;
 
 function start() {
@@ -53,13 +57,6 @@ function start() {
 		});
 	});
 
-	// Content:
-	app.use("/frameworks", express.static(config.root + "/bower_components"));
-
-	app.use("/js", require("./js"));
-
-	app.use("/api", require("./api"));
-
 	// Main page:
 	app.engine("html", swig.renderFile);
 
@@ -79,8 +76,12 @@ function start() {
 		res.set({
 			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
 		});
-		res.render("index", api);
+		res.render("index", urlEncoder);
 	});
+
+	// Content:
+
+	app.use(require("./api"));
 
 	// Start server:
 	return security.get().then(function(key) {

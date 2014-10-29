@@ -4,6 +4,14 @@ var express = require("express"),
 	stream = require("stream"),
 	api = require("../core/api");
 
+// MAIN ROUTES:
+require("./js")(api);
+require("./frameworks")(api);
+
+// API ROUTES:
+require("./plugins");
+require("./themes");
+
 router.all("*", function(req, res, next) {
 	var path = req.url,
 		i = 0,
@@ -23,13 +31,13 @@ router.all("*", function(req, res, next) {
 	for(; i < l; location = path.charAt(++i)) {
 		if(location == "/") {
 			go();
-			if(i > 0 && path.charAt(i-1) == "/")
+			if(i > 0 && path.charAt(i-1) == "!")
 				break;
 		} else if(location == "?") {
 			go();
 			break;
 		}
-		else
+		else if(location != "!")
 			word += location;
 	}
 	req.requestedContent = querystring.unescape(path.substr(i+1));
@@ -39,7 +47,7 @@ router.all("*", function(req, res, next) {
 	req.api.get(req.requestedContent).then(function(content) {
 
 		if(content instanceof api.File)
-			return res.sendfile(content.path);
+			return res.sendFile(content.path);
 
 		if(content instanceof stream.Readable)
 			return content.pipe(res);
@@ -54,8 +62,6 @@ router.all("*", function(req, res, next) {
 		Object.defineProperty(err, "type", { value:err.type, enumerable:true });
 		res.status(404).json(err);
 	});
-}).put("*", function(req, res, next) {
-
 });
 
 module.exports = router;
