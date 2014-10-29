@@ -6,6 +6,10 @@
 
 	function PluginFactory(api, pluginsApi, themesApi, $q) {
 
+		var frameworksPath = api.root.route("frameworks").url.getAbsolute(),
+			connectorPath = pluginsApi.connector.getAbsolute(),
+			themesPath = themesApi.route("raw").url.getAbsolute();
+
 		function Plugin(id) {
 			this.id = id;
 
@@ -19,7 +23,7 @@
 							var html = data[0],
 								theme = data[1],
 								result,
-								meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+api.root.route("frameworks").url.absolute+" "+themesApi.url.absolute+" "+pluginPath+" "+pluginsApi.connector.absolute+"; frame-src 'none'; connect-src 'none'\" />",
+								meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
 								base = "<base href='"+pluginPath+"' target='_self' />",
 								script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
 								link = "";
