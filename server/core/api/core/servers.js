@@ -23,7 +23,7 @@ AbstractServer.prototype = {
 	}
 };
 
-var Q = require("q"),
+var B = require("bluebird"),
 	path = require("path"),
 
 	File = require("./File"),
@@ -39,12 +39,12 @@ var Q = require("q"),
 	objectServer = function(name, data) {
 		if(typeof name != "string")
 			throw new TypeError("'"+name+"' has to be of type string.");
-		return Q(this).then(function(object) {
+		return B.resolve(this).then(function(object) {
 			if(!isPropertyPublic(object, name) || typeof object[name] == "function")
 				throw new Error("'"+name+"' could not be found.");
 			if(data !== undefined)
 				object[name] = data;
-			return Q(object[name]);
+			return B.resolve(object[name]);
 		});
 	},
 
@@ -55,12 +55,13 @@ var Q = require("q"),
 
 		var t = this,
 			o = Object.create(null),
-			offer = t._parent._root.offer(o);
+			offer = t._parent._root.offer(o),
+			promise = B.resolve(object);
 
 		offer.provider(t.content(object)).router(function(route) {
 			if(typeof route != "string")
 				throw new TypeError("'"+route+"' has to be of type string.");
-			return Q(object).then(function(object) {
+			return promise.then(function(object) {
 				if(!isPropertyPublic(object, route) || typeof object[route] != "function")
 					throw new Error("'"+route+"' could not be found.");
 				var exposed = Object.create(null);
@@ -140,7 +141,7 @@ var Q = require("q"),
 			return function(content, data) {
 				if(data !== undefined)
 					throw new Error("File system server does not allow writing access.");
-				return Q(map.call(this, content)).then(function(result) {
+				return B.resolve(map.call(this, content)).then(function(result) {
 					return new File(result);
 				});
 			};

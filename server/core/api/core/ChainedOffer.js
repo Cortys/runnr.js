@@ -1,4 +1,4 @@
-var Q = require("q"),
+var B = require("bluebird"),
 	helper = require("./helper"),
 	Offer = require("./Offer");
 
@@ -22,6 +22,7 @@ function ChainedOffer(object, baseApi) {
 
 }
 
+// Takes an array of routers/providers and returns the result of the given router chain when appied with 'args'.
 ChainedOffer.server = function(arr, args) {
 
 	if(arr.length === 0)
@@ -32,12 +33,12 @@ ChainedOffer.server = function(arr, args) {
 	for(var i = 0, l = arr.length, s = l?arr[0]:null; i < l; s=arr[++i])
 		if(!curr)
 			try {
-				curr = Q(s.apply(t, args));
+				curr = B.resolve(s.apply(t, args));
 			} catch(err) {
-				curr = Q.reject(err);
+				curr = B.reject(err);
 			}
 		else
-			curr.then(undefined, function(err) {
+			curr.catch(function(err) {
 				return s.apply(t, [].concat(args, [err]));
 			});
 

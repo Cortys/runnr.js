@@ -1,12 +1,9 @@
-var Q = require("q"),
-
+var B = require("bluebird"),
 	helper = require("./helper");
-
-Q.longStackSupport = false;
 
 function Api(name, basePromise) {
 	this.name = name;
-	this._basePromise = Q(basePromise).then(function(base) {
+	this._basePromise = B.resolve(basePromise).then(function(base) {
 		if(!helper.isExposed(base))
 			throw new TypeError("This route is not exposed.");
 		return base;
@@ -35,8 +32,8 @@ Api.prototype = {
 					throw new Error("This route has no router.");
 				throw err;
 			}
-		}).then(undefined, function(err) {
-			if(typeof err == "object" && !("location" in err)) {
+		}).catch(Error, function(err) {
+			if(!("location" in err)) {
 				err.type = "route";
 				err.location = t.name;
 				err.route = location;
@@ -61,8 +58,8 @@ Api.prototype = {
 					throw new Error("This route has no content provider.");
 				throw err;
 			}
-		}).then(undefined, function(err) {
-			if(typeof err == "object" && !("location" in err)) {
+		}).catch(Error, function(err) {
+			if(!("location" in err)) {
 				err.type = "content";
 				err.location = t.name;
 				err.content = content;

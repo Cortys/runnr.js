@@ -1,6 +1,4 @@
-var Q = require("q"),
-
-	helper = { // these functions turn exposable objects into functions that map queries to the given objects
+var helper = { // these functions turn exposable objects into functions that map queries to the given objects
 		cast: function(t, object, bind) {
 			if(typeof object == "function") // if already a function
 				return object;
