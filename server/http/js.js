@@ -6,7 +6,7 @@ function js(api) {
 
 	var o = {};
 
-	api.chainedOffer(o).provider(
+	api.offer(o).provider(
 		api.serve.fs(function(file) {
 			if(file == "runnr.js")
 				return jsPath + "build/runnr"+min+".js";
