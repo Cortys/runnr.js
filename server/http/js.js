@@ -14,6 +14,10 @@ function js(api) {
 				return jsPath + "build/runnr"+min+".js.map";
 			return jsPath + file;
 		})
+	).router(
+		api.serve.route("connector").provider(
+			api.serve.fs(jsPath + "connector")
+		)
 	).publish("js");
 }
 
