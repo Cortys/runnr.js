@@ -7,11 +7,11 @@
 	function pluginRenderer($http, $compile) {
 
 		function linker(scope, element, attrs) {
-			scope.plugin().client.html.then(function(html) {
+			scope.plugin().client.html.then(function(page) {
 
 				var frame = document.createElement("iframe");
 
-				frame.srcdoc = html;
+				frame.srcdoc = page.html.replace(/(<head[^>]*>)/i, "$1"+page.insert);
 				frame.sandbox = "allow-scripts";
 
 				element.append(frame);
