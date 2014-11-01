@@ -1,1 +1,1 @@
-require("../core/plugins");
+module.exports = require("../core/plugins");

@@ -1,1 +1,1 @@
-require("../core/themes");
+module.exports = require("../core/themes");

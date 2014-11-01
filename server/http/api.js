@@ -10,7 +10,7 @@ require("./frameworks")(api);
 
 // API ROUTES:
 require("./plugins");
-require("./themes");
+var themePublished = api.published(require("./themes"));
 
 router.all("*", function(req, res, next) {
 	var path = req.url,
@@ -22,7 +22,12 @@ router.all("*", function(req, res, next) {
 		go = function() {
 			if(!word.length)
 				return;
-			req.api = req.api.route(querystring.unescape(word));
+			word = querystring.unescape(word);
+			if(word == themePublished)
+				res.set({
+					"Access-Control-Allow-Origin": "*"
+				});
+			req.api = req.api.route(word);
 			word = "";
 		};
 

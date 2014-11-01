@@ -1,8 +1,8 @@
 @import "vars"
 
 posForPos(pos, align)
-	left: ((pos/paneCount) + align)*100%
-	right: (1 - ((pos+1)/paneCount) - align)*100%
+	//transform: translate3d((pos + align*paneCount)*100%,0,0)
+	left: (pos/paneCount + align)*100%
 
 #panes
 	position: absolute
@@ -12,24 +12,28 @@ posForPos(pos, align)
 	bottom: size.normal + distance.close
 
 	$posLeft
-		transform: translateX(-100%)
+		//transform: translate3d(-100%,0,0)
+		left: (-1/paneCount)*100%
 		opacity: 0.5
 
 	$posRight
-		transform: translateX(100%)
+		//transform: translate3d(100%,0,0)
+		left: 100%
 		opacity: 0.5
 
 	@import "panes/plugin"
 
 	.pane
 		position: absolute
-		width: auto
+		width: (1/paneCount)*100%
 		height: auto
+		left: 0
+		right: auto
 		top: 0
 		bottom: 0
 
 		z-index: 1
-		
+
 		enable3d()
 
 		slowTransition()

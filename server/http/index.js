@@ -73,9 +73,7 @@ function start() {
 	app.set("views", config.root+ "/client");
 
 	app.get("/", function(req, res, next) {
-		res.set({
-			"Content-Security-Policy": "style-src * 'unsafe-inline'; script-src * 'unsafe-eval'"
-		});
+		res.removeHeader("Content-Security-Policy");
 		res.render("index", urlEncoder);
 	});
 

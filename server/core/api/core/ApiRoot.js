@@ -32,6 +32,10 @@ ApiRoot.prototype = Object.create(Api.prototype, {
 
 		if(name in this._routes)
 			throw new Error("The route '"+name+"' is already used.");
+
+		if(this.published(exposed) !== false)
+			throw new TypeError("Given object is already published.");	
+
 		exposed._exposed.published = name;
 		this._routes[name] = exposed;
 
@@ -39,13 +43,19 @@ ApiRoot.prototype = Object.create(Api.prototype, {
 	} },
 
 	unpublish: { value: function unpublish(exposed) {
-		if(!helper.isExposed(exposed) || exposed._exposed.published === undefined)
+		if(this.published(exposed) === false)
 			throw new TypeError("Given object was not published.");
 
 		exposed._exposed.published = undefined;
 		delete this._routes[exposed._exposed.published];
 
 		return this;
+	} },
+
+	published: { value: function published(exposed) {
+		if(!helper.isExposed(exposed) || exposed._exposed.published === undefined)
+			return false;
+		return exposed._exposed.published;
 	} },
 
 	offer: { value: function offer(object) {

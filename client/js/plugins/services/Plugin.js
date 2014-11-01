@@ -27,7 +27,6 @@
 						return $q.all([client.get("html"), themesApi.theme]).then(function(data) {
 							var html = data[0],
 								theme = data[1],
-								result,
 								link = "";
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
