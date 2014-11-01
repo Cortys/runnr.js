@@ -19,7 +19,7 @@
 				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
 				base = "<base href='"+pluginPath+"' target='_self' />",
 				script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
-				fixed = meta+base+script;
+				fixed = base+script;
 
 			this.client = Object.create(client, {
 				html: {
@@ -32,11 +32,10 @@
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
 							});
-							
-							return {
-								html: html,
-								insert: fixed+link
-							};
+
+							// Put meta tag before all HTML to prevent disabling it through comments or similar attack vectors.
+							// Links and helpers are inserted properly into the head, exploiting them would cause no security breach.
+							return (meta+html).replace(/(<head[^>]*>)/i, "$1"+fixed+link);
 						});
 					}
 				}
