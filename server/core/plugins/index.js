@@ -29,13 +29,22 @@ api.offer(plugins)
 	.publish("plugins");
 
 function scan(dir) {
+
+	console.log("Scanning '"+dir+"' for plugins.");
+
+	var f = {
+		res: function(data) {
+			var manifest = JSON.parse(data);
+			Plugin.install(manifest, dir);
+		},
+		rej: function() {}
+	};
 	fs.readdirAsync(dir).then(function(files) {
 		files.forEach(function(e, i) {
-			fs.readFileAsync(path.join(dir, e, "manifest.json")).then(function(data) {
-				var manifest = JSON.parse(data);
-				Plugin.install(manifest, dir);
-			});
+			fs.readFileAsync(path.join(dir, e, "manifest.json")).then(f.res, f.rej);
 		});
+	}, function(err) {
+		console.error("Scanning '"+dir+"' for plugins failed: ", err);
 	});
 }
 

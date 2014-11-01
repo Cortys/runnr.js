@@ -56,6 +56,8 @@ Plugin.prototype = {
 
 				return fs.readFileAsync(path.join(db.installationLocation, db.manifest.id, "client", db.manifest.plugin.client)).then(function(html) {
 					return html;
+				}, function() {
+					throw new Error("No main page found.");
 				});
 			});
 		},

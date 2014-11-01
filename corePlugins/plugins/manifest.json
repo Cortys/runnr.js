@@ -9,7 +9,11 @@
 	"description": "Plugin page.",
 	"author": "Clemens Damke",
 
-	"permissions": [],
+	"requires": ["core"],
+
+	"permissions": {
+		"resources": ["core"]
+	},
 
 	"plugin": {
 		"client": "plugin.html",

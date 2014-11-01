@@ -9,5 +9,5 @@
 	"description": "Supplies all core plugins with essential modules and data.",
 	"author": "Clemens Damke",
 
-	"permissions": []
+	"permissions": {}
 }
