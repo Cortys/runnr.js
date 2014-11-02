@@ -1,9 +1,12 @@
 var path = require("path"),
+	B = require("bluebird"),
 	api = require("../api").api,
 	fs = require("fs"),
 	db = require("../db").plugins;
 
 function Plugin(id) {
+
+	var t = this;
 
 	this.id = id;
 
@@ -11,6 +14,14 @@ function Plugin(id) {
 		if(data)
 			return data;
 		throw new Error("A plugin named '"+id+"' is not installed.");
+	});
+
+	this.installationLocation = this.db.then(function(db) {
+		return db.installationLocation;
+	});
+
+	this.manifest = this.db.then(function(db) {
+		return db.manifest;
 	});
 
 	this.client = Object.create(this.client, { parent: { value: this } });
@@ -22,8 +33,19 @@ function Plugin(id) {
 			)
 		).redirector(
 			api.serve.static.exposed(this.client)
-		)
+		).router(function(route) {
+			console.log(route);
+			return api.serve.api(new Plugin(route)).route("client").route("raw").exposed;
+		})
+	).provider(
+		api.serve.static.content({
+			manifest: this.manifest
+		})
 	);
+
+	return this.db.then(function() {
+		return t;
+	});
 }
 
 Plugin.prototype = {
@@ -31,19 +53,8 @@ Plugin.prototype = {
 	id: null,
 	db: null,
 
-	get installationLocation() {
-
-		return this.db.then(function(db) {
-			return db.installationLocation;
-		});
-	},
-
-	get manifest() {
-
-		return this.db.then(function(db) {
-			return db.manifest;
-		});
-	},
+	installationLocation: null,
+	manifest: null,
 
 	client: {
 		parent: null,

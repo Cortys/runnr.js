@@ -13,7 +13,8 @@
 		function Plugin(id) {
 			this.id = id;
 
-			var client = pluginsApi.client(id),
+			var api = this.api = pluginsApi.route(id),
+				client = api.route("client"),
 				pluginPath = client.route("raw").url.getAbsolute(),
 
 				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
@@ -21,13 +22,17 @@
 				script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
 				fixed = base+script;
 
+			this.manifest = api.get("manifest")
+
 			this.client = Object.create(client, {
 				html: {
 					get: function() {
 						return $q.all([client.get("html"), themesApi.theme]).then(function(data) {
 							var html = data[0],
 								theme = data[1],
+
 								link = "";
+
 							theme.css.plugin.forEach(function(v, i) {
 								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
 							});

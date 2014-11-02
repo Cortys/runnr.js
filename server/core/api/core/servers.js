@@ -119,6 +119,11 @@ var B = require("bluebird"),
 			return f;
 		},
 
+		api: function(exposed) {
+			var api = new Api("", exposed);
+			return api;
+		},
+
 		// FILTER REQUESTS: only propses cancellation of an unmatched request to following servers -> provider, router
 		filtered: function filtered(filter) {
 			return function(name) {

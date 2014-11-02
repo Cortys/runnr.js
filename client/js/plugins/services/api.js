@@ -6,12 +6,7 @@
 
 	function api(coreApi) {
 
-		var o = Object.create(coreApi.route("plugins"), {
-
-			client: { value: function(id) {
-				return this.route(id).route("client");
-			} }
-		});
+		var o = Object.create(coreApi.route("plugins"), {});
 
 		o.connector = coreApi.root.route("js").route("connector").url;
 

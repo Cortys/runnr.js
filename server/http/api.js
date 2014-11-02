@@ -56,13 +56,13 @@ router.all("*", function(req, res, next) {
 		if(typeof content == "number")
 			content += "";
 		res.send(content);
-	}, function(err) {
+	}).catch(function(err) {
 		if(typeof err != "object")
 			return res.status(404).json({});
 		Object.defineProperty(err, "message", { value:err.message, enumerable:true });
 		Object.defineProperty(err, "type", { value:err.type, enumerable:true });
 		res.status(404).json(err);
-	});
+	}).done();
 });
 
 module.exports = router;

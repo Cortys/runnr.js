@@ -66,6 +66,10 @@ Api.prototype = {
 			}
 			throw err;
 		});
+	},
+
+	get exposed() {
+		return this._basePromise;
 	}
 };
 

@@ -4,6 +4,8 @@ module.exports = function start(root) {
 
 	B.promisifyAll(require("fs"));
 
+	B.onPossiblyUnhandledRejection(function(err) {});
+
 	require("./config").root = root;
 
 	// Start HTTP server before socket server:

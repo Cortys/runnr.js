@@ -12,10 +12,7 @@ plugins = {
 		return db.countAsync({});
 	},
 	get: function(id) {
-		var p = new Plugin(id);
-		return p.db.then(function() {
-			return p;
-		});
+		return new Plugin(id);
 	}
 };
 
