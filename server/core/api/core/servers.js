@@ -26,6 +26,8 @@ AbstractServer.prototype = {
 var B = require("bluebird"),
 	path = require("path"),
 
+	Api = require("./Api"),
+
 	File = require("./File"),
 
 	helper = require("./helper"),

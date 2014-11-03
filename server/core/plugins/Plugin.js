@@ -31,12 +31,11 @@ function Plugin(id) {
 			api.serve.route("raw", this.client).provider(
 				api.serve.fs(this.client.raw)
 			)
-		).redirector(
-			api.serve.static.exposed(this.client)
 		).router(function(route) {
-			console.log(route);
 			return api.serve.api(new Plugin(route)).route("client").route("raw").exposed;
-		})
+		}).redirector(
+			api.serve.static.exposed(this.client)
+		)
 	).provider(
 		api.serve.static.content({
 			manifest: this.manifest

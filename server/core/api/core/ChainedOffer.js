@@ -29,8 +29,13 @@ ChainedOffer.server = function(arr, args) {
 		throw helper.EMPTY;
 
 	var t = this,
-		curr;
-	for(var i = 0, l = arr.length, s = l?arr[0]:null; i < l; s=arr[++i])
+		curr,
+		propagate = function(s) {
+			return function(err) {
+				return s.apply(t, Array.prototype.slice.call(args).concat([err]));
+			};
+		};
+	for(var i = 0, l = arr.length, s = l?arr[0]:null; i < l; s=arr[++i]) {
 		if(!curr)
 			try {
 				curr = B.resolve(s.apply(t, args));
@@ -38,9 +43,8 @@ ChainedOffer.server = function(arr, args) {
 				curr = B.reject(err);
 			}
 		else
-			curr.catch(function(err) {
-				return s.apply(t, [].concat(args, [err]));
-			});
+			curr = curr.error(propagate(s));
+	}
 
 	return curr;
 };
