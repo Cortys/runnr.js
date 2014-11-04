@@ -24,16 +24,34 @@ function Plugin(id) {
 		return db.manifest;
 	});
 
+	this.resources = this.manifest.then(function(manifest) {
+		var res = {};
+
+		manifest.permissions.resources.forEach(function(v) {
+			res[v] = true;
+		});
+
+		return res;
+	});
+
 	this.client = Object.create(this.client, { parent: { value: this } });
 
 	api.offer(this).router(
 		api.serve.route("client", undefined, true).router(
 			api.serve.route("raw", this.client).provider(
 				api.serve.fs(this.client.raw)
-			)
-		).router(function(route) {
-			return api.serve.api(new Plugin(route)).route("client").route("raw").exposed;
-		}).redirector(
+			),
+			api.serve.route("resource", this).router(function(route) {
+				return this.resources.then(function(resources) {
+					if(!(route in resources)) {
+						if(route == id)
+							throw new Error("Plugin '"+id+"' cannot access itself as a resource.");
+						throw new Error("Plugin '"+id+"' has no access to plugin '"+route+"'.");
+					}
+					return api.serve.api(new Plugin(route)).route("client").route("raw").exposed;
+				});
+			})
+		).redirector(
 			api.serve.static.exposed(this.client)
 		)
 	).provider(
