@@ -13,17 +13,11 @@ plugins = {
 	},
 	get: function(id) {
 		return new Plugin(id);
+	},
+	getPersistent: function(id) {
+		return new Plugin(id, true);
 	}
 };
-
-api.offer(plugins)
-	.router(plugins.get)
-	.provider(api.serve.static.content({
-		get all() {
-			return plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 });
-		}
-	}))
-	.publish("plugins");
 
 function scan(dir) {
 
@@ -63,5 +57,14 @@ function init() {
 }
 
 init();
+
+api.offer(plugins)
+	.router(plugins.get)
+	.provider(api.serve.static.content({
+		get all() {
+			return plugins.getRaw({ "manifest.core":true }, { "manifest.author":1 });
+		}
+	}))
+	.publish("plugins");
 
 module.exports = plugins;

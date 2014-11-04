@@ -4,11 +4,14 @@ var path = require("path"),
 	fs = require("fs"),
 	db = require("../db").plugins;
 
-function Plugin(id) {
+function Plugin(id, persistent) {
 
-	var t = this;
+	var t = this, r;
 
 	this.id = id;
+
+	if((r = (persistent && Plugin.store(this) || Plugin.store.lookup(this))))
+		return r.selfPromise;
 
 	this.db = db.findOneAsync({ _id:this.id }).then(function(data) {
 		if(data)
@@ -60,9 +63,9 @@ function Plugin(id) {
 		})
 	);
 
-	return this.db.then(function() {
+	return (this.selfPromise = this.db.then(function() {
 		return t;
-	});
+	}));
 }
 
 Plugin.prototype = {
@@ -96,7 +99,44 @@ Plugin.prototype = {
 			});
 		}
 
+	},
+
+	close: function() {
+		Plugin.store.remove(this);
 	}
+};
+
+Plugin.store = function(plugin) { // store plugin in Plugin.store if not already stored.
+	if(!(plugin instanceof Plugin))
+		throw new Error("Only plugins can be stored in Plugin.store.");
+
+	return this.lookup(plugin, true) || (this.dictionary[plugin.id] = {
+		plugin: plugin,
+		refCount: 1
+	});
+};
+
+Plugin.store.dictionary = {};
+
+Plugin.store.remove = function(plugin) {
+	if(!(plugin instanceof Plugin))
+		throw new Error("Only plugins can be removed from Plugin.store.");
+	var e = this.dictionary[plugin.id];
+	if(e && e.refCount > 1)
+		e.refCount--;
+	else
+		this.dictionary[plugin.id] = undefined;
+};
+
+Plugin.store.lookup = function(plugin, increaseRefCount) {
+	if(!(plugin instanceof Plugin))
+		throw new Error("Only plugins can be looked up in Plugin.store.");
+	var e = this.dictionary[plugin.id];
+	if(!e)
+		return false;
+	if(increaseRefCount)
+		e.refCount++;
+	return e.plugin;
 };
 
 Plugin.install = function install(manifest, installationLocation) {
