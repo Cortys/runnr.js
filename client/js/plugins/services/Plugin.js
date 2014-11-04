@@ -17,12 +17,14 @@
 				client = api.route("client"),
 				pluginPath = client.route("raw").url.getAbsolute(),
 
-				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
+				resourcePath = client.route("resource").url.absolute+"/",
+
+				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
 				base = "<base href='"+pluginPath+"' target='_self' />",
 				script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
 				fixed = base+script;
 
-			this.manifest = api.get("manifest")
+			this.manifest = api.get("manifest");
 
 			this.client = Object.create(client, {
 				html: {
