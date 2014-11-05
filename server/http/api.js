@@ -46,8 +46,9 @@ router.all("*", function(req, res, next) {
 
 	req.api.get(req.requestedContent).then(function(content) {
 
-		if(content instanceof api.File)
-			return res.sendFile(content.path);
+		if(content instanceof api.File) {
+			return res.sendFile(content.path, function(err) {});
+		}
 
 		if(content instanceof stream.Readable)
 			return content.pipe(res);

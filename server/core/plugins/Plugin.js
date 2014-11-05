@@ -106,7 +106,7 @@ Plugin.prototype = {
 	}
 };
 
-Plugin.store = function(plugin) { // store plugin in Plugin.store if not already stored.
+Plugin.store = function store(plugin) { // store plugin in Plugin.store if not already stored.
 	if(!(plugin instanceof Plugin))
 		throw new Error("Only plugins can be stored in Plugin.store.");
 
@@ -118,7 +118,7 @@ Plugin.store = function(plugin) { // store plugin in Plugin.store if not already
 
 Plugin.store.dictionary = {};
 
-Plugin.store.remove = function(plugin) {
+Plugin.store.remove = function remove(plugin) {
 	if(!(plugin instanceof Plugin))
 		throw new Error("Only plugins can be removed from Plugin.store.");
 	var e = this.dictionary[plugin.id];
@@ -128,7 +128,7 @@ Plugin.store.remove = function(plugin) {
 		this.dictionary[plugin.id] = undefined;
 };
 
-Plugin.store.lookup = function(plugin, increaseRefCount) {
+Plugin.store.lookup = function lookup(plugin, increaseRefCount) {
 	if(!(plugin instanceof Plugin))
 		throw new Error("Only plugins can be looked up in Plugin.store.");
 	var e = this.dictionary[plugin.id];

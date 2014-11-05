@@ -59,7 +59,7 @@
 			client: null,
 		};
 
-		Plugin.isPlugin = function(plugin) {
+		Plugin.isPlugin = function isPlugin(plugin) {
 			return plugin instanceof Plugin;
 		};
 
