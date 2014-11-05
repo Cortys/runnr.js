@@ -13,3 +13,33 @@ body
 	overflow: hidden
 	-webkit-font-smoothing: antialiased
 	font-smoothing: antialiased
+
+.mainSearch
+	position: relative
+	width: auto
+	height: size.big
+	top: 0
+	left: 0
+	right: 0
+	shadow()
+	box-sizing: border-box
+	padding: (size.big - size.normal)*0.5 distance.far
+
+input
+	position: relative
+	border: none
+	border-bottom: size.border solid color.darkGray;
+	color: color.darkGray
+	font-family: font.type
+	font-size: font.normal
+	display: inline-block
+	box-sizing: border-box
+	width: auto
+	height: size.normal
+	padding-left: distance.narrow + distance.close + size.icon
+	outline: none
+	background: transparent url('../../img/magIcon.svg') no-repeat distance.narrow (size.normal - size.icon)*0.5
+
+input:focus
+	border-bottom-width: size.border*2
+	height: size.normal + size.border
