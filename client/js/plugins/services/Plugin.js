@@ -19,7 +19,7 @@
 
 				resourcePath = client.route("resource").url.absolute+"/",
 
-				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; frame-src 'none'; connect-src 'none'\" />",
+				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; frame-src 'none'\" />",
 				base = "<base href='"+pluginPath+"' target='_self' />",
 				script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
 				fixed = base+script;
