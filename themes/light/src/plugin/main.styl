@@ -16,6 +16,7 @@ body
 
 .mainSearch
 	position: relative
+	display: flex
 	width: auto
 	height: size.big
 	top: 0
@@ -24,6 +25,44 @@ body
 	shadow()
 	box-sizing: border-box
 	padding: (size.big - size.normal)*0.5 distance.far
+
+	button
+		position: relative
+		reset()
+		fastTransition()
+		margin-left: distance.far
+		width: auto
+		height: size.normal
+		display: inline-block
+		box-sizing: border-box
+		background: none
+		border: size.border solid transparent
+		border-radius: size.normal*0.5 + 1px
+		cursor: pointer
+		outline: none
+
+		text-align: center
+		line-height: size.normal - size.border*2
+		color: color.green
+
+		padding: 0 distance.far
+
+		font-size: font.normal
+
+		enable3d()
+
+		i
+			position: relative
+			display: inline-block
+			margin-left: - distance.close
+			margin-right: distance.close
+			margin-top: - size.border
+
+		&:hover
+			border-color: color.green
+		&:active
+			background: color.green
+			color: color.light
 
 input
 	position: relative
@@ -39,7 +78,9 @@ input
 	padding-left: distance.narrow + distance.close + size.icon
 	outline: none
 	background: transparent url('../../img/magIcon.svg') no-repeat distance.narrow (size.normal - size.icon)*0.5
+	flex-grow: 1
 
 input:focus
 	border-bottom-width: size.border*2
 	height: size.normal + size.border
+	margin-bottom: - size.border

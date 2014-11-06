@@ -74,7 +74,7 @@
 			},
 
 			get: function(content, absolute) {
-				return this[absolute?"absolute":"relative"]+"!/"+(content && encodeURI(content) || "");
+				return this[absolute?"absolute":"relative"]+"!/"+(content && encodeURIComponent(content).replace(/!/g, "%21") || "");
 			},
 
 			getAbsolute: function(content) {
