@@ -12,6 +12,14 @@ require("./frameworks")(api);
 require("./plugins");
 require("./themes");
 
+var problem = function(err) {
+	if(typeof err != "object")
+		return this.status(404).json({});
+	Object.defineProperty(err, "message", { value:err.message, enumerable:true });
+	Object.defineProperty(err, "type", { value:err.type, enumerable:true });
+	this.status(404).json(err);
+};
+
 router.all("*", function(req, res, next) {
 	var path = req.url,
 		i = 0,
@@ -47,7 +55,10 @@ router.all("*", function(req, res, next) {
 	req.api.get(req.requestedContent).then(function(content) {
 
 		if(content instanceof api.File) {
-			return res.sendFile(content.path, function(err) {});
+			return res.sendFile(content.path, function(err) {
+				if(err && !res.headersSent)
+					res.status(err.status || 404).end();
+			});
 		}
 
 		if(content instanceof stream.Readable)
@@ -56,13 +67,7 @@ router.all("*", function(req, res, next) {
 		if(typeof content == "number")
 			content += "";
 		res.send(content);
-	}).catch(function(err) {
-		if(typeof err != "object")
-			return res.status(404).json({});
-		Object.defineProperty(err, "message", { value:err.message, enumerable:true });
-		Object.defineProperty(err, "type", { value:err.type, enumerable:true });
-		res.status(404).json(err);
-	}).done();
+	}).catch(problem.bind(res)).done();
 });
 
 module.exports = router;
