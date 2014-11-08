@@ -2,6 +2,7 @@
 
 font = {
 	type: 'Roboto Light'\, Helvetica\, Arial\, serif
+	// font sizes optimized to fit inside their correspondent size-box:
 	big: 20px
 	normal: 15px
 	small: 12px
@@ -10,16 +11,19 @@ font = {
 // COLORS:
 
 color = {
+	// 4-color symmetric monochrome palette:
 	light: #fafafa
 	lightGray: #d9d9d9
 	darkGray: #555555
 	dark: #151515
+	// true colors: all sharing the same saturation and brightness
 	green: #89c42c
 }
 
 // DISTANCES:
 
 distance = {
+	// 0.5 factor for element distances:
 	far: 20px
 	close: 10px
 	narrow: 5px
@@ -28,12 +32,16 @@ distance = {
 // SIZES:
 
 size = {
+	// this size does not match the factor based sizing pattern - used for big lists because 2*big would be too big:
+	special: 70px
+	// 0.6 factor sizes for block elements:
 	big: 50px
 	normal: 30px
 	small: 18px
-	border: 1px,
-	radius: 2px
+	// 0.5 factor sizes for decoration elements:
 	icon: 16px
+	radius: 2px
+	border: 1px
 }
 
 // CONTENT:
