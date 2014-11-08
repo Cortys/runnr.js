@@ -9,12 +9,14 @@
 		function linker(scope, element, attrs) {
 			scope.plugin().client.html.then(function(html) {
 
-				var frame = document.createElement("iframe");
+				var span = document.createElement("span"),
+					frame = document.createElement("iframe");
 
 				frame.srcdoc = html;
 				frame.sandbox = "allow-scripts";
 
-				element.append(frame);
+				span.appendChild(frame);
+				element.append(span);
 
 				element.attr("loaded", "");
 			}, function() {

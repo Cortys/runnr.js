@@ -1,4 +1,6 @@
-plugin-renderer
+@import "../vars"
+
+plugin-renderer, plugin-renderer > span
 
 	position: absolute
 	width: auto
@@ -7,9 +9,13 @@ plugin-renderer
 	left: 0
 	bottom: 0
 	right: 0
+	overflow: hidden
+
+plugin-renderer > span
+	border-radius: size.radius
 
 	iframe
-		position: relative
+		position: static
 		width: 100%
 		height:100%
 		top: 0
