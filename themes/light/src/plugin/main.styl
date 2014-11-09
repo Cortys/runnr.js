@@ -1,0 +1,42 @@
+@import "../vars"
+
+body
+	reset()
+	font-family: font.type
+	font-size: font.normal
+	cursor: default
+	color: color.dark
+	background-color: color.light
+	-webkit-user-select: none
+	-moz-user-select: none
+	user-select: none
+	overflow: hidden
+	-webkit-font-smoothing: antialiased
+	font-smoothing: antialiased
+
+input
+	position: relative
+	border: none
+	border-bottom: size.border solid color.darkGray;
+	color: color.darkGray
+	font-family: font.type
+	font-size: font.normal
+	display: inline-block
+	box-sizing: border-box
+	width: auto
+	height: size.normal
+	padding-left: distance.narrow + distance.close + size.icon
+	outline: none
+	background: transparent url('../../img/magIcon.svg') no-repeat distance.narrow (size.normal - size.icon)*0.5
+	flex-grow: 1
+
+input:focus
+	border-bottom-width: size.border*2
+	height: size.normal + size.border
+	margin-bottom: - size.border
+
+.icon
+	font-size: size.icon
+
+@import "search"
+@import "list"
