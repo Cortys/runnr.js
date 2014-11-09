@@ -11,6 +11,7 @@
 		box-sizing: border-box
 		enable3d()
 		fastTransition()
+		cursor: pointer
 
 	&.big
 		&.img li
@@ -19,7 +20,6 @@
 			height: size.bigger
 
 			border-radius: size.bigger * 0.5
-			overflow: hidden
 
 			.img
 				position: absolute
@@ -50,9 +50,13 @@
 				font-size: font.small
 				margin: 0
 				padding: 0
+				i
+					font-size: font.smallIcon
+					vertical-align: text-top
 
 	&.clickable
 		li
+
 			&.active
 				background-color: color.darkGray
 				color: color.light
