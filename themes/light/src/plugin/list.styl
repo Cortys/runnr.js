@@ -5,18 +5,20 @@
 	position: relative
 	list-style: none
 
-	margin: distance.far
+	margin: 0 distance.far
 
 	li
+		position: relative
 		box-sizing: border-box
 		enable3d()
 		fastTransition()
 		cursor: pointer
+		float: left
+		width: 100%
 
 	&.big
 		&.img li
-			position: relative
-			margin: distance.narrow 0 distance.narrow + distance.far 0
+			margin: distance.narrow + distance.close 0
 			height: size.bigger
 
 			border-radius: size.bigger * 0.5
@@ -29,6 +31,7 @@
 				border-radius: 50%
 				border: distance.narrow solid color.light
 				margin: - distance.narrow
+				enable3d()
 
 			h2
 				position: absolute
@@ -54,9 +57,24 @@
 					font-size: font.smallIcon
 					vertical-align: text-top
 
+		&.clickable .clickBox
+			position: absolute
+			top: - distance.narrow - distance.close
+			bottom: - distance.narrow - distance.close
+			left: 0
+			right: 0
+			cursor: pointer
+
 	&.clickable
 		li
-
 			&.active
 				background-color: color.darkGray
 				color: color.light
+
+				.img
+					-webkit-animation-duration: speed.slow * 2;
+					animation-duration: speed.slow * 2;
+					-webkit-animation-fill-mode: both;
+					animation-fill-mode: both;
+					-webkit-animation-name: pulse;
+					animation-name: pulse;

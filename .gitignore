@@ -3,5 +3,6 @@
 node_modules
 bower_components
 client/js/build
-themes/*/*.css
+themes/*/desktop.css
+themes/*/plugin.css
 themes/*/img/build

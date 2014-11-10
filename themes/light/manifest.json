@@ -12,12 +12,18 @@
 	"css": {
 		"main": [
 			{
+				"file": "animate.css",
+				"media": null
+			}, {
 				"file": "desktop.css",
 				"media": null
 			}
 		],
 		"plugin": [
 			{
+				"file": "animate.css",
+				"media": null
+			}, {
 				"file": "plugin.css",
 				"media": null
 			}

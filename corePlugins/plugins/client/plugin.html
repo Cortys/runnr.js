@@ -7,21 +7,24 @@
 	</head>
 	<body>
 		<ng-include src="'../resource/core!/components/mainSearch.html'"></ng-include>
-		<ul class="big clickable img list" ng-init="active = 1">
+		<ul class="big clickable img list" ng-init="active = 0">
 			<li ng-class="active == 1?'active':''" ng-click="active = 1">
 				<div class="img"></div>
 				<h2>Watch Directory</h2>
 				<p><i class="icon icon_symbols-runner"></i> 5 instances</p>
+				<div class="clickBox"></div>
 			</li>
 			<li ng-class="active == 2?'active':''" ng-click="active = 2">
 				<div class="img"></div>
 				<h2>Timer</h2>
 				<p><i class="icon icon_symbols-runner"></i> 3 instances</p>
+				<div class="clickBox"></div>
 			</li>
 			<li ng-class="active == 3?'active':''" ng-click="active = 3">
 				<div class="img"></div>
 				<h2>File Operator</h2>
 				<p><i class="icon icon_symbols-runner"></i> 1 instance</p>
+				<div class="clickBox"></div>
 			</li>
 		</ul>
 	</body>
