@@ -62,8 +62,8 @@ reset()
 	margin: 0
 	padding: 0
 	-webkit-appearance: none
-	-moz-apperance: none
-	apperance: none
+	-moz-appearance: none
+	appearance: none
 
 box-shadow()
 	-moz-box-shadow: arguments
@@ -89,13 +89,6 @@ gradient(dir, colorA, colorB)
 		dirInverse = "to top"
 	background-image: linear-gradient(dirInverse, colorA 0%, colorB 100%);
 
-transition()
-	-webkit-transition: arguments
-	-moz-transition: arguments
-	-o-transition: arguments
-	-ms-transition: arguments
-	transition: arguments
-
 fastTransition()
 	transition: all speed.fast linear
 
@@ -105,18 +98,7 @@ slowTransition()
 bounceTransition()
 	transition: all speed.slow*2 cubic-bezier(.36,.02,.35,1.5)
 
-transform()
-	-webkit-transform: arguments
-	-moz-transform: arguments
-	-o-transform: arguments
-	-ms-transform: arguments
-	transform: arguments
-
 enable3d()
 	transform: translate3d(0,0,0)
 	p = 1500px
-	-webkit-perspective: p
-	-moz-perspective: p
-	-o-perspective: p
-	-ms-perspective: p
 	perspective: p
