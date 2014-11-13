@@ -11,21 +11,11 @@
 
 		function Controller() {
 			this._active = null;
+			this.entries = [];
 		}
 
 		Controller.prototype = {
-			entries: [
-				{
-					name: "Hello World",
-					instances: 5
-				}, {
-					name: "Foo Bar",
-					instances: 3
-				}, {
-					name: "Baz Boo",
-					instances: 1
-				}
-			],
+			entries: null,
 			activate: function(plugin) {
 				this._active = plugin;
 			},
