@@ -7,7 +7,6 @@
 	function PluginFactory(api, pluginsApi, themesApi, $q) {
 
 		var frameworksPath = api.root.route("frameworks").url.getAbsolute(),
-			connectorPath = pluginsApi.connector.getAbsolute(),
 			themesPath = themesApi.route("raw").url.getAbsolute();
 
 		function Plugin(id) {
@@ -19,25 +18,29 @@
 
 				resourcePath = client.route("resource").url.absolute+"/",
 
+				connectorPath = client.url.getAbsolute("connector"),
+
 				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; child-src 'none'; base-uri "+pluginPath+"\" />",
 				base = "<base href='"+pluginPath+"' target='_self' />",
-				script = "<script src='"+pluginsApi.connector.get("plugin.js")+"' type='text/javascript'></script>",
-				fixed = base+script;
+				script = "<script src='"+connectorPath+"' type='text/javascript'></script>",
+				fixed = base+script,
 
-			this.manifest = api.get("manifest");
+				manifest = this.manifest = api.get("manifest");
 
 			this.client = Object.create(client, {
 				html: {
 					get: function() {
-						return $q.all([client.get("html"), themesApi.theme]).then(function(data) {
+						return $q.all([client.get("html"), themesApi.theme, manifest]).then(function(data) {
 							var html = data[0],
 								theme = data[1],
+								manifest = data[2],
 
 								link = "";
 
-							theme.css.plugin.forEach(function(v, i) {
-								link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
-							});
+							if(manifest.plugin.theme)
+								theme.css.plugin.forEach(function(v, i) {
+									link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
+								});
 
 							// Put meta tag before all HTML to prevent disabling it through comments or similar attack vectors.
 							// Links and helpers are inserted properly into the head, exploiting them would cause no security breach.

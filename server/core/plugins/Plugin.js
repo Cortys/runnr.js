@@ -1,6 +1,7 @@
 var path = require("path"),
 	B = require("bluebird"),
-	api = require("../api").api,
+	baseApi = require("../api")
+	api = baseApi.api,
 	fs = require("fs"),
 	db = require("../db").plugins;
 
@@ -81,6 +82,8 @@ Plugin.prototype = {
 
 	client: {
 		parent: null,
+		
+		connector: baseApi.route("js").route("connector").get("plugin.js"),
 
 		get html() {
 

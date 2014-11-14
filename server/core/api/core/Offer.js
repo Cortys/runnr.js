@@ -46,7 +46,7 @@ Offer.prototype = {
 	redirector: function(exposed) {
 
 		if(!helper.isExposed(exposed))
-			throw new TypeError("Provided redirect target [index = "+i+"] is not exposed.");
+			throw new TypeError("Provided redirect target is not exposed.");
 		this._router = exposed._exposed.router && exposed._exposed.router.bind(exposed);
 		this._provider = exposed._exposed.provider && exposed._exposed.provider.bind(exposed);
 
