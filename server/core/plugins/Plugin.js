@@ -40,6 +40,7 @@ function Plugin(id, persistent) {
 	this.client = Object.create(this.client, { parent: { value: this } });
 
 	api.offer(this).router(
+		// CLIENT DATA:
 		api.serve.route("client", undefined, true).router(
 			api.serve.route("raw", this.client).provider(
 				api.serve.fs(this.client.raw)
@@ -58,7 +59,9 @@ function Plugin(id, persistent) {
 			api.serve.static.exposed(this.client)
 		)
 	).provider(
+		// GENERAL DATA:
 		api.serve.static.content({
+			id: this.id,
 			manifest: this.manifest
 		})
 	);
@@ -106,38 +109,7 @@ Plugin.prototype = {
 	}
 };
 
-Plugin.store = function store(plugin) { // store plugin in Plugin.store if not already stored.
-	if(!(plugin instanceof Plugin))
-		throw new Error("Only plugins can be stored in Plugin.store.");
-
-	return this.lookup(plugin, true) || (this.dictionary[plugin.id] = {
-		plugin: plugin,
-		refCount: 1
-	});
-};
-
-Plugin.store.dictionary = {};
-
-Plugin.store.remove = function remove(plugin) {
-	if(!(plugin instanceof Plugin))
-		throw new Error("Only plugins can be removed from Plugin.store.");
-	var e = this.dictionary[plugin.id];
-	if(e && e.refCount > 1)
-		e.refCount--;
-	else
-		this.dictionary[plugin.id] = undefined;
-};
-
-Plugin.store.lookup = function lookup(plugin, increaseRefCount) {
-	if(!(plugin instanceof Plugin))
-		throw new Error("Only plugins can be looked up in Plugin.store.");
-	var e = this.dictionary[plugin.id];
-	if(!e)
-		return false;
-	if(increaseRefCount)
-		e.refCount++;
-	return e.plugin;
-};
+Plugin.store = require("./PluginStore")(Plugin);
 
 Plugin.install = function install(manifest, installationLocation) {
 	if(manifest.id != "all" && manifest.id != "connector") // Plugins named 'all' and 'connector' are not allowed because the plugin http API already uses these identifiers.

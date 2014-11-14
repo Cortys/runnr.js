@@ -17,6 +17,7 @@
 
 	"plugin": {
 		"client": "plugin.html",
+		"theme": true,
 		"server": null
 	}
 }
