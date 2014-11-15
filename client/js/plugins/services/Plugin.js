@@ -14,10 +14,9 @@
 
 			var api = this.api = pluginsApi.route(id),
 				client = api.route("client"),
+
 				pluginPath = client.route("raw").url.getAbsolute(),
-
 				resourcePath = client.route("resource").url.absolute+"/",
-
 				connectorPath = client.url.getAbsolute("connector"),
 
 				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; child-src 'none'; base-uri "+pluginPath+"\" />",
