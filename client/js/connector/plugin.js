@@ -1,0 +1,5 @@
+var connector = (function() {
+	return {
+		
+	};
+})();
