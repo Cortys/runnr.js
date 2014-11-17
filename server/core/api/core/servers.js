@@ -74,7 +74,7 @@ var B = require("bluebird"),
 
 		return o;
 	},
-
+	// TODO: Rethink whole api server infrastructure for a more structured and intuitive api exposal
 	servers = {
 
 		// STATIC OBJECT EXPOSAL: allows read-only access to object properties -> provider, router, redirector

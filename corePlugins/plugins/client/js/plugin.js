@@ -8,7 +8,7 @@
 	pluginList.$inject = [];
 
 	function pluginList() {
-
+		// TODO: Implement data layer for plugin list
 		function Controller() {
 			this._active = null;
 			this.entries = [];
