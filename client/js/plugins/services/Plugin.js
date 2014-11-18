@@ -2,15 +2,17 @@
 	angular.module("plugins")
 		.factory("plugins.Plugin", PluginFactory);
 
-	PluginFactory.$inject = ["core.api", "plugins.api", "themes.api", "$q"];
+	PluginFactory.$inject = ["core.api", "plugins.api", "themes.api", "plugins.Connector", "$q"];
 
-	function PluginFactory(api, pluginsApi, themesApi, $q) {
+	function PluginFactory(api, pluginsApi, themesApi, Connector, $q) {
 
 		var frameworksPath = api.root.route("frameworks").url.getAbsolute(),
 			themesPath = themesApi.route("raw").url.getAbsolute();
 
 		function Plugin(id) {
 			this.id = id;
+
+			this.connector = new Connector(this);
 
 			var api = this.api = pluginsApi.route(id),
 				client = api.route("client"),
@@ -48,17 +50,14 @@
 					}
 				}
 			});
-
-			console.log(id);
 		}
 
 		Plugin.prototype = {
 			name: null,
 			id: null,
+			connector: null,
 
-			onInitialized: null,
-
-			client: null,
+			client: null
 		};
 
 		Plugin.isPlugin = function isPlugin(plugin) {

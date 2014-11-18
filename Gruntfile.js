@@ -59,7 +59,7 @@ module.exports = function(grunt) {
 					banner: "'use strict';\n\n",
 					sourceMap: true
 				},
-				src: ["client/js/runnr.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js"],
+				src: ["client/js/runnr.js", "client/js/*/*.js", "client/js/*/*/**/*.js", "!client/js/build/*.js", "!client/js/connector/*.js"],
 				dest: "client/js/build/runnr.js",
 			}
 		},
