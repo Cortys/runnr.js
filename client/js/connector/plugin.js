@@ -8,8 +8,10 @@ var connector = (function() {
 			console.log(event);
 		}, false);
 
-		parent.postMessage({ type:"handshake", id:connId, application:"runnr" }, "*");
+		console.log("send start");
 
+		parent.postMessage({ type:"handshake", id:connId, application:"runnr" }, "*");
+		parent.postMessage({ type:"test" }, "*");
 	}
 
 	init();

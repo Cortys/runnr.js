@@ -15,6 +15,7 @@
 			t._eventTargets = new Set();
 
 			window.addEventListener("message", function(event) {
+				console.log("got", event);
 				protocol.receive(event, r);
 			}, false);
 		}
@@ -44,7 +45,7 @@
 			send: {
 				_do: function(target, message) {
 					console.log(target, message);
-					target.postMessage(message, "null");
+					target.postMessage(message, "*");
 				},
 
 				handshake: function(target, id) {
@@ -57,6 +58,7 @@
 					sender = event.source;
 				if(data.type == "handshake" && data.application == "runnr")
 					return this.send.handshake(sender, data.id);
+				callback(data.type, data.message);
 			}
 		};
 
