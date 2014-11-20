@@ -15,7 +15,7 @@
 			t._eventTargets = new Set();
 
 			window.addEventListener("message", function(event) {
-				console.log("got", event);
+				
 				protocol.receive(event, r);
 			}, false);
 		}
@@ -44,7 +44,7 @@
 		var protocol = {
 			send: {
 				_do: function(target, message) {
-					console.log(target, message);
+
 					target.postMessage(message, "*");
 				},
 
