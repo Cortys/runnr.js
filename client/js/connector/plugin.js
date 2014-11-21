@@ -8,6 +8,7 @@ var connector = (function() {
 			
 		}, false);
 
+		console.log("send start");
 
 		parent.postMessage({ type:"handshake", id:connId, application:"runnr" }, "*");
 		parent.postMessage({ type:"test" }, "*");

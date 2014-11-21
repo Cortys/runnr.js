@@ -15,8 +15,8 @@
 			t._eventTargets = new Set();
 
 			window.addEventListener("message", function(event) {
-				
-				protocol.receive(event, r);
+				if(t._eventTargets.has(event.source))
+					protocol.receive(event, r);
 			}, false);
 		}
 
@@ -37,14 +37,13 @@
 
 			// handle high level connection stuff
 			receive: function(type, data) {
-
+				console.log(type, data);
 			}
 		};
 
 		var protocol = {
 			send: {
 				_do: function(target, message) {
-
 					target.postMessage(message, "*");
 				},
 
@@ -56,9 +55,13 @@
 			receive: function(event, callback) {
 				var data = event.data,
 					sender = event.source;
-				if(data.type == "handshake" && data.application == "runnr")
-					return this.send.handshake(sender, data.id);
-				callback(data.type, data.message);
+				if(data.type == "handshake" && data.application == "runnr") {
+					this.send.handshake(sender, data.id);
+					callback("handshake");
+					return;
+				}
+				if(data.type == "message")
+					callback("message", data.message);
 			}
 		};
 
