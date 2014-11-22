@@ -1,22 +1,39 @@
 var connector = (function() {
 
-	function init() {
+	var protocol = {
 
-		var connId = Math.random();
+		init: function() {
 
-		window.addEventListener("message", function(event) {
-			
-		}, false);
+			window.addEventListener("message", function(event) {
 
-		console.log("send start");
+			}, false);
 
-		parent.postMessage({ type:"handshake", id:connId, application:"runnr" }, "*");
-		parent.postMessage({ type:"test" }, "*");
-	}
+			this.send.handshake();
 
-	init();
+		},
+
+		send: {
+
+			id: Math.random(),
+
+			_do: function(message) {
+				parent.postMessage(message, "*");
+			},
+
+			handshake: function() {
+				this._do({ type:"handshake", id:this.id, application:"runnr" });
+			}
+		},
+
+		receive: function() {
+
+		}
+	};
+
+	protocol.init();
 
 	return {
 		// TODO: Implement plugin side of connector logic
+
 	};
 })();

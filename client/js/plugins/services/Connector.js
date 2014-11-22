@@ -9,7 +9,7 @@
 		function Connector(plugin) {
 
 			var t = this,
-				r = t.receive.bind(t);
+				r = t._receive.bind(t);
 
 			t.plugin = plugin;
 			t._eventTargets = new Set();
@@ -36,7 +36,7 @@
 			},
 
 			// handle high level connection stuff
-			receive: function(type, data) {
+			_receive: function(type, data) {
 				console.log(type, data);
 			}
 		};
