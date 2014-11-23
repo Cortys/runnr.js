@@ -22,6 +22,10 @@ var connector = (function() {
 
 			handshake: function() {
 				this._do({ type:"handshake", id:this.id, application:"runnr" });
+			},
+
+			message: function(message) {
+				this._do({ type:"message", message:message });
 			}
 		},
 
