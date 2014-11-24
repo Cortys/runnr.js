@@ -7,7 +7,7 @@ var connector = (function() {
 			var t = this;
 
 			window.addEventListener("message", function(event) {
-				r.receive(event);
+				t.receive(event);
 			}, false);
 
 			t.send.handshake();
