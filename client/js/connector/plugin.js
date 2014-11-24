@@ -4,11 +4,13 @@ var connector = (function() {
 
 		init: function() {
 
-			window.addEventListener("message", function(event) {
+			var t = this;
 
+			window.addEventListener("message", function(event) {
+				r.receive(event);
 			}, false);
 
-			this.send.handshake();
+			t.send.handshake();
 
 		},
 
@@ -29,8 +31,10 @@ var connector = (function() {
 			}
 		},
 
-		receive: function() {
-
+		receive: function(event) {
+			var t = this,
+				data = event.data,
+				sender = event.source;
 		}
 	};
 
