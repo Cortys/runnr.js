@@ -2,6 +2,8 @@ var connector = (function() {
 
 	var protocol = {
 
+		connected: false,
+
 		init: function() {
 
 			var t = this;
@@ -35,6 +37,10 @@ var connector = (function() {
 			var t = this,
 				data = event.data,
 				sender = event.source;
+			if(!t.connected && data.type == "handshake" && data.application == "runnr") {
+				t.connected = true;
+				return;
+			}
 		}
 	};
 
