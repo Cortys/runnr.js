@@ -18,7 +18,7 @@ var connector = (function() {
 
 		send: {
 
-			id: Math.random(),
+			id: Date.now()+Math.random(),
 
 			_do: function(message) {
 				parent.postMessage(message, "*");
@@ -37,8 +37,9 @@ var connector = (function() {
 			var t = this,
 				data = event.data,
 				sender = event.source;
-			if(!t.connected && data.type == "handshake" && data.application == "runnr") {
+			if(!t.connected && data.type == "handshake" && data.application == "runnr" && data.id == t.send.id) {
 				t.connected = true;
+				console.log("connected");
 				return;
 			}
 		}
