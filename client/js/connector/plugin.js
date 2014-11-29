@@ -40,6 +40,7 @@ var connector = (function() {
 			if(!t.connected && data.type == "handshake" && data.application == "runnr" && data.id == t.send.id) {
 				t.connected = true;
 				console.log("connected");
+				// TODO: Complete plugin receive handler
 				return;
 			}
 		}
