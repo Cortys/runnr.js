@@ -2,9 +2,9 @@
 	angular.module("plugins")
 		.factory("plugins.Connector", ConnectorFactory);
 
-	ConnectorFactory.$inject = [];
+	ConnectorFactory.$inject = ["$q"];
 
-	function ConnectorFactory() {
+	function ConnectorFactory($q) {
 		// TODO: Implement application side of plugin / runner connector logic
 		function Connector(plugin) {
 
@@ -38,6 +38,20 @@
 			// handle high level connection stuff
 			_receive: function(type, data, callback) {
 				console.log(type, data);
+			},
+
+			send: function(message) {
+				var t = this;
+				return $q(function(resolve, reject) {
+					t._eventTargets.forEach(function(target) {
+						protocol.send.message(target, message, function(data) {
+							if(data !== undefined)
+								resolve(data);
+							else
+								reject();
+						});
+					});
+				});
 			}
 		};
 
