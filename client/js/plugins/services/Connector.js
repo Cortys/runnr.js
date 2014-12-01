@@ -43,14 +43,14 @@
 			send: function(message) {
 				var t = this;
 				return $q(function(resolve, reject) {
-					t._eventTargets.forEach(function(target) {
-						protocol.send.message(target, message, function(data) {
+					var o = t._eventTargets.values().next();
+					if(o && (o = o.value))
+						protocol.send.message(o, message, function(data) {
 							if(data !== undefined)
 								resolve(data);
 							else
 								reject();
 						});
-					});
 				});
 			}
 		};
