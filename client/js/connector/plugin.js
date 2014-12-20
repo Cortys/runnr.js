@@ -52,4 +52,4 @@ var connector = (function() {
 		// TODO: Implement plugin side of connector logic
 
 	};
-})();
+}());
