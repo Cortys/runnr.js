@@ -6,39 +6,26 @@
 
 	function ConnectorFactory($q) {
 		// TODO: Implement application side of plugin / runner connector logic
-		function Connector(plugin) {
-
+		function Connector(plugin, eventTarget) {
 			var t = this,
 				r = t._receive.bind(t);
 
 			t.plugin = plugin;
+			t.eventTarget = eventTarget;
 
-			window.addEventListener("message", function(event) {
-				if(t._eventTarget === event.source)
+			window.addEventListener("message", t._listener = function(event) {
+				if(t.eventTarget === event.source)
 					protocol.receive(event, r);
 			}, false);
 		}
 
 		Connector.prototype = {
 			plugin: null,
+			eventTarget: null,
 
-			_eventTarget: null,
-
-			setEventTarget: function(target) {
-				if(typeof target != "object" || typeof target.postMessage != "function")
-					throw new TypeError("Only objects with an implemented postMessage API can be a plugin event target.");
-				if(this._eventTarget)
-					return false;
-				this._eventTarget = target;
-				return true;
-			},
-
-			removeEventTarget: function(target) {
-				if(this._eventTarget === target) {
-					this._eventTarget = null;
-					return true;
-				}
-				return false;
+			destroy: function() {
+				window.removeEventListener("message", this._listener, false);
+				this.plugin = this.eventTarget = null;
 			},
 
 			// handle high level connection stuff
@@ -49,8 +36,8 @@
 			send: function(message) {
 				var t = this;
 				return $q(function(resolve, reject) {
-					if(t._eventTarget)
-						protocol.send.message(t._eventTarget, message, function(data) {
+					if(t.eventTarget)
+						protocol.send.message(t.eventTarget, message, function(data) {
 							if(data !== undefined)
 								resolve(data);
 							else
@@ -68,7 +55,7 @@
 			send: {
 
 				_getId: function() {
-					return (storePos = storePos+1%Number.MAX_VALUE);
+					return ((storePos = storePos+1)%Number.MAX_VALUE);
 				},
 
 				_do: function(target, message) {

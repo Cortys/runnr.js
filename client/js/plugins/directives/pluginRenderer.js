@@ -2,14 +2,14 @@
 	angular.module("plugins")
 		.directive("pluginRenderer", pluginRenderer);
 
-	pluginRenderer.$inject = ["$http", "$compile"];
+	pluginRenderer.$inject = ["$http", "$compile", "plugins.Connector"];
 
-	function pluginRenderer($http, $compile) {
+	function pluginRenderer($http, $compile, Connector) {
 
 		function linker(scope, element, attrs) {
 
 			var plugin = scope.plugin(),
-				target;
+				connector;
 
 			plugin.client.html.then(function(html) {
 
@@ -22,19 +22,18 @@
 				span.appendChild(frame);
 				element.append(span);
 
-				if(plugin.connector.setEventTarget(target = frame.contentWindow))
-					element.attr("loaded", "");
-				else {
-					span.remove();
-					element.attr("failed", "");
-				}
+				connector = new Connector(plugin, frame.contentWindow);
+
+				element.attr("loaded", "");
 
 			}, function() {
 				element.attr("failed", "");
 			});
 
 			scope.$on("$destroy", function() {
-				plugin.connector.removeEventTarget(target);
+				if(connector)
+					connector.destroy();
+				connector = null;
 			});
 
 		}
