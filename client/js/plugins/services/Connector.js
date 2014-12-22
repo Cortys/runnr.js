@@ -12,10 +12,9 @@
 				r = t._receive.bind(t);
 
 			t.plugin = plugin;
-			t._eventTargets = new Set();
 
 			window.addEventListener("message", function(event) {
-				if(t._eventTargets.has(event.source))
+				if(t._eventTarget === event.source)
 					protocol.receive(event, r);
 			}, false);
 		}
@@ -23,16 +22,23 @@
 		Connector.prototype = {
 			plugin: null,
 
-			_eventTargets: null,
+			_eventTarget: null,
 
-			addEventTarget: function(target) {
+			setEventTarget: function(target) {
 				if(typeof target != "object" || typeof target.postMessage != "function")
 					throw new TypeError("Only objects with an implemented postMessage API can be a plugin event target.");
-				this._eventTargets.add(target);
+				if(this._eventTarget)
+					return false;
+				this._eventTarget = target;
+				return true;
 			},
 
 			removeEventTarget: function(target) {
-				return this._eventTargets.delete(target);
+				if(this._eventTarget === target) {
+					this._eventTarget = null;
+					return true;
+				}
+				return false;
 			},
 
 			// handle high level connection stuff
@@ -43,9 +49,8 @@
 			send: function(message) {
 				var t = this;
 				return $q(function(resolve, reject) {
-					var o = t._eventTargets.values().next();
-					if(o && (o = o.value))
-						protocol.send.message(o, message, function(data) {
+					if(t._eventTarget)
+						protocol.send.message(t._eventTarget, message, function(data) {
 							if(data !== undefined)
 								resolve(data);
 							else

@@ -22,17 +22,19 @@
 				span.appendChild(frame);
 				element.append(span);
 
-				plugin.connector.addEventTarget(target = frame.contentWindow);
-
-				element.attr("loaded", "");
+				if(plugin.connector.setEventTarget(target = frame.contentWindow))
+					element.attr("loaded", "");
+				else {
+					span.remove();
+					element.attr("failed", "");
+				}
 
 			}, function() {
 				element.attr("failed", "");
 			});
 
 			scope.$on("$destroy", function() {
-				if(target)
-					plugin.connector.removeEventTarget(target);
+				plugin.connector.removeEventTarget(target);
 			});
 
 		}
