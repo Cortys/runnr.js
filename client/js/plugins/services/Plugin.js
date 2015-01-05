@@ -61,6 +61,7 @@
 		Plugin.prototype = {
 			name: null,
 			id: null,
+			client: null,
 
 			_cache: null,
 
@@ -68,7 +69,9 @@
 				this._cache = {};
 			},
 
-			client: null
+			receive: function(message, callback) {
+				
+			}
 		};
 
 		Plugin.isPlugin = function isPlugin(plugin) {

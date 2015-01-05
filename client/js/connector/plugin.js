@@ -1,8 +1,12 @@
 var connector = (function() {
 
-	var protocol = {
+	var callbackStore = new Map(),
+		storePos = 1,
+		connected = false,
+		application = "runnrConnectorV1",
+		eventListeners = new Map();
 
-		connected: false,
+	var protocol = {
 
 		init: function() {
 
@@ -20,16 +24,27 @@ var connector = (function() {
 
 			id: Date.now()+Math.random(),
 
+			_getId: function() {
+				return ((storePos = storePos+1)%Number.MAX_VALUE);
+			},
+
 			_do: function(message) {
-				parent.postMessage(message, "*");
+				window.parent.postMessage(message, "*");
 			},
 
 			handshake: function() {
-				this._do({ type:"handshake", id:this.id, application:"runnr" });
+				this._do({ type:"handshake", id:this.id, application:application });
 			},
 
-			message: function(message) {
-				this._do({ type:"message", message:message });
+			message: function(message, callback, responseTo) {
+				var id = this._getId();
+
+				if(!connected)
+					return;
+
+				this._do(target, { type:"message", id:id, message:message, responseTo:responseTo });
+				if(typeof callback == "function")
+					callbackStore.set(id, callback);
 			}
 		},
 
@@ -37,19 +52,35 @@ var connector = (function() {
 			var t = this,
 				data = event.data,
 				sender = event.source;
-			if(!t.connected && data.type == "handshake" && data.application == "runnr" && data.id == t.send.id) {
-				t.connected = true;
-				console.log("connected");
-				// TODO: Complete plugin receive handler
+			if(!connected && data.type == "handshake" && data.application == application && data.id == t.send.id) {
+				connected = true;
 				return;
 			}
+			if(data.type == "message") {
+				if(!data.responseTo);
+
+				else if(callbackStore.has(data.responseTo))
+					callbackStore.get(data.responseTo)();
+			}
+		}
+	};
+
+	var api = {
+		// TODO: Implement plugin side of connector logic
+		send: function(event, data, callback) {
+
+		},
+
+		addEventListener: function(event, callback) {
+
+		},
+
+		removeEventListener: function(event, callback) {
+
 		}
 	};
 
 	protocol.init();
 
-	return {
-		// TODO: Implement plugin side of connector logic
-
-	};
+	return api;
 }());
