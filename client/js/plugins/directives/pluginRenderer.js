@@ -22,7 +22,7 @@
 				span.appendChild(frame);
 				element.append(span);
 
-				connector = new Connector(plugin, frame.contentWindow);
+				connector = new Connector(plugin.receive, frame.contentWindow);
 
 				element.attr("loaded", "");
 

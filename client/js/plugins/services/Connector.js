@@ -110,10 +110,18 @@
 					return;
 				}
 				if(data.type == "message") {
-					if(!data.responseTo)
-						callback("message", data.message, function(response) {
+					if(!data.responseTo) {
+						var called = false;
+						var responseFunction = function(response) {
+							if(called)
+								return;
 							t.send.message(sender, response, null, data.id);
-						});
+							called = true;
+						}, result = callback("message", data.message, responseFunction);
+
+						if(!called && !result)
+							responseFunction(undefined);
+					}
 					else if(callbackStore.has(data.responseTo))
 						callbackStore.get(data.responseTo)();
 				}

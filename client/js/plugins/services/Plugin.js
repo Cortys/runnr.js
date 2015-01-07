@@ -32,6 +32,8 @@
 
 			this._cache = new Cache(cached?0:cacheLimit);
 
+			this.receive = this.receive.bind(this);
+
 			this.client = Object.create(client, {
 				html: {
 					get: function() {
@@ -70,7 +72,7 @@
 			},
 
 			receive: function(message, callback) {
-				
+				console.log(message);
 			}
 		};
 
