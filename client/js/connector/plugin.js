@@ -25,7 +25,7 @@ var connector = (function() {
 			id: Date.now()+Math.random(),
 
 			_getId: function() {
-				return ((storePos = storePos+1)%Number.MAX_VALUE);
+				return (storePos = (storePos+1)%Number.MAX_VALUE);
 			},
 
 			_do: function(message) {
