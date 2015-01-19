@@ -14,13 +14,13 @@ function Offer(object, baseApi, onlyInit) {
 
 	var t = this,
 		o = helper.exposer({
-		router: { get: function() {
-			return t._router;
-		} },
-		provider: { get: function() {
-			return t._provider;
-		} }
-	});
+			router: { get: function() {
+				return t._router;
+			} },
+			provider: { get: function() {
+				return t._provider;
+			} }
+		});
 
 	Object.defineProperty(object, "_exposed", { value: o });
 

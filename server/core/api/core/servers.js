@@ -27,6 +27,8 @@ var B = require("bluebird"),
 	path = require("path"),
 
 	Api = require("./Api"),
+	Offer = require("./Offer"),
+	ChainedOffer = require("./ChainedOffer"),
 
 	File = require("./File"),
 
@@ -57,17 +59,18 @@ var B = require("bluebird"),
 
 		var t = this,
 			o = Object.create(null),
-			offer = t._parent._root.offer(o),
+			offer = new Offer(o),
 			promise = B.resolve(object);
 
 		offer.provider(t.content(object)).router(function(route) {
+			console.log("exposed route call: ", route);
 			if(typeof route != "string")
 				throw new TypeError("'"+route+"' has to be of type string.");
 			return promise.then(function(object) {
 				if(!isPropertyPublic(object, route) || typeof object[route] != "function")
 					throw new Error("'"+route+"' could not be found.");
 				var exposed = Object.create(null);
-				t._parent._root.offer(exposed).provider(object[route].bind(object));
+				new Offer(exposed).provider(object[route].bind(object));
 				return exposed;
 			});
 		});
@@ -93,6 +96,7 @@ var B = require("bluebird"),
 			var f = function(route) {
 					if(route == name)
 						return o;
+					console.log("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
 					throw new Error("'"+route+"' does not match this dynamic exposed route '"+name+"'.");
 				}, convert = function(n, args) {
 					if(baseContext)
@@ -107,7 +111,7 @@ var B = require("bluebird"),
 					return f;
 				},
 				o = Object.create(null),
-				offer = this._root[chained?"chainedOffer":"offer"](o);
+				offer = chained ? new ChainedOffer(o) : new Offer(o);
 
 			f.provider = function() {
 				return convert("provider", arguments);
@@ -155,10 +159,4 @@ var B = require("bluebird"),
 		}
 	};
 
-module.exports = function init(apiRoot) {
-	if(typeof apiRoot != "object")
-		return servers;
-	var o = Object.create(servers, { _root: { value: apiRoot } });
-	o.static._parent = o.dynamic._parent = o;
-	return o;
-};
+module.exports = servers;

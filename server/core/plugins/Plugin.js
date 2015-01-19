@@ -43,20 +43,22 @@ function Plugin(id, persistent) {
 	api.offer(this).router(
 		// CLIENT DATA:
 		api.serve.route("client", undefined, true).router(
+			// client/raw
 			api.serve.route("raw", this.client).provider(
 				api.serve.fs(this.client.raw)
 			),
+			// client/resource
 			api.serve.route("resource", this).router(function(route) {
 				return this.resources.then(function(resources) {
-					if(!(route in resources)) {
-						if(route == id)
-							throw new Error("Plugin '"+id+"' cannot access itself as a resource.");
+					if(route == id)
+						throw new Error("Plugin '"+id+"' cannot access itself as a resource.");
+					if(!(route in resources))
 						throw new Error("Plugin '"+id+"' has no access to plugin '"+route+"'.");
-					}
 					return api.serve.api(new Plugin(route)).route("client").route("raw").exposed;
 				});
 			})
 		).redirector(
+			// client[???]
 			api.serve.static.exposed(this.client)
 		)
 	).provider(
@@ -83,7 +85,7 @@ Plugin.prototype = {
 	client: {
 		parent: null,
 
-		connector: baseApi.route("js").route("connector").get("plugin.js"),
+		connector: baseApi.route("js").route("connector"),
 
 		get html() {
 

@@ -22,7 +22,7 @@ function ChainedOffer(object, baseApi) {
 
 }
 
-// Takes an array of routers/providers and returns the result of the given router chain when appied with 'args'.
+// Takes an array of routers/providers and returns the result of the given routing chain when applied with 'args'.
 ChainedOffer.server = function(arr, args) {
 
 	if(arr.length === 0)
@@ -31,11 +31,12 @@ ChainedOffer.server = function(arr, args) {
 	var t = this,
 		curr,
 		propagate = function(s) {
+			console.log("propagate ", s.toString());
 			return function(err) {
 				return s.apply(t, Array.prototype.slice.call(args).concat([err]));
 			};
 		};
-	for(var i = 0, l = arr.length, s = l?arr[0]:null; i < l; s=arr[++i]) {
+	for(var i = 0, l = arr.length, s = arr[0]; i < l; s=arr[++i]) {
 		if(!curr)
 			try {
 				curr = B.resolve(s.apply(t, args));

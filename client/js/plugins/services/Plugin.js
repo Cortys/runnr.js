@@ -16,35 +16,41 @@
 
 			var t = this,
 
-				api = this.api = pluginsApi.route(id),
-				client = api.route("client"),
+				// API objects:
+				api = pluginsApi.route(id),
+				clientRoute = api.route("client"),
 
-				pluginPath = client.route("raw").url.getAbsolute(),
-				resourcePath = client.route("resource").url.absolute+"/",
-				connectorPath = client.url.getAbsolute("connector"),
+				// URLs:
+				pluginPath = clientRoute.route("raw").url.getAbsolute(),
+				resourcePath = clientRoute.route("resource").url.absolute+"/",
+				connectorPath = clientRoute.url.getAbsolute("connector"),
 
+				// HTML snippets:
 				meta = "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src "+frameworksPath+" "+themesPath+" "+pluginPath+" "+resourcePath+" "+connectorPath+"; child-src 'none'; base-uri "+pluginPath+"\" />",
 				base = "<base href='"+pluginPath+"' target='_self' />",
 				script = "<script src='"+connectorPath+"' type='text/javascript'></script>",
-				fixed = base+script,
-
-				manifest = this.manifest = api.get("manifest");
+				fixed = base+script;
 
 			this._cache = new Cache(cached?0:cacheLimit);
 
+			this.manifest = api.get("manifest");
+
 			this.receive = this.receive.bind(this);
 
-			this.client = Object.create(client, {
+			this.client = Object.create(clientRoute, {
 				html: {
 					get: function() {
+						// Only fetch plugin html and render if it wasn't cached before:
 						return t._cache.lookup("html", function() {
-							return $q.all([client.get("html"), themesApi.theme, manifest]).then(function(data) {
+							// Plugin html was not cached. Fetch and render:
+							return $q.all([clientRoute.get("html"), themesApi.theme, t.manifest]).then(function(data) {
 								var html = data[0],
-								theme = data[1],
-								manifest = data[2],
+									theme = data[1],
+									manifest = data[2],
 
 								link = "";
 
+								// Only style plugin frame with theme if specified:
 								if(manifest.plugin.theme)
 									theme.css.plugin.forEach(function(v, i) {
 										link += '<link rel="stylesheet" type="text/css" href="'+themesApi.raw(v.file)+'" media="'+(v.media || '')+'" />';
@@ -61,14 +67,15 @@
 		}
 
 		Plugin.prototype = {
-			name: null,
-			id: null,
-			client: null,
+			name: null, // Plugin UI name
+			id: null, // Plugin unique identifier
+			client: null, // Stores object, that grants access to plugin's client resources
+			manifest: null, // Promise for the manifest JSON
 
-			_cache: null,
+			_cache: null, // Hidden cache – e.g. storing rendered client data
 
-			emptyCache: function() {
-				this._cache = {};
+			wipeCache: function() {
+				this._cache.wipe();
 			},
 
 			receive: function(message, callback) {

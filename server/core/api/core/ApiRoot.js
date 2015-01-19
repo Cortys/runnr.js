@@ -1,6 +1,5 @@
 var Api = require("./Api"),
 	helper = require("./helper"),
-	servers = require("./servers"),
 	Offer = require("./Offer"),
 	ChainedOffer = require("./ChainedOffer");
 
@@ -8,17 +7,17 @@ function ApiRoot(name, publishTo) {
 
 	this._routes = {};
 
-	this.serve = servers(this);
-
 	this.offer(this._routes).router(this.serve.static.routes());
 
 	if(publishTo instanceof ApiRoot)
-	publishTo.publish(name, this._routes);
+		publishTo.publish(name, this._routes);
 
 	Api.call(this, name, this._routes);
 }
 
 ApiRoot.prototype = Object.create(Api.prototype, {
+
+	serve: { value: require("./servers") },
 
 	File: { value: require("./File") },
 
@@ -34,7 +33,7 @@ ApiRoot.prototype = Object.create(Api.prototype, {
 			throw new Error("The route '"+name+"' is already used.");
 
 		if(this.published(exposed) !== false)
-			throw new TypeError("Given object is already published.");	
+			throw new TypeError("Given object is already published.");
 
 		exposed._exposed.published = name;
 		this._routes[name] = exposed;
