@@ -2,4 +2,6 @@
 
 const core = require("./core/index.js");
 
-console.log(core.plugins.list);
+core.then(function(core) {
+	console.log(JSON.stringify(core.plugins.list));
+});

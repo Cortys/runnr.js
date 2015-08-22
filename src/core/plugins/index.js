@@ -9,10 +9,8 @@ const listView = store.addDynamicView("list").applySimpleSort("name");
 const plugins = {
 	get list() {
 		return listView.mapReduce(function(plugin) {
-			return {
-				id: plugin.$loki,
-				name: plugin.name
-			};
+
+			return new Plugin(plugin);
 		}, function(res) {
 			return res;
 		});

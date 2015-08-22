@@ -21,10 +21,10 @@
 	"preferGlobal": true,
 	"main": "src/app.js",
 	"bin": {
-		"runnr": "./index.js"
+		"runnr": "./src/app.js"
 	},
 	"scripts": {
-		"start": "node index.js"
+		"start": "node ./src/app.js"
 	},
 	"dependencies": {
 		"owe-core": "^0.5",

@@ -1,31 +1,16 @@
 "use strict";
 
-const db = require("../db");
+const store = require("../store");
 
-let store = db.getCollection("plugins");
+let collection = store.getCollection("plugins");
 
-if(store === null) {
-	store = db.addCollection("plugins", {
+if(collection === null) {
+	console.log("added");
+	collection = store.addCollection("plugins", {
 		indices: ["name"]
 	});
 
-	store.ensureUniqueIndex("name");
+	collection.ensureUniqueIndex("name");
 }
 
-store.insert({
-	name: "foo"
-});
-
-store.insert({
-	name: "bar"
-});
-
-store.insert({
-	name: "baz"
-});
-
-store.insert({
-	name: "bar"
-});
-
-module.exports = store;
+module.exports = collection;
