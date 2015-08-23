@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const pluginMap = new Map();
+const pluginMap = new WeakMap();
 
 const dbPlugin = Symbol("dbPlugin");
 
@@ -11,10 +11,10 @@ class Plugin {
 
 		let res;
 
-		if((res = pluginMap.get(plugin.$loki)))
+		if((res = pluginMap.get(plugin)))
 			return res;
 
-		pluginMap.set(plugin.$loki, this);
+		pluginMap.set(plugin, this);
 
 		this[dbPlugin] = plugin;
 
@@ -29,10 +29,23 @@ class Plugin {
 		return this[dbPlugin].name;
 	}
 
+	get author() {
+		return this[dbPlugin].author;
+	}
+
+	get source() {
+		return this[dbPlugin].source;
+	}
+
+	get location() {
+		return this[dbPlugin].location;
+	}
+
 	toJSON() {
 		return {
 			id: this.id,
-			name: this.name
+			name: this.name,
+			source: this.source
 		};
 	}
 }

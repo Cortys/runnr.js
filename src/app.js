@@ -2,6 +2,12 @@
 
 const core = require("./core/index.js");
 
+const owe = require("owe.js");
+
 core.then(function(core) {
-	console.log(JSON.stringify(core.plugins.list));
+	const coreApi = owe.api(core);
+
+	coreApi.route("plugins").route("list").then(console.log);
+}).catch(function(err) {
+	console.error(err);
 });
