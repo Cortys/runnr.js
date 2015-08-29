@@ -8,10 +8,7 @@ const store = new Loki(config.fromUserData("store.db"), {
 });
 
 store.loaded = new Promise(function(resolve, reject) {
-	store.loadDatabase({}, function(err) {
-		if(err)
-			reject(err);
-
+	store.loadDatabase({}, function() {
 		resolve(store);
 	});
 });

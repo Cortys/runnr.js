@@ -33,7 +33,8 @@
 		"owe-fs": "^0.1",
 
 		"lokijs": "1.3.8",
-		"semver": "^5.0"
+		"semver": "^5.0",
+		"cpr": "0.4.1"
 	},
 	"devDependencies": {
 

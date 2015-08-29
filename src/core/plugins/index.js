@@ -3,9 +3,10 @@
 const owe = require("owe.js");
 const store = require("./store");
 const Plugin = require("./Plugin");
-const Installer = require("./Installer");
+const install = require("./manage/install");
+const uninstall = require("./manage/uninstall");
 
-const listView = store.addDynamicView("list").applySimpleSort("name");
+const listView = store.getDynamicView("list") || store.addDynamicView("list").applySimpleSort("name");
 
 const plugins = {
 	get list() {
@@ -16,8 +17,18 @@ const plugins = {
 		});
 	},
 
+	get(pluginName) {
+		return new Plugin(store.by("name", pluginName));
+	},
+
 	install(plugin) {
-		return new Installer(plugin).status;
+		console.log("install attempt", plugin);
+
+		return install(plugin);
+	},
+
+	uninstall(plugin) {
+		return uninstall(plugin);
 	}
 };
 

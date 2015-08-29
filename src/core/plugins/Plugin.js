@@ -1,6 +1,7 @@
 "use strict";
 
 const owe = require("owe.js");
+const oweFs = require("owe-fs");
 
 const pluginMap = new WeakMap();
 
@@ -17,6 +18,10 @@ class Plugin {
 		pluginMap.set(plugin, this);
 
 		this[dbPlugin] = plugin;
+
+		this.fs = oweFs({
+			root: this.location
+		});
 
 		owe(this, owe.serve());
 	}
@@ -41,10 +46,15 @@ class Plugin {
 		return this[dbPlugin].location;
 	}
 
+	get main() {
+		return this[dbPlugin].main;
+	}
+
 	toJSON() {
 		return {
 			id: this.id,
 			name: this.name,
+			author: this.author,
 			source: this.source
 		};
 	}
