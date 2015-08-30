@@ -34,4 +34,6 @@ const plugins = {
 
 owe(plugins, owe.serve());
 
+owe(plugins.get, plugins.get);
+
 module.exports = plugins;

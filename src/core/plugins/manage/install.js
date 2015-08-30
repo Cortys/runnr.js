@@ -8,6 +8,13 @@ const config = require("../../config");
 const store = require("../store");
 const Plugin = require("../Plugin");
 
+function install(plugin) {
+	if(helpers.installationTypes[plugin.type] in helpers)
+		return helpers[helpers.installationTypes[plugin.type]](plugin);
+	else
+		throw new Error("Plugins cannot be installed with the given installation method.");
+}
+
 const helpers = {
 	installationTypes: {
 
@@ -38,7 +45,7 @@ const helpers = {
 				});
 			});
 		}).then(this.parsePluginFile.bind(this)).then(function(result) {
-			if(plugin.copy)
+			if(+plugin.copy)
 				return new Promise(function(resolve, reject) {
 					const location = config.fromUserData("plugins");
 
@@ -107,12 +114,5 @@ const helpers = {
 		return manifest;
 	}
 };
-
-function install(plugin) {
-	if(helpers.installationTypes[plugin.type] in helpers)
-		return helpers[helpers.installationTypes[plugin.type]](plugin);
-	else
-		throw new Error("Plugins cannot be installed with the given installation method.");
-}
 
 module.exports = install;

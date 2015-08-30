@@ -4,7 +4,8 @@
 	"node": true,
 	"esnext": true,
 	"newcap": false,
-	"proto": true,
+	"strict": true,
+	"varstmt": true,
 	"globals": {
 		"Symbol": false
 	}

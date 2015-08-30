@@ -10,9 +10,14 @@ const dbPlugin = Symbol("dbPlugin");
 class Plugin {
 	constructor(plugin) {
 
-		let res;
+		if(!plugin || typeof plugin !== "object")
+			throw owe.resource(new Error("Plugin not found."), {
+				expose: true
+			});
 
-		if((res = pluginMap.get(plugin)))
+		const res = pluginMap.get(plugin);
+
+		if(res)
 			return res;
 
 		pluginMap.set(plugin, this);
@@ -23,7 +28,11 @@ class Plugin {
 			root: this.location
 		});
 
-		owe(this, owe.serve());
+		owe(this, owe.serve({
+			closer: {
+				filter: true
+			}
+		}));
 	}
 
 	get id() {
@@ -32,6 +41,10 @@ class Plugin {
 
 	get name() {
 		return this[dbPlugin].name;
+	}
+
+	get version() {
+		return this[dbPlugin].version;
 	}
 
 	get author() {
@@ -54,6 +67,7 @@ class Plugin {
 		return {
 			id: this.id,
 			name: this.name,
+			version: this.version,
 			author: this.author,
 			source: this.source
 		};
