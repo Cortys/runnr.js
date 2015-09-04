@@ -25,15 +25,23 @@ const plugins = {
 		console.log("install attempt", plugin);
 
 		return install(plugin);
-	},
-
-	uninstall(plugin) {
-		return uninstall(plugin);
 	}
 };
 
-owe(plugins, owe.serve());
+/* Api: */
+const pluginsApi = function() {
+	return plugins.list;
+};
+
+pluginsApi.install = plugins.install;
 
 owe(plugins.get, plugins.get);
+owe(pluginsApi, owe.chain([owe.serve({
+	mapRootFunction: "closer"
+}), owe.reroute(plugins.get)], {
+	errors: "last"
+}));
+
+owe(plugins, owe.reroute(pluginsApi));
 
 module.exports = plugins;

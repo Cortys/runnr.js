@@ -3,6 +3,8 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
+const uninstall = require("./manage/uninstall");
+
 const pluginMap = new WeakMap();
 
 const dbPlugin = Symbol("dbPlugin");
@@ -29,6 +31,9 @@ class Plugin {
 		});
 
 		owe(this, owe.serve({
+			router: {
+				filter: new Set(["id", "name", "version", "author", "source", "uninstall"])
+			},
 			closer: {
 				filter: true
 			}
@@ -71,6 +76,10 @@ class Plugin {
 			author: this.author,
 			source: this.source
 		};
+	}
+
+	uninstall() {
+		return uninstall(this);
 	}
 }
 

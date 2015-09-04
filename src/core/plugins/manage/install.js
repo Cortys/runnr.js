@@ -68,7 +68,7 @@ const helpers = {
 				return result.manifest;
 			}
 		}).then(this.installManifest.bind(this)).then(function(manifest) {
-			return new Plugin();
+			return new Plugin(manifest);
 		});
 	},
 
@@ -77,8 +77,6 @@ const helpers = {
 	parsePluginFile(file) {
 		const startOfManifest = file.indexOf("/*");
 		const endOfManifest = file.indexOf("*/\n", startOfManifest);
-
-		console.log(file);
 
 		return {
 			file,
