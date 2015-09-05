@@ -4,6 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const copy = require("cpr");
 const semver = require("semver");
+const sanitizeFilename = require("sanitize-filename");
+const owe = require("owe.js");
+
 const config = require("../../config");
 const store = require("../store");
 const Plugin = require("../Plugin");
@@ -12,7 +15,7 @@ function install(plugin) {
 	if(helpers.installationTypes[plugin.type] in helpers)
 		return helpers[helpers.installationTypes[plugin.type]](plugin);
 	else
-		throw new Error("Plugins cannot be installed with the given installation method.");
+		throw new owe.exposed.Error("Plugins cannot be installed with the given installation method.");
 }
 
 const helpers = {
@@ -32,22 +35,25 @@ const helpers = {
 		return new Promise(function(resolve, reject) {
 			fs.stat(plugin.path, function(err, stat) {
 				if(err)
-					return reject(new Error("Invalid local installation path."));
+					return reject(new owe.exposed.Error("Invalid local installation path."));
 
 				if(!stat.isFile())
-					return reject(new Error("Only files can be installed."));
+					return reject(new owe.exposed.Error("Only files can be installed."));
 
 				fs.readFile(plugin.path, function(err, file) {
 					if(err)
-						reject(new Error("Plugin file could not be read."));
+						reject(new owe.exposed.Error("Plugin file could not be read."));
 
 					resolve(file.toString());
 				});
 			});
 		}).then(this.parsePluginFile.bind(this)).then(function(result) {
+
+			result.manifest.main = path.basename(plugin.path);
+
 			if(+plugin.copy)
 				return new Promise(function(resolve, reject) {
-					const location = config.fromUserData("plugins");
+					const location = path.join(config.fromUserData("plugins"), result.manifest.name);
 
 					copy(plugin.path, location, {
 						deleteFirst: true,
@@ -55,15 +61,16 @@ const helpers = {
 						confirm: true
 					}, function(err, files) {
 						if(err)
-							return reject(new Error("Plugin files could not be installed."));
+							return reject(new owe.exposed.Error("Plugin files could not be installed."));
 
-						result.manifest.location = path.join(location, path.basename(plugin.path));
+						result.manifest.location = location;
+						result.manifest.copied = true;
 
 						resolve(result.manifest);
 					});
 				});
 			else {
-				result.manifest.location = plugin.path;
+				result.manifest.location = path.dirname(plugin.path);
 
 				return result.manifest;
 			}
@@ -87,15 +94,18 @@ const helpers = {
 	validateManifest(manifest) {
 
 		if(!manifest.name || typeof manifest.name !== "string")
-			throw new TypeError("Plugin name has to be a string.");
+			throw new owe.exposed.TypeError("Plugin name has to be a string.");
+
+		if(manifest.name !== sanitizeFilename(manifest.name))
+			throw new owe.exposed.TypeError(`Plugin name "${manifest.name}" is invalid.`);
 
 		if(!semver.valid(manifest.version))
-			throw new TypeError("Plugin version has to be semver compliant.");
+			throw new owe.exposed.TypeError("Plugin version has to be semver compliant.");
 
 		const dbPlugin = store.by("name", manifest.name);
 
 		if(dbPlugin && (dbPlugin.block || semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
-			throw new Error(`Plugin with name ${manifest.name} already installed.`);
+			throw new owe.exposed.Error(`Plugin with name "${manifest.name}" already installed.`);
 
 		return manifest;
 	},

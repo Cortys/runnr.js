@@ -11,15 +11,11 @@ core.then(function(core) {
 
 	http.createServer(oweHttp(coreApi, {
 		onError(req, res, err) {
+
+			if(!err)
+				return err;
+
 			console.error(err.stack);
-
-			const data = owe.resourceData(err);
-
-			if(data && data.expose)
-				Object.defineProperty(err, "message", {
-					value: err.message,
-					enumerable: true
-				});
 
 			return err;
 		},

@@ -18,12 +18,17 @@ const plugins = {
 	},
 
 	get(pluginName) {
-		return new Plugin(store.by("name", pluginName));
+
+		console.log("get");
+
+		const res = store.by("name", pluginName);
+
+		console.log("get", pluginName, res);
+
+		return new Plugin(res);
 	},
 
 	install(plugin) {
-		console.log("install attempt", plugin);
-
 		return install(plugin);
 	}
 };
@@ -35,11 +40,22 @@ const pluginsApi = function() {
 
 pluginsApi.install = plugins.install;
 
-owe(plugins.get, plugins.get);
-owe(pluginsApi, owe.chain([owe.serve({
-	mapRootFunction: "closer"
-}), owe.reroute(plugins.get)], {
-	errors: "last"
+owe(pluginsApi, owe.chain([
+	owe.serve({
+		router: {
+			filter: new Set(["install"])
+		}
+	}),
+	owe.reroute(owe(null, plugins.get, function() {
+		throw undefined;
+	}))
+], {
+	errors(errs) {
+		console.log(errs);
+
+		return errs[errs.length - 1];
+	},
+	removeNonErrors: true
 }));
 
 owe(plugins, owe.reroute(pluginsApi));

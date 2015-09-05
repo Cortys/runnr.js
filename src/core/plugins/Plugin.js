@@ -12,10 +12,8 @@ const dbPlugin = Symbol("dbPlugin");
 class Plugin {
 	constructor(plugin) {
 
-		if(!plugin || typeof plugin !== "object")
-			throw owe.resource(new Error("Plugin not found."), {
-				expose: true
-			});
+		if(!plugin || typeof plugin !== "object" || !("$loki" in plugin))
+			throw new owe.exposed.Error("Plugin not found.");
 
 		const res = pluginMap.get(plugin);
 
@@ -64,6 +62,10 @@ class Plugin {
 		return this[dbPlugin].location;
 	}
 
+	get copied() {
+		return this[dbPlugin].copied;
+	}
+
 	get main() {
 		return this[dbPlugin].main;
 	}
@@ -79,7 +81,12 @@ class Plugin {
 	}
 
 	uninstall() {
-		return uninstall(this);
+
+		let that = this;
+
+		return uninstall(this).then(function() {
+			pluginMap.delete(that[dbPlugin]);
+		});
 	}
 }
 
