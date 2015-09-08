@@ -32,34 +32,34 @@ const helpers = {
 
 	local(plugin) {
 
-		return new Promise(function(resolve, reject) {
-			fs.stat(plugin.path, function(err, stat) {
+		return new Promise((resolve, reject) => {
+			fs.stat(plugin.path, (err, stat) => {
 				if(err)
 					return reject(new owe.exposed.Error("Invalid local installation path."));
 
 				if(!stat.isFile())
 					return reject(new owe.exposed.Error("Only files can be installed."));
 
-				fs.readFile(plugin.path, function(err, file) {
+				fs.readFile(plugin.path, (err, file) => {
 					if(err)
 						reject(new owe.exposed.Error("Plugin file could not be read."));
 
 					resolve(file.toString());
 				});
 			});
-		}).then(this.parsePluginFile.bind(this)).then(function(result) {
+		}).then(file => this.parsePluginFile(file)).then(result => {
 
 			result.manifest.main = path.basename(plugin.path);
 
 			if(+plugin.copy)
-				return new Promise(function(resolve, reject) {
+				return new Promise((resolve, reject) => {
 					const location = path.join(config.fromUserData("plugins"), result.manifest.name);
 
 					copy(plugin.path, location, {
 						deleteFirst: true,
 						overwrite: true,
 						confirm: true
-					}, function(err, files) {
+					}, (err, files) => {
 						if(err)
 							return reject(new owe.exposed.Error("Plugin files could not be installed."));
 
@@ -74,9 +74,7 @@ const helpers = {
 
 				return result.manifest;
 			}
-		}).then(this.installManifest.bind(this)).then(function(manifest) {
-			return new Plugin(manifest);
-		});
+		}).then(manifest => this.installManifest(manifest)).then(manifest => new Plugin(manifest));
 	},
 
 	/* Helpers: */

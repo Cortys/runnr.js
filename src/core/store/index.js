@@ -7,8 +7,8 @@ const store = new Loki(config.fromUserData("store.db"), {
 	autosave: true
 });
 
-store.loaded = new Promise(function(resolve, reject) {
-	store.loadDatabase({}, function() {
+store.loaded = new Promise((resolve, reject) => {
+	store.loadDatabase({}, () => {
 		resolve(store);
 	});
 });

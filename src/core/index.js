@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-module.exports = require("./store").loaded.then(function() {
+module.exports = require("./store").loaded.then(() => {
 
 	console.log("DB loaded.");
 
@@ -10,6 +10,6 @@ module.exports = require("./store").loaded.then(function() {
 		plugins: require("./plugins"),
 		runners: require("./runners")
 	}, owe.serve());
-}, function(err) {
+}, err => {
 	console.error("Loading DB failed.", err);
 });

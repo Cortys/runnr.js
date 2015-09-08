@@ -6,16 +6,16 @@ const remove = require("remove");
 const store = require("../store");
 
 function uninstall(plugin) {
-	return new Promise(function(resolve, reject) {
+	return new Promise((resolve, reject) => {
 		if(!plugin.copied)
 			return resolve();
 
-		remove(plugin.location, function(err) {
+		remove(plugin.location, err => {
 			if(err)
 				reject(new owe.exposed.Error("Plugin could not be removed from the plugins directory."));
 			resolve();
 		});
-	}).then(function() {
+	}).then(() => {
 		store.remove(plugin.id);
 	});
 }

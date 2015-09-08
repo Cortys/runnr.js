@@ -6,7 +6,7 @@ const owe = require("owe.js");
 const http = require("http");
 const oweHttp = require("owe-http");
 
-core.then(function(core) {
+core.then(core => {
 	const coreApi = owe.api(core);
 
 	http.createServer(oweHttp(coreApi, {
@@ -25,6 +25,6 @@ core.then(function(core) {
 			POST: oweHttp.parseCloseData.body
 		}
 	})).listen(3912);
-}).catch(function(err) {
+}).catch(err => {
 	console.error(err);
 });

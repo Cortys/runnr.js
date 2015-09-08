@@ -81,12 +81,7 @@ class Plugin {
 	}
 
 	uninstall() {
-
-		let that = this;
-
-		return uninstall(this).then(function() {
-			pluginMap.delete(that[dbPlugin]);
-		});
+		return uninstall(this).then(() => pluginMap.delete(this[dbPlugin]));
 	}
 }
 

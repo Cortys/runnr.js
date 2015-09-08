@@ -10,11 +10,7 @@ const listView = store.getDynamicView("list") || store.addDynamicView("list").ap
 
 const plugins = {
 	get list() {
-		return listView.mapReduce(function(plugin) {
-			return new Plugin(plugin);
-		}, function(res) {
-			return res;
-		});
+		return listView.mapReduce(plugin => new Plugin(plugin), res => res);
 	},
 
 	get(pluginName) {
@@ -46,7 +42,7 @@ owe(pluginsApi, owe.chain([
 			filter: new Set(["install"])
 		}
 	}),
-	owe.reroute(owe(null, plugins.get, function() {
+	owe.reroute(owe(null, plugins.get, () => {
 		throw undefined;
 	}))
 ], {
