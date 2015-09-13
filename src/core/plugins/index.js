@@ -3,8 +3,6 @@
 const owe = require("owe.js");
 const store = require("./store");
 const Plugin = require("./Plugin");
-const install = require("./manage/install");
-const uninstall = require("./manage/uninstall");
 
 const listView = store.getDynamicView("list") || store.addDynamicView("list").applySimpleSort("name");
 
@@ -14,18 +12,11 @@ const plugins = {
 	},
 
 	get(pluginName) {
-
-		console.log("get");
-
-		const res = store.by("name", pluginName);
-
-		console.log("get", pluginName, res);
-
-		return new Plugin(res);
+		return new Plugin(store.by("name", pluginName));
 	},
 
 	install(plugin) {
-		return install(plugin);
+		return Plugin.install(plugin);
 	}
 };
 
@@ -46,11 +37,7 @@ owe(pluginsApi, owe.chain([
 		throw undefined;
 	}))
 ], {
-	errors(errs) {
-		console.log(errs);
-
-		return errs[errs.length - 1];
-	},
+	errors: "last",
 	removeNonErrors: true
 }));
 

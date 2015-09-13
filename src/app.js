@@ -25,6 +25,4 @@ core.then(core => {
 			POST: oweHttp.parseCloseData.body
 		}
 	})).listen(3912);
-}).catch(err => {
-	console.error(err);
-});
+}).catch(err => console.error(err));

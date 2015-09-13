@@ -3,39 +3,32 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
+const install = require("./manage/install");
 const uninstall = require("./manage/uninstall");
 
-const pluginMap = new WeakMap();
+const StoreItem = require("../StoreItem");
+const dbPlugin = StoreItem.dbItem;
 
-const dbPlugin = Symbol("dbPlugin");
-
-class Plugin {
+class Plugin extends StoreItem {
 	constructor(plugin) {
 
 		if(!plugin || typeof plugin !== "object" || !("$loki" in plugin))
 			throw new owe.exposed.Error("Plugin not found.");
 
-		const res = pluginMap.get(plugin);
+		super(plugin, function onNewPlugin() {
+			this.fs = oweFs({
+				root: this.location
+			});
 
-		if(res)
-			return res;
-
-		pluginMap.set(plugin, this);
-
-		this[dbPlugin] = plugin;
-
-		this.fs = oweFs({
-			root: this.location
+			owe(this, owe.serve({
+				router: {
+					filter: new Set(["id", "name", "version", "author", "source", "uninstall"])
+				},
+				closer: {
+					filter: true
+				}
+			}));
 		});
-
-		owe(this, owe.serve({
-			router: {
-				filter: new Set(["id", "name", "version", "author", "source", "uninstall"])
-			},
-			closer: {
-				filter: true
-			}
-		}));
 	}
 
 	get id() {
@@ -81,7 +74,11 @@ class Plugin {
 	}
 
 	uninstall() {
-		return uninstall(this).then(() => pluginMap.delete(this[dbPlugin]));
+		return uninstall(this).then(() => StoreItem.delete(this[dbPlugin]));
+	}
+
+	static install(plugin) {
+		return install(plugin);
 	}
 }
 
