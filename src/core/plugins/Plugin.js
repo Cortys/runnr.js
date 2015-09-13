@@ -3,9 +3,6 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
-const install = require("./manage/install");
-const uninstall = require("./manage/uninstall");
-
 const StoreItem = require("../StoreItem");
 const dbPlugin = StoreItem.dbItem;
 
@@ -74,11 +71,11 @@ class Plugin extends StoreItem {
 	}
 
 	uninstall() {
-		return uninstall(this).then(() => StoreItem.delete(this[dbPlugin]));
+		return require("./manage/uninstall")(this).then(() => StoreItem.delete(this[dbPlugin]));
 	}
 
 	static install(plugin) {
-		return install(plugin);
+		return require("./manage/install")(plugin);
 	}
 }
 
