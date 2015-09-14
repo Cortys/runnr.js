@@ -3,8 +3,11 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
+const addRunner = require("./manage/add");
+const deleteRunner = require("./manage/delete");
+
 const StoreItem = require("../StoreItem");
-const dbRunner = StoreItem.dbItem;
+const item = StoreItem.dbItem;
 
 class Runner extends StoreItem {
 	constructor(runner) {
@@ -14,13 +17,33 @@ class Runner extends StoreItem {
 		super(runner, function onNewRunner() {
 			owe(this, owe.serve({
 				router: {
-					filter: new Set([])
+					filter: new Set(["id", "name", "active", "delete"])
 				},
 				closer: {
 					filter: true
 				}
 			}));
 		});
+	}
+
+	get id() {
+		return this[item].$loki;
+	}
+
+	get name() {
+		return this[item].name;
+	}
+
+	get active() {
+		return this[item].active;
+	}
+
+	delete() {
+		return deleteRunner(this).then(() => super.delete());
+	}
+
+	static add(runner) {
+		return addRunner(runner).then(runner => new Runner(runner));
 	}
 }
 

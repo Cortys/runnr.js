@@ -24,8 +24,8 @@ class StoreItem {
 			onNewItem.call(this);
 	}
 
-	static delete(item) {
-		itemMap.delete(item);
+	delete() {
+		itemMap.delete(this[dbItem]);
 	}
 }
 

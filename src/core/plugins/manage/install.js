@@ -9,7 +9,6 @@ const owe = require("owe.js");
 
 const config = require("../../config");
 const store = require("../store");
-const Plugin = require("../Plugin");
 
 function install(plugin) {
 	if(helpers.installationTypes[plugin.type] in helpers)
@@ -74,7 +73,7 @@ const helpers = {
 
 				return result.manifest;
 			}
-		}).then(manifest => this.installManifest(manifest)).then(manifest => new Plugin(manifest));
+		}).then(manifest => this.installManifest(manifest));
 	},
 
 	/* Helpers: */

@@ -3,8 +3,11 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
+const installPlugin = require("./manage/install");
+const uninstallPlugin = require("./manage/uninstall");
+
 const StoreItem = require("../StoreItem");
-const dbPlugin = StoreItem.dbItem;
+const item = StoreItem.dbItem;
 
 class Plugin extends StoreItem {
 	constructor(plugin) {
@@ -29,35 +32,35 @@ class Plugin extends StoreItem {
 	}
 
 	get id() {
-		return this[dbPlugin].$loki;
+		return this[item].$loki;
 	}
 
 	get name() {
-		return this[dbPlugin].name;
+		return this[item].name;
 	}
 
 	get version() {
-		return this[dbPlugin].version;
+		return this[item].version;
 	}
 
 	get author() {
-		return this[dbPlugin].author;
+		return this[item].author;
 	}
 
 	get source() {
-		return this[dbPlugin].source;
+		return this[item].source;
 	}
 
 	get location() {
-		return this[dbPlugin].location;
+		return this[item].location;
 	}
 
 	get copied() {
-		return this[dbPlugin].copied;
+		return this[item].copied;
 	}
 
 	get main() {
-		return this[dbPlugin].main;
+		return this[item].main;
 	}
 
 	toJSON() {
@@ -71,11 +74,11 @@ class Plugin extends StoreItem {
 	}
 
 	uninstall() {
-		return require("./manage/uninstall")(this).then(() => StoreItem.delete(this[dbPlugin]));
+		return uninstallPlugin(this).then(() => this.delete());
 	}
 
 	static install(plugin) {
-		return require("./manage/install")(plugin);
+		return installPlugin(plugin).then(manifest => new Plugin(manifest));
 	}
 }
 
