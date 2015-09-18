@@ -4,7 +4,9 @@ const owe = require("owe.js");
 const store = require("./store");
 const Plugin = require("./Plugin");
 
-const listView = store.getDynamicView("list") || store.addDynamicView("list").applySimpleSort("name");
+const listView = store.getDynamicView("list") || store.addDynamicView("list", {
+	persistent: false
+}).applySimpleSort("name");
 
 const plugins = {
 	get list() {

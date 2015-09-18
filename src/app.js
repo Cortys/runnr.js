@@ -25,4 +25,12 @@ core.then(core => {
 			POST: oweHttp.parseCloseData.body
 		}
 	})).listen(3912);
+
+	process.on("SIGINT", exit);
+	process.on("SIGTERM", exit);
+
+	function exit() {
+		core.onExit().then(() => process.exit());
+	}
+
 }).catch(err => console.error(err));

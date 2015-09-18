@@ -5,7 +5,9 @@ const store = require("./store");
 
 const Runner = require("./Runner");
 
-const listView = store.getDynamicView("list") || store.addDynamicView("list").applySimpleSort("name");
+const listView = store.getDynamicView("list") || store.addDynamicView("list", {
+	persistent: false
+}).applySimpleSort("name");
 
 const runners = {
 	get list() {

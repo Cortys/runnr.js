@@ -15,8 +15,9 @@ function uninstall(plugin) {
 				reject(new owe.exposed.Error("Plugin could not be removed from the plugins directory."));
 			resolve();
 		});
-	}).then(() => {
+	}).then(() => store.remove(plugin.id), err => {
 		store.remove(plugin.id);
+		throw err;
 	});
 }
 
