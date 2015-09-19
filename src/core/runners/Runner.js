@@ -43,6 +43,14 @@ class Runner extends StoreItem {
 		this[val ? "activate" : "deactivate"]();
 	}
 
+	toJSON() {
+		return {
+			id: this.id,
+			name: this.name,
+			active: this.active
+		};
+	}
+
 	activate() {
 		this[item].active = true;
 		this.emit("activeChanged", true);

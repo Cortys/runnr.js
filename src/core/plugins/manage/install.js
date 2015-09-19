@@ -11,6 +11,10 @@ const config = require("../../config");
 const store = require("../store");
 
 function install(plugin) {
+
+	if(typeof plugin !== "object" || !plugin)
+		throw new owe.exposed.TypeError(`Given plugin "${plugin}" cannot be installed.`);
+
 	if(helpers.installationTypes[plugin.type] in helpers)
 		return helpers[helpers.installationTypes[plugin.type]](plugin);
 	else
