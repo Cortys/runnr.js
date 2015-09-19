@@ -1,9 +1,11 @@
 "use strict";
 
-function uninstall() {
-	return new Promise((resolve, reject) => {
+const store = require("../store");
 
+function deleteRunner(runner) {
+	return runner.deactivate().then(() => {
+		store.remove(runner.id);
 	});
 }
 
-module.exports = uninstall;
+module.exports = deleteRunner;

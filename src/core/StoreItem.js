@@ -3,8 +3,11 @@
 const itemMap = new WeakMap();
 const dbItem = Symbol("dbItem");
 
-class StoreItem {
+class StoreItem extends require("events") {
 	constructor(item, onNewItem) {
+
+		super();
+
 		if(this.constructor === StoreItem)
 			throw new Error("StoreItem cannot be instanciated directly.");
 

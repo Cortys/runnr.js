@@ -17,10 +17,11 @@ class Runner extends StoreItem {
 		super(runner, function onNewRunner() {
 			owe(this, owe.serve({
 				router: {
-					filter: new Set(["id", "name", "active", "delete"])
+					filter: new Set(["id", "name", "active", "activate", "deactivate", "delete"])
 				},
 				closer: {
-					filter: true
+					filter: true,
+					writable: new Set(["active"])
 				}
 			}));
 		});
@@ -38,8 +39,28 @@ class Runner extends StoreItem {
 		return this[item].active;
 	}
 
+	set active(val) {
+		this[val ? "activate" : "deactivate"]();
+	}
+
+	activate() {
+		this[item].active = true;
+		this.emit("activeChanged", true);
+
+		return Promise.resolve();
+	}
+
+	deactivate() {
+		this[item].active = false;
+		this.emit("activeChanged", false);
+
+		return Promise.resolve();
+	}
+
 	delete() {
-		return deleteRunner(this).then(() => super.delete());
+		return deleteRunner(this)
+			.then(() => super.delete())
+			.then(() => this.emit("deleted"));
 	}
 
 	static add(runner) {

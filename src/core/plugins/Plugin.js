@@ -74,7 +74,9 @@ class Plugin extends StoreItem {
 	}
 
 	uninstall() {
-		return uninstallPlugin(this).then(() => this.delete());
+		return uninstallPlugin(this)
+			.then(() => this.delete())
+			.then(() => this.emit("uninstalled"));
 	}
 
 	static install(plugin) {

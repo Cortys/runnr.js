@@ -19,7 +19,7 @@ const runners = {
 	},
 
 	add(runner) {
-
+		return Runner.add(runner);
 	}
 };
 
