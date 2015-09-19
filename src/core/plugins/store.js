@@ -13,4 +13,8 @@ if(collection === null) {
 	collection.ensureUniqueIndex("name");
 }
 
+/*collection.on("insert", () => store.saveDatabase());
+collection.on("update", () => store.saveDatabase());
+collection.on("delete", () => store.saveDatabase());*/
+
 module.exports = collection;
