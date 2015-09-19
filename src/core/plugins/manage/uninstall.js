@@ -12,12 +12,16 @@ function uninstall(plugin) {
 
 		remove(plugin.location, err => {
 			if(err)
-				reject(new owe.exposed.Error("Plugin could not be removed from the plugins directory."));
+				reject(err);
 			resolve();
 		});
 	}).then(() => store.remove(plugin.id), err => {
-		store.remove(plugin.id);
-		throw err;
+		if(err && err.code === "ENOENT") {
+			store.remove(plugin.id);
+
+			return;
+		}
+		throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 	});
 }
 
