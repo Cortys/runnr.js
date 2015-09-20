@@ -13,7 +13,7 @@ const store = require("../store");
 function install(plugin) {
 
 	if(typeof plugin !== "object" || !plugin)
-		throw new owe.exposed.TypeError(`Given plugin "${plugin}" cannot be installed.`);
+		throw new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`);
 
 	if(helpers.installationTypes[plugin.type] in helpers)
 		return helpers[helpers.installationTypes[plugin.type]](plugin);
@@ -98,7 +98,7 @@ const helpers = {
 			throw new owe.exposed.TypeError("Plugin name has to be a string.");
 
 		if(manifest.name !== sanitizeFilename(manifest.name))
-			throw new owe.exposed.TypeError(`Plugin name "${manifest.name}" is invalid.`);
+			throw new owe.exposed.TypeError(`Plugin name '${manifest.name}' is invalid.`);
 
 		if(!semver.valid(manifest.version))
 			throw new owe.exposed.TypeError("Plugin version has to be semver compliant.");
@@ -106,7 +106,7 @@ const helpers = {
 		const dbPlugin = store.by("name", manifest.name);
 
 		if(dbPlugin && (dbPlugin.block || semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
-			throw new owe.exposed.Error(`Plugin with name "${manifest.name}" already installed.`);
+			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
 
 		return manifest;
 	},

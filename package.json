@@ -27,10 +27,10 @@
 		"start": "node ./src/app.js"
 	},
 	"dependencies": {
-		"owe-core": "^0.5",
-		"owe.js": "^0.5",
-		"owe-http": "^0.4",
-		"owe-fs": "^0.1",
+		"owe-core": "^0.6",
+		"owe.js": "^0.6",
+		"owe-http": "^0.6",
+		"owe-fs": "^0.6",
 
 		"lokijs": "runnr/LokiJS#filteredRowsAsNumbers",
 		"semver": "^5.0",

@@ -31,7 +31,7 @@ const helpers = {
 				return reject(new owe.exposed.TypeError("Runner name has to be a string."));
 
 			if(store.by("name", runner.name))
-				return reject(new owe.exposed.Error(`Runner with name "${runner.name}" already exists.`));
+				return reject(new owe.exposed.Error(`Runner with name '${runner.name}' already exists.`));
 
 			resolve(store.insert({
 				name: runner.name,
