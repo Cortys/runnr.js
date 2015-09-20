@@ -55,14 +55,14 @@ class Runner extends StoreItem {
 		this[item].active = true;
 		this.emit("activeChanged", true);
 
-		return Promise.resolve();
+		return Promise.resolve(this);
 	}
 
 	deactivate() {
 		this[item].active = false;
 		this.emit("activeChanged", false);
 
-		return Promise.resolve();
+		return Promise.resolve(this);
 	}
 
 	delete() {
