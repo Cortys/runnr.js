@@ -1,7 +1,6 @@
 "use strict";
 
 const owe = require("owe.js");
-const oweFs = require("owe-fs");
 
 const addRunner = require("./manage/add");
 const deleteRunner = require("./manage/delete");
@@ -33,7 +32,7 @@ class Runner extends StoreItem {
 		});
 	}
 
-	// Exposed properties:
+	/* Exposed properties: */
 
 	get name() {
 		return this[item].name;
@@ -47,13 +46,13 @@ class Runner extends StoreItem {
 		this[val ? "activate" : "deactivate"]();
 	}
 
-	// Unexposed properties:
+	/* Unexposed properties: */
 
 	get id() {
 		return this[item].$loki;
 	}
 
-	// Methods:
+	/* Methods: */
 
 	toJSON() {
 		return {

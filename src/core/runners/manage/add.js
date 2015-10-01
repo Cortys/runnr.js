@@ -9,8 +9,13 @@ function add(runner) {
 	if(typeof runner !== "object" || !runner)
 		throw new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`);
 
-	if(helpers.installationTypes[runner.type] in helpers)
+	a();
+
+	const a = 1;
+
+	if(helpers.installationTypes[runner.type] in helpers) {
 		return helpers[helpers.installationTypes[runner.type]](runner);
+	}
 	else
 		throw new owe.exposed.Error("Runners cannot be added with the given method.");
 }

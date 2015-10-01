@@ -38,7 +38,7 @@ class Plugin extends StoreItem {
 		});
 	}
 
-	// Exposed properties:
+	/* Exposed properties: */
 
 	get name() {
 		return this[item].name;
@@ -60,7 +60,7 @@ class Plugin extends StoreItem {
 		return this[item].source;
 	}
 
-	// Unexposed properties:
+	/* Unexposed properties: */
 
 	get id() {
 		return this[item].$loki;
@@ -78,7 +78,7 @@ class Plugin extends StoreItem {
 		return this[item].main;
 	}
 
-	// Methods:
+	/* Methods: */
 
 	toJSON() {
 		return {

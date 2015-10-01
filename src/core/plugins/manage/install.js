@@ -54,7 +54,7 @@ const helpers = {
 
 			result.manifest.main = path.basename(plugin.path);
 
-			if(+plugin.copy)
+			if(+plugin.copy) {
 				return new Promise((resolve, reject) => {
 					const location = path.join(config.fromUserData("plugins"), result.manifest.name);
 
@@ -62,7 +62,7 @@ const helpers = {
 						deleteFirst: true,
 						overwrite: true,
 						confirm: true
-					}, (err, files) => {
+					}, err => {
 						if(err)
 							return reject(new owe.exposed.Error("Plugin files could not be installed."));
 
@@ -72,6 +72,7 @@ const helpers = {
 						resolve(result.manifest);
 					});
 				});
+			}
 			else {
 				result.manifest.location = path.dirname(plugin.path);
 
@@ -110,7 +111,7 @@ const helpers = {
 
 	validateManifest(manifest) {
 
-		try {
+		try{
 			normalizePackage(manifest, true);
 		}
 		catch(err) {
