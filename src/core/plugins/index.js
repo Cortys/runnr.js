@@ -7,7 +7,7 @@ const Plugin = require("./Plugin");
 
 const listView = store.getDynamicView("list") || store.addDynamicView("list", {
 	persistent: false
-}).applySimpleSort("name");
+}).applySimpleSort("displayName");
 
 const plugins = {
 	get list() {
@@ -25,7 +25,7 @@ const plugins = {
 
 /* Api: */
 const pluginsApi = Object.assign(() => plugins.list, {
-	add: plugins.add
+	install: plugins.install
 });
 
 owe(pluginsApi, owe.chain([

@@ -22,7 +22,8 @@ class Plugin extends StoreItem {
 
 			owe(this, owe.serve({
 				router: {
-					filter: new Set(["id", "name", "version", "author", "source", "uninstall"])
+					filter: new Set(["id", "name", "displayName", "version", "author", "source", "uninstall"]),
+					deep: true
 				},
 				closer: {
 					filter: true
@@ -39,6 +40,10 @@ class Plugin extends StoreItem {
 
 	get name() {
 		return this[item].name;
+	}
+
+	get displayName() {
+		return this[item].displayName;
 	}
 
 	get version() {
@@ -73,6 +78,7 @@ class Plugin extends StoreItem {
 		return {
 			id: this.id,
 			name: this.name,
+			displayName: this.displayName,
 			version: this.version,
 			author: this.author,
 			source: this.source

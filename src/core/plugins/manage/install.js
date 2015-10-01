@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const copy = require("cpr");
 const semver = require("semver");
-const sanitizeFilename = require("sanitize-filename");
+const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
 const config = require("../../config");
@@ -83,25 +83,42 @@ const helpers = {
 	/* Helpers: */
 
 	parsePluginFile(file) {
-		const startOfManifest = file.indexOf("/*");
-		const endOfManifest = file.indexOf("*/\n", startOfManifest);
+
+		const startToken = "/**package\n";
+		const endToken = "**/\n";
+
+		const startOfManifest = file.indexOf(startToken);
+		const endOfManifest = file.indexOf(endToken, startOfManifest + startToken.length);
+
+		if(startOfManifest < 0 || endOfManifest < 0)
+			throw new owe.exposed.SyntaxError("No manifest declaration in the given plugin file.");
+
+		let manifest = file.substring(startOfManifest + startToken.length, endOfManifest);
+
+		try {
+			manifest = JSON.parse(manifest);
+		}
+		catch(err) {
+			throw new owe.exposed.SyntaxError("The manifest in the given plugin file is no valid JSON.");
+		}
 
 		return {
 			file,
-			manifest: this.validateManifest(JSON.parse(file.substring(startOfManifest + 2, endOfManifest)))
+			manifest: this.validateManifest(manifest)
 		};
 	},
 
 	validateManifest(manifest) {
 
-		if(!manifest.name || typeof manifest.name !== "string")
-			throw new owe.exposed.TypeError("Plugin name has to be a string.");
+		try {
+			normalizePackage(manifest, true);
+		}
+		catch(err) {
+			throw owe.exposed(err);
+		}
 
-		if(manifest.name !== sanitizeFilename(manifest.name))
-			throw new owe.exposed.TypeError(`Plugin name '${manifest.name}' is invalid.`);
-
-		if(!semver.valid(manifest.version))
-			throw new owe.exposed.TypeError("Plugin version has to be semver compliant.");
+		if(!manifest.displayName || typeof manifest.displayName !== "string")
+			manifest.displayName = manifest.name;
 
 		const dbPlugin = store.by("name", manifest.name);
 
