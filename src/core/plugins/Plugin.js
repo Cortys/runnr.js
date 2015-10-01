@@ -26,7 +26,13 @@ class Plugin extends StoreItem {
 					deep: true
 				},
 				closer: {
-					filter: true
+					filter: true,
+					output(val) {
+						if(val && typeof val === "object" && typeof val.toJSON === "function")
+							return val.toJSON();
+
+						return val;
+					}
 				}
 			}));
 		});

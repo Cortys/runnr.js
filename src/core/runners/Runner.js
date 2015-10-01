@@ -21,7 +21,13 @@ class Runner extends StoreItem {
 				},
 				closer: {
 					filter: true,
-					writable: new Set(["active"])
+					writable: new Set(["active"]),
+					output(val) {
+						if(val && typeof val === "object" && typeof val.toJSON === "function")
+							return val.toJSON();
+
+						return val;
+					}
 				}
 			}));
 		});
