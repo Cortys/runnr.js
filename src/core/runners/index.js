@@ -24,11 +24,9 @@ const runners = {
 };
 
 /* Api: */
-const runnersApi = function() {
-	return runners.list;
-};
-
-runnersApi.add = runners.add;
+const runnersApi = Object.assign(() => runners.list, {
+	add: runners.add
+});
 
 owe(runnersApi, owe.chain([
 	owe.serve({

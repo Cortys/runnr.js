@@ -31,6 +31,8 @@ class Plugin extends StoreItem {
 		});
 	}
 
+	// Exposed properties:
+
 	get id() {
 		return this[item].$loki;
 	}
@@ -51,6 +53,8 @@ class Plugin extends StoreItem {
 		return this[item].source;
 	}
 
+	// Unexposed properties:
+
 	get location() {
 		return this[item].location;
 	}
@@ -62,6 +66,8 @@ class Plugin extends StoreItem {
 	get main() {
 		return this[item].main;
 	}
+
+	// Methods:
 
 	toJSON() {
 		return {

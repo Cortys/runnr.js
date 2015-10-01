@@ -2,6 +2,7 @@
 
 const owe = require("owe.js");
 const store = require("./store");
+
 const Plugin = require("./Plugin");
 
 const listView = store.getDynamicView("list") || store.addDynamicView("list", {
@@ -23,11 +24,9 @@ const plugins = {
 };
 
 /* Api: */
-const pluginsApi = function() {
-	return plugins.list;
-};
-
-pluginsApi.install = plugins.install;
+const pluginsApi = Object.assign(() => plugins.list, {
+	add: plugins.add
+});
 
 owe(pluginsApi, owe.chain([
 	owe.serve({

@@ -27,6 +27,8 @@ class Runner extends StoreItem {
 		});
 	}
 
+	// Exposed properties:
+
 	get id() {
 		return this[item].$loki;
 	}
@@ -42,6 +44,8 @@ class Runner extends StoreItem {
 	set active(val) {
 		this[val ? "activate" : "deactivate"]();
 	}
+
+	// Methods:
 
 	toJSON() {
 		return {
