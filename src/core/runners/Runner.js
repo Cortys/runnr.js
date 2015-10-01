@@ -17,7 +17,7 @@ class Runner extends StoreItem {
 		super(runner, function onNewRunner() {
 			owe(this, owe.serve({
 				router: {
-					filter: new Set(["id", "name", "active", "activate", "deactivate", "delete"])
+					filter: new Set(["name", "active", "activate", "deactivate", "delete"])
 				},
 				closer: {
 					filter: true,
@@ -35,10 +35,6 @@ class Runner extends StoreItem {
 
 	// Exposed properties:
 
-	get id() {
-		return this[item].$loki;
-	}
-
 	get name() {
 		return this[item].name;
 	}
@@ -51,11 +47,16 @@ class Runner extends StoreItem {
 		this[val ? "activate" : "deactivate"]();
 	}
 
+	// Unexposed properties:
+
+	get id() {
+		return this[item].$loki;
+	}
+
 	// Methods:
 
 	toJSON() {
 		return {
-			id: this.id,
 			name: this.name,
 			active: this.active
 		};

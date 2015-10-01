@@ -22,7 +22,7 @@ class Plugin extends StoreItem {
 
 			owe(this, owe.serve({
 				router: {
-					filter: new Set(["id", "name", "displayName", "version", "author", "source", "uninstall"]),
+					filter: new Set(["name", "displayName", "version", "author", "source", "uninstall"]),
 					deep: true
 				},
 				closer: {
@@ -39,10 +39,6 @@ class Plugin extends StoreItem {
 	}
 
 	// Exposed properties:
-
-	get id() {
-		return this[item].$loki;
-	}
 
 	get name() {
 		return this[item].name;
@@ -66,6 +62,10 @@ class Plugin extends StoreItem {
 
 	// Unexposed properties:
 
+	get id() {
+		return this[item].$loki;
+	}
+
 	get location() {
 		return this[item].location;
 	}
@@ -82,7 +82,6 @@ class Plugin extends StoreItem {
 
 	toJSON() {
 		return {
-			id: this.id,
 			name: this.name,
 			displayName: this.displayName,
 			version: this.version,
