@@ -10,7 +10,7 @@ const store = new Loki(config.fromUserData("store.db"), {
 store.loaded = new Promise(resolve => store.loadDatabase({}, () => resolve(store)));
 
 store.exit = function exit() {
-	return new Promise(resolve => store.close(() => {
+	return new Promise(resolve => store.save(() => {
 		console.log("DB saved.");
 		resolve();
 	}));

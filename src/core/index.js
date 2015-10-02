@@ -14,7 +14,7 @@ module.exports = store.loaded.then(() => {
 		onExit() {
 			return store.exit().then(() => {
 				console.log("Exiting runnr core.");
-			}, (err) => {
+			}, err => {
 				console.log("Failed to exit runnr core.", err);
 				throw err;
 			});

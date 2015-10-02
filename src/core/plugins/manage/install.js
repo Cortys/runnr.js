@@ -111,7 +111,7 @@ const helpers = {
 
 	validateManifest(manifest) {
 
-		try{
+		try {
 			normalizePackage(manifest, true);
 		}
 		catch(err) {
