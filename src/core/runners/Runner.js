@@ -2,87 +2,67 @@
 
 const owe = require("owe.js");
 
-const addRunner = require("./manage/add");
-const deleteRunner = require("./manage/delete");
+const active = Symbol("active");
 
-const StoreItem = require("../StoreItem");
-const item = StoreItem.dbItem;
+class Runner extends require("events") {
+	constructor(preset) {
 
-class Runner extends StoreItem {
-	constructor(runner) {
-		if(!runner || typeof runner !== "object" || !("$loki" in runner))
-			throw new owe.exposed.Error("Runner not found.");
+		super();
 
-		super(runner, function onNewRunner() {
-			owe(this, owe.serve({
-				router: {
-					filter: new Set(["name", "active", "activate", "deactivate", "delete"])
-				},
-				closer: {
-					filter: true,
-					writable: new Set(["active"]),
-					output(val) {
-						if(val && typeof val === "object" && typeof val.toJSON === "function")
-							return val.toJSON();
-
-						return val;
-					}
-				}
-			}));
+		Object.defineProperty(this, "active", {
+			enumerable: true,
+			get: () => this[active],
+			set: val => this[val ? "activate" : "deactivate"]()
 		});
+
+		if(preset && typeof preset === "object")
+			Object.assign(this, preset);
+
+		owe(this, owe.serve({
+			router: {
+				filter: new Set(["name", "active", "activate", "deactivate", "delete"])
+			},
+			closer: {
+				filter: true,
+				writable: new Set(["name", "active"])
+			}
+		}));
+
+		owe.expose(this, () => this.exposed);
 	}
 
 	/* Exposed properties: */
 
-	get name() {
-		return this[item].name;
-	}
-
-	get active() {
-		return this[item].active;
-	}
-
-	set active(val) {
-		this[val ? "activate" : "deactivate"]();
-	}
-
-	/* Unexposed properties: */
-
-	get id() {
-		return this[item].$loki;
-	}
-
-	/* Methods: */
-
-	toJSON() {
+	get exposed() {
 		return {
 			name: this.name,
 			active: this.active
 		};
 	}
 
+	/* Methods: */
+
 	activate() {
-		this[item].active = true;
+		this[active] = true;
 		this.emit("activeChanged", true);
 
 		return Promise.resolve(this);
 	}
 
 	deactivate() {
-		this[item].active = false;
-		this.emit("activeChanged", false);
+		this[active] = false;
 
 		return Promise.resolve(this);
 	}
 
 	delete() {
-		return deleteRunner(this)
-			.then(() => super.delete())
+		return this.deactivate()
+			.then(() => require("./manage/delete")(this))
 			.then(() => this.emit("deleted"));
 	}
 
 	static add(runner) {
-		return addRunner(runner).then(runner => new Runner(runner));
+		return require("./manage/add")(runner, runner => new Runner(runner));
 	}
 }
 

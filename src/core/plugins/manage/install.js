@@ -10,13 +10,14 @@ const owe = require("owe.js");
 const config = require("../../config");
 const store = require("../store");
 
-function install(plugin) {
+function install(plugin, map) {
 
 	if(typeof plugin !== "object" || !plugin)
 		throw new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`);
 
 	if(helpers.installationTypes[plugin.type] in helpers)
-		return helpers[helpers.installationTypes[plugin.type]](plugin);
+		return helpers[helpers.installationTypes[plugin.type]](plugin)
+			.then(manifest => helpers.installManifest(map(manifest)));
 	else
 		throw new owe.exposed.Error("Plugins cannot be installed with the given installation method.");
 }
@@ -78,7 +79,7 @@ const helpers = {
 
 				return result.manifest;
 			}
-		}).then(manifest => this.installManifest(manifest));
+		});
 	},
 
 	/* Helpers: */

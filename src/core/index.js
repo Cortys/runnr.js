@@ -21,5 +21,6 @@ module.exports = store.loaded.then(() => {
 		}
 	}, owe.serve());
 }, err => {
-	console.error("Loading DB failed.", err);
+	console.error("Loading DB failed.");
+	console.error(err.stack);
 });

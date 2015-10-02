@@ -3,7 +3,7 @@
 const store = require("../store");
 
 function deleteRunner(runner) {
-	return runner.deactivate().then(() => store.remove(runner.id));
+	return Promise.resolve(store.remove(runner));
 }
 
 module.exports = deleteRunner;

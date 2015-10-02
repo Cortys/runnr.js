@@ -11,11 +11,11 @@ const listView = store.getDynamicView("list") || store.addDynamicView("list", {
 
 const runners = {
 	get list() {
-		return listView.mapReduce(runner => new Runner(runner), res => res);
+		return listView.mapReduce(runner => runner, res => res);
 	},
 
 	get(runnerName) {
-		return new Runner(store.by("name", runnerName));
+		return store.by("name", runnerName);
 	},
 
 	add(runner) {

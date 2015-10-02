@@ -11,11 +11,11 @@ const listView = store.getDynamicView("list") || store.addDynamicView("list", {
 
 const plugins = {
 	get list() {
-		return listView.mapReduce(plugin => new Plugin(plugin), res => res);
+		return listView.mapReduce(plugin => plugin, res => res);
 	},
 
 	get(pluginName) {
-		return new Plugin(store.by("name", pluginName));
+		return store.by("name", pluginName);
 	},
 
 	install(plugin) {

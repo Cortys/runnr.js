@@ -15,12 +15,10 @@ function uninstall(plugin) {
 				reject(err);
 			resolve();
 		});
-	}).then(() => store.remove(plugin.id), err => {
-		if(err && err.code === "ENOENT") {
-			store.remove(plugin.id);
+	}).then(() => store.remove(plugin), err => {
+		if(err && err.code === "ENOENT")
+			return store.remove(plugin);
 
-			return;
-		}
 		throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 	});
 }

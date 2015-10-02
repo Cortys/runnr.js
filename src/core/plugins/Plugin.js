@@ -3,84 +3,34 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 
-const installPlugin = require("./manage/install");
-const uninstallPlugin = require("./manage/uninstall");
+class Plugin extends require("events") {
+	constructor(preset) {
 
-const StoreItem = require("../StoreItem");
-const item = StoreItem.dbItem;
+		super();
 
-class Plugin extends StoreItem {
-	constructor(plugin) {
+		if(preset && typeof preset === "object")
+			Object.assign(this, preset);
 
-		if(!plugin || typeof plugin !== "object" || !("$loki" in plugin))
-			throw new owe.exposed.Error("Plugin not found.");
-
-		super(plugin, function onNewPlugin() {
-			this.fs = oweFs({
-				root: this.location
-			});
-
-			owe(this, owe.serve({
-				router: {
-					filter: new Set(["name", "displayName", "version", "author", "source", "uninstall"]),
-					deep: true
-				},
-				closer: {
-					filter: true,
-					output(val) {
-						if(val && typeof val === "object" && typeof val.toJSON === "function")
-							return val.toJSON();
-
-						return val;
-					}
-				}
-			}));
+		this.fs = oweFs({
+			root: this.location
 		});
+
+		owe(this, owe.serve({
+			router: {
+				filter: new Set(["name", "displayName", "version", "author", "source", "uninstall"]),
+				deep: true
+			},
+			closer: {
+				filter: true
+			}
+		}));
+
+		owe.expose(this, () => this.exposed);
 	}
 
 	/* Exposed properties: */
 
-	get name() {
-		return this[item].name;
-	}
-
-	get displayName() {
-		return this[item].displayName;
-	}
-
-	get version() {
-		return this[item].version;
-	}
-
-	get author() {
-		return this[item].author;
-	}
-
-	get source() {
-		return this[item].source;
-	}
-
-	/* Unexposed properties: */
-
-	get id() {
-		return this[item].$loki;
-	}
-
-	get location() {
-		return this[item].location;
-	}
-
-	get copied() {
-		return this[item].copied;
-	}
-
-	get main() {
-		return this[item].main;
-	}
-
-	/* Methods: */
-
-	toJSON() {
+	get exposed() {
 		return {
 			name: this.name,
 			displayName: this.displayName,
@@ -90,14 +40,15 @@ class Plugin extends StoreItem {
 		};
 	}
 
+	/* Methods: */
+
 	uninstall() {
-		return uninstallPlugin(this)
-			.then(() => this.delete())
+		return require("./manage/uninstall")(this)
 			.then(() => this.emit("uninstalled"));
 	}
 
 	static install(plugin) {
-		return installPlugin(plugin).then(manifest => new Plugin(manifest));
+		return require("./manage/install")(plugin, manifest => new Plugin(manifest));
 	}
 }
 
