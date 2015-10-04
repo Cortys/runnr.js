@@ -21,7 +21,7 @@ core.then(core => {
 		},
 
 		parseCloseData: {
-			GET: oweHttp.parseCloseData.extended,
+			GET: () => undefined,
 			POST: oweHttp.parseCloseData.body
 		}
 	})).listen(3912);
