@@ -67,9 +67,7 @@
 		"camelcase": [1, {
 			"properties": "always"
 		}],
-		"brace-style": [1, "stroustrup", {
-			"allowSingleLine": true
-		}],
+		"brace-style": [1, "stroustrup"],
 		"newline-after-var": [1, "always"],
 		"eol-last": 1,
 		"lines-around-comment": [1, {

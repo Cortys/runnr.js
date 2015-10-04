@@ -116,7 +116,7 @@ const helpers = {
 			normalizePackage(manifest, true);
 		}
 		catch(err) {
-			throw owe.exposed(err);
+			throw owe.expose(err);
 		}
 
 		if(!manifest.displayName || typeof manifest.displayName !== "string")

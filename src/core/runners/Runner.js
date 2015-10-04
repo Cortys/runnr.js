@@ -20,11 +20,12 @@ class Runner extends require("events") {
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set(["name", "active", "activate", "deactivate", "delete"])
+				filter: new Set(["name", "active", "activate", "deactivate", "delete"]),
+				writable: new Set(["name", "active"])
 			},
 			closer: {
 				filter: true,
-				writable: new Set(["name", "active"])
+				writable: true
 			}
 		}));
 
