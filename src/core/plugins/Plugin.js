@@ -2,14 +2,14 @@
 
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
+const StoreItem = require("../StoreItem");
 
-class Plugin extends require("events") {
+class Plugin extends StoreItem {
 	constructor(preset) {
 
-		super();
+		const exposed = ["name", "displayName", "version", "author", "source"];
 
-		if(preset && typeof preset === "object")
-			Object.assign(this, preset);
+		super(exposed, undefined, preset);
 
 		this.fs = oweFs({
 			root: this.location
@@ -17,30 +17,14 @@ class Plugin extends require("events") {
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set(["name", "displayName", "version", "author", "source", "uninstall"]),
+				filter: new Set(exposed.concat(["uninstall"])),
 				deep: true
 			},
 			closer: {
 				filter: true
 			}
 		}));
-
-		owe.expose(this, () => this.exposed);
 	}
-
-	/* Exposed properties: */
-
-	get exposed() {
-		return {
-			name: this.name,
-			displayName: this.displayName,
-			version: this.version,
-			author: this.author,
-			source: this.source
-		};
-	}
-
-	/* Methods: */
 
 	uninstall() {
 		return require("./manage/uninstall")(this)

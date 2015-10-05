@@ -13,6 +13,7 @@ module.exports = store.loaded.then(() => {
 
 		onExit() {
 			return store.exit().then(() => {
+				console.log("DB saved.");
 				console.log("Exiting runnr core.");
 			}, err => {
 				console.log("Failed to exit runnr core.", err);

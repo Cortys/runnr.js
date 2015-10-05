@@ -21,10 +21,7 @@ store.loaded = new Promise(resolve => {
 });
 
 store.exit = function exit() {
-	return new Promise(resolve => store.save(() => {
-		console.log("DB saved.");
-		resolve();
-	}));
+	return new Promise(resolve => store.close(resolve));
 };
 
 module.exports = store;

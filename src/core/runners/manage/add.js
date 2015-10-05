@@ -32,6 +32,11 @@ const helpers = {
 			if(!runner.name || typeof runner.name !== "string")
 				return reject(new owe.exposed.TypeError("Runner name has to be a string."));
 
+			runner.name = runner.name.trim();
+
+			if(runner.name === "")
+				throw new owe.exposed.TypeError("Runner name must not conist of whitespace.");
+
 			if(store.by("name", runner.name))
 				return reject(new owe.exposed.Error(`Runner with name '${runner.name}' already exists.`));
 

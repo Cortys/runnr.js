@@ -7,7 +7,8 @@ let collection = store.getCollection("plugins");
 if(collection === null) {
 	console.log("Added plugins collection.");
 	collection = store.addCollection("plugins", {
-		indices: ["name", "displayName"]
+		indices: ["name", "displayName"],
+		autoupdate: true
 	});
 
 	collection.ensureUniqueIndex("name");

@@ -1,50 +1,63 @@
 "use strict";
 
 const owe = require("owe.js");
+const StoreItem = require("../StoreItem");
 
+const name = Symbol("name");
 const active = Symbol("active");
+const update = StoreItem.update;
 
-class Runner extends require("events") {
+class Runner extends StoreItem {
 	constructor(preset) {
 
-		super();
+		const exposed = ["name", "active"];
 
-		Object.defineProperty(this, "active", {
-			enumerable: true,
-			get: () => this[active],
-			set: val => this[val ? "activate" : "deactivate"]()
-		});
-
-		if(preset && typeof preset === "object")
-			Object.assign(this, preset);
+		super(exposed, exposed, preset);
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set(["name", "active", "activate", "deactivate", "delete"]),
-				writable: new Set(["name", "active"])
+				filter: new Set(exposed.concat(["activate", "deactivate", "delete"])),
+				writable: new Set(exposed)
 			},
 			closer: {
 				filter: true,
-				writable: true
+				writable: data => typeof data !== "object"
 			}
 		}));
-
-		owe.expose(this, () => this.exposed);
 	}
 
-	/* Exposed properties: */
+	get name() {
+		return this[name];
+	}
+	set name(val) {
+		if(typeof val !== "string")
+			throw new owe.exposed.TypeError("Runner name has to be a string.");
 
-	get exposed() {
-		return {
-			name: this.name,
-			active: this.active
-		};
+		val = val.trim();
+
+		if(val === "")
+			throw new owe.exposed.TypeError("Runner name must not conist of whitespace.");
+
+		if(val === this.name)
+			return;
+
+		if(name in this && require("./manage/helpers").exists(val))
+			throw new owe.exposed.Error(`Runner with name '${val}' already exists.`);
+
+		this[name] = val;
+		this[update]();
 	}
 
-	/* Methods: */
+	get active() {
+		return this[active];
+	}
+	set active(val) {
+		this[val ? "activate" : "deactivate"]();
+	}
 
 	activate() {
 		this[active] = true;
+		this[update]();
 		this.emit("activeChanged", true);
 
 		return Promise.resolve(this);
@@ -52,6 +65,8 @@ class Runner extends require("events") {
 
 	deactivate() {
 		this[active] = false;
+		this[update]();
+		this.emit("activeChanged", false);
 
 		return Promise.resolve(this);
 	}
