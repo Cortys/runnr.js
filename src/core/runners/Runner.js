@@ -2,28 +2,33 @@
 
 const owe = require("owe.js");
 const StoreItem = require("../StoreItem");
+const Graph = require("./Graph");
 
 const name = Symbol("name");
 const active = Symbol("active");
+const graph = Symbol("graph");
 const update = StoreItem.update;
 
 class Runner extends StoreItem {
 	constructor(preset) {
 
-		const exposed = ["name", "active"];
+		const exposed = ["name", "active", "graph"];
 
 		super(exposed, exposed, preset);
 
 		owe(this, owe.serve({
 			router: {
 				filter: new Set(exposed.concat(["activate", "deactivate", "delete"])),
-				writable: new Set(exposed)
+				writable: new Set(["name", "active"])
 			},
 			closer: {
 				filter: true,
 				writable: data => typeof data !== "object"
 			}
 		}));
+
+		if(!(graph in this))
+			this[graph] = new Graph();
 	}
 
 	get name() {
@@ -46,6 +51,7 @@ class Runner extends StoreItem {
 
 		this[name] = val;
 		this[update]();
+		this.emit("nameChanged", val);
 	}
 
 	get active() {
@@ -53,6 +59,18 @@ class Runner extends StoreItem {
 	}
 	set active(val) {
 		this[val ? "activate" : "deactivate"]();
+	}
+
+	get graph() {
+		return this[graph];
+	}
+	set graph(val) {
+		if(!(val instanceof Graph))
+			val = new Graph(val);
+
+		this[graph] = val;
+		this[update]();
+		this.emit("graphChanged", val);
 	}
 
 	activate() {
