@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 const store = require("../store");
 
-module.exports = Object.assign(Object.create(require("../../helpers")), {
+module.exports = {
 	exists(name) {
 		return store.collection && typeof store.collection.by("name", name) === "object";
 	},
@@ -28,4 +28,4 @@ module.exports = Object.assign(Object.create(require("../../helpers")), {
 
 		return constraint;
 	}
-});
+};
