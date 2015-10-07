@@ -37,7 +37,7 @@ const helpers = {
 			if(runner.name === "")
 				throw new owe.exposed.TypeError("Runner name must not conist of whitespace.");
 
-			if(store.by("name", runner.name))
+			if(store.collection.by("name", runner.name))
 				return reject(new owe.exposed.Error(`Runner with name '${runner.name}' already exists.`));
 
 			resolve({
@@ -50,7 +50,7 @@ const helpers = {
 	/* Helpers: */
 
 	insertRunner(runner) {
-		return store.insert(runner);
+		return store.collection.insert(runner);
 	}
 
 };

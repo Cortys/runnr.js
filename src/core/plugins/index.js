@@ -5,9 +5,11 @@ const store = require("./store");
 
 const Plugin = require("./Plugin");
 
-const listView = store.getDynamicView("list") || store.addDynamicView("list", {
+let listView;
+
+store.loaded.then(() => listView = store.collection.getDynamicView("list") || store.collection.addDynamicView("list", {
 	persistent: false
-}).applySimpleSort("displayName");
+}).applySimpleSort("displayName"));
 
 const plugins = {
 	get list() {
@@ -15,7 +17,7 @@ const plugins = {
 	},
 
 	get(pluginName) {
-		return store.by("name", pluginName);
+		return store.collection.by("name", pluginName);
 	},
 
 	install(plugin) {

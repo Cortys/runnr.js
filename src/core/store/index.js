@@ -3,12 +3,12 @@
 const config = require("../config");
 const Loki = require("lokijs");
 
-const store = new Loki(config.fromUserData("store.db"), {
+const store = module.exports = new Loki(config.fromUserData("store.db"), {
 	autosave: true
 });
 
 store.loaded = new Promise(resolve => {
-	store.loadDatabase({
+	setImmediate(() => store.loadDatabase({
 		plugins: {
 			proto: require("../plugins/Plugin"),
 			inflate: (src, dst) => Object.assign(dst, src)
@@ -17,11 +17,9 @@ store.loaded = new Promise(resolve => {
 			proto: require("../runners/Runner"),
 			inflate: (src, dst) => Object.assign(dst, src)
 		}
-	}, () => resolve(store));
-});
+	}, resolve));
+}).then(() => store);
 
 store.exit = function exit() {
 	return new Promise(resolve => store.close(resolve));
 };
-
-module.exports = store;

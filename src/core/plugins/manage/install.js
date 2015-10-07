@@ -122,7 +122,7 @@ const helpers = {
 		if(!manifest.displayName || typeof manifest.displayName !== "string")
 			manifest.displayName = manifest.name;
 
-		const dbPlugin = store.by("name", manifest.name);
+		const dbPlugin = store.collection.by("name", manifest.name);
 
 		if(dbPlugin && (dbPlugin.block || semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
 			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
@@ -132,12 +132,12 @@ const helpers = {
 
 	installManifest(manifest) {
 
-		const dbPlugin = store.by("name", manifest.name);
+		const dbPlugin = store.collection.by("name", manifest.name);
 
 		if(dbPlugin)
 			store.remove(dbPlugin);
 
-		store.insert(manifest);
+		store.collection.insert(manifest);
 
 		return manifest;
 	}

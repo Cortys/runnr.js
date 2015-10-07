@@ -4,6 +4,9 @@ const owe = require("owe.js");
 const StoreItem = require("../StoreItem");
 const Graph = require("./Graph");
 
+const addRunner = require("./manage/add");
+const deleteRunner = require("./manage/delete");
+
 const name = Symbol("name");
 const active = Symbol("active");
 const graph = Symbol("graph");
@@ -91,12 +94,12 @@ class Runner extends StoreItem {
 
 	delete() {
 		return this.deactivate()
-			.then(() => require("./manage/delete")(this))
+			.then(() => deleteRunner(this))
 			.then(() => this.emit("deleted"));
 	}
 
 	static add(runner) {
-		return require("./manage/add")(runner, runner => new Runner(runner));
+		return addRunner(runner, runner => new Runner(runner));
 	}
 }
 

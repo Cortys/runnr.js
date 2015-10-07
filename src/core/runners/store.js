@@ -2,16 +2,18 @@
 
 const store = require("../store");
 
-let collection = store.getCollection("runners");
+module.exports.loaded = store.loaded.then(() => {
+	let collection = store.getCollection("runners");
 
-if(collection === null) {
-	console.log("Added runners collection.");
-	collection = store.addCollection("runners", {
-		indices: ["name", "active"],
-		autoupdate: true
-	});
+	if(collection === null) {
+		console.log("Added runners collection.");
+		collection = store.addCollection("runners", {
+			indices: ["name", "active"],
+			autoupdate: true
+		});
 
-	collection.ensureUniqueIndex("name");
-}
+		collection.ensureUniqueIndex("name");
+	}
 
-module.exports = collection;
+	module.exports.collection = collection;
+});

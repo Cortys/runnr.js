@@ -4,6 +4,9 @@ const owe = require("owe.js");
 const oweFs = require("owe-fs");
 const StoreItem = require("../StoreItem");
 
+const installPlugin = require("./manage/install");
+const uninstallPlugin = require("./manage/uninstall");
+
 class Plugin extends StoreItem {
 	constructor(preset) {
 
@@ -27,12 +30,12 @@ class Plugin extends StoreItem {
 	}
 
 	uninstall() {
-		return require("./manage/uninstall")(this)
+		return uninstallPlugin(this)
 			.then(() => this.emit("uninstalled"));
 	}
 
 	static install(plugin) {
-		return require("./manage/install")(plugin, manifest => new Plugin(manifest));
+		return installPlugin(plugin, manifest => new Plugin(manifest));
 	}
 }
 

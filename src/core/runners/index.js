@@ -5,9 +5,11 @@ const store = require("./store");
 
 const Runner = require("./Runner");
 
-const listView = store.getDynamicView("list") || store.addDynamicView("list", {
+let listView;
+
+store.loaded.then(() => listView = store.collection.getDynamicView("list") || store.collection.addDynamicView("list", {
 	persistent: false
-}).applySimpleSort("name");
+}).applySimpleSort("name"));
 
 const runners = {
 	get list() {
@@ -15,7 +17,7 @@ const runners = {
 	},
 
 	get(runnerName) {
-		return store.by("name", runnerName);
+		return store.collection.by("name", runnerName);
 	},
 
 	add(runner) {

@@ -15,9 +15,9 @@ function uninstall(plugin) {
 				reject(err);
 			resolve();
 		});
-	}).then(() => store.remove(plugin), err => {
+	}).then(() => store.collection.remove(plugin), err => {
 		if(err && err.code === "ENOENT")
-			return store.remove(plugin);
+			return store.collection.remove(plugin);
 
 		throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 	});

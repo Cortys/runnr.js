@@ -2,16 +2,18 @@
 
 const store = require("../store");
 
-let collection = store.getCollection("plugins");
+module.exports.loaded = store.loaded.then(() => {
+	let collection = store.getCollection("plugins");
 
-if(collection === null) {
-	console.log("Added plugins collection.");
-	collection = store.addCollection("plugins", {
-		indices: ["name", "displayName"],
-		autoupdate: true
-	});
+	if(collection === null) {
+		console.log("Added plugins collection.");
+		collection = store.addCollection("plugins", {
+			indices: ["name", "displayName"],
+			autoupdate: true
+		});
 
-	collection.ensureUniqueIndex("name");
-}
+		collection.ensureUniqueIndex("name");
+	}
 
-module.exports = collection;
+	module.exports.collection = collection;
+});
