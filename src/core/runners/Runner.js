@@ -6,6 +6,7 @@ const Graph = require("./Graph");
 
 const addRunner = require("./manage/add");
 const deleteRunner = require("./manage/delete");
+const helpers = require("./manage/helpers");
 
 const name = Symbol("name");
 const active = Symbol("active");
@@ -38,21 +39,7 @@ class Runner extends StoreItem {
 		return this[name];
 	}
 	set name(val) {
-		if(typeof val !== "string")
-			throw new owe.exposed.TypeError("Runner name has to be a string.");
-
-		val = val.trim();
-
-		if(val === "")
-			throw new owe.exposed.TypeError("Runner name must not conist of whitespace.");
-
-		if(val === this.name)
-			return;
-
-		if(name in this && require("./manage/helpers").exists(val))
-			throw new owe.exposed.Error(`Runner with name '${val}' already exists.`);
-
-		this[name] = val;
+		this[name] = helpers.validateName(val, this.name);
 		this[update]();
 		this.emit("nameChanged", val);
 	}
