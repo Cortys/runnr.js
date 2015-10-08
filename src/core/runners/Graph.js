@@ -75,8 +75,13 @@ class Graph extends StoreItem {
 		if(!from || !to || typeof from !== "object" || typeof to !== "object")
 			throw new owe.exposed.TypeError("Edge endpoints have to be objects.");
 
-		const edge = {
+		if(!(from.node in this.nodes))
+			throw new owe.exposed.Error("Egde start-node does not exist.");
 
+		if(!(to.node in this.nodes))
+			throw new owe.exposed.Error("Egde end-node does not exist.");
+
+		const edge = {
 			id: this.idCount++,
 
 			from: {
