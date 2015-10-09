@@ -17,12 +17,14 @@ const plugins = {
 	},
 
 	get(pluginName) {
-		return store.collection.by("name", pluginName);
+		return store.collection && store.collection.by("name", pluginName);
 	},
 
 	install(plugin) {
 		return Plugin.install(plugin);
-	}
+	},
+
+	constraints: require("./manage/constraints")
 };
 
 /* Api: */
