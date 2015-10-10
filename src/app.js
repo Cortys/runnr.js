@@ -26,11 +26,16 @@ core.then(core => {
 		}
 	})).listen(3912);
 
-	process.on("SIGINT", exit);
-	process.on("SIGTERM", exit);
+	process.once("SIGINT", exit);
+	process.once("SIGTERM", exit);
+	process.once("SIGUSR2", restart);
 
 	function exit() {
 		core.onExit().then(() => process.exit());
+	}
+
+	function restart() {
+		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"));
 	}
 
 }).catch(err => console.error(err));
