@@ -11,9 +11,9 @@
 		"no-func-assign": 1,
 		"no-inner-declarations": 2,
 		"no-obj-calls": 2,
-		"no-var": 1,
-		"no-const-assign": 1,
-		"no-ex-assign": 1,
+		"no-var": 2,
+		"no-const-assign": 2,
+		"no-ex-assign": 2,
 		"no-with": 1,
 		"no-mixed-spaces-and-tabs": 1,
 		"no-multiple-empty-lines": [1, {

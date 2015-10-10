@@ -17,13 +17,13 @@ const updateGraph = Symbol("updateGraph");
 class Runner extends StoreItem {
 	constructor(preset) {
 
-		const exposed = ["name", "active", "graph"];
+		const exposed = ["name", "active"];
 
 		super(exposed, exposed, preset);
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set(exposed.concat(["activate", "deactivate", "delete"])),
+				filter: new Set(exposed.concat(["graph", "activate", "deactivate", "delete"])),
 				writable: new Set(["name", "active"])
 			},
 			closer: {
