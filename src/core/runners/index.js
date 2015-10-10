@@ -36,9 +36,12 @@ owe(runnersApi, owe.chain([
 			filter: new Set(["add"])
 		}
 	}),
-	owe.reroute(owe(null, runners.get, () => {
-		throw undefined;
-	}))
+	{
+		router: runners.get,
+		closer() {
+			throw undefined;
+		}
+	}
 ], {
 	errors: "last",
 	removeNonErrors: true

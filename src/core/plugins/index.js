@@ -38,9 +38,12 @@ owe(pluginsApi, owe.chain([
 			filter: new Set(["install"])
 		}
 	}),
-	owe.reroute(owe(null, plugins.get, () => {
-		throw undefined;
-	}))
+	{
+		router: plugins.get,
+		closer() {
+			throw undefined;
+		}
+	}
 ], {
 	errors: "last",
 	removeNonErrors: true
