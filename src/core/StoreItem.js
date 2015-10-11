@@ -3,7 +3,6 @@
 const owe = require("owe.js");
 
 const update = Symbol("update");
-const didUpdate = Symbol("didUpdate");
 
 class StoreItem extends require("events") {
 	constructor(exposed, internalize, preset) {

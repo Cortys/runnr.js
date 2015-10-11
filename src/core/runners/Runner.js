@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 const StoreItem = require("../StoreItem");
-const Graph = require("./Graph");
+const Graph = require("./graph/Graph");
 
 const addRunner = require("./manage/add");
 const deleteRunner = require("./manage/delete");
@@ -32,10 +32,12 @@ class Runner extends StoreItem {
 			}
 		}));
 
-		this[updateGraph] = () => super[update]();
-
 		if(!(graph in this))
 			this[graph] = new Graph();
+	}
+
+	[updateGraph]() {
+		super[update]();
 	}
 
 	[update](type, value) {
