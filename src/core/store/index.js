@@ -3,7 +3,7 @@
 const config = require("../config");
 const Loki = require("lokijs");
 
-const store = module.exports = new Loki(config.fromUserData("store.db"), {
+const store = module.exports = new Loki(config.fromUserData("store.json"), {
 	autosave: true
 });
 
