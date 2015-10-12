@@ -78,6 +78,7 @@ const nodeTypes = {
 		return {
 			type: "data",
 			data: plugins.constraints.match(node.data, node.constraint),
+			constraint: node.constraint,
 			ports: {
 				in: {},
 				out: {

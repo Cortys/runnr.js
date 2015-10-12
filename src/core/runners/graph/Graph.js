@@ -44,7 +44,6 @@ class Graph extends StoreItem {
 		return this[nodes];
 	}
 	set nodes(val) {
-		Object.keys(val).forEach(id => val[id] = operations.instanciateNode(val[id], this));
 		this[nodes] = operations.prepareGraphList(this, "Node", val);
 
 		this[update]("nodes");
@@ -54,7 +53,6 @@ class Graph extends StoreItem {
 		return this[edges];
 	}
 	set edges(val) {
-		Object.keys(val).forEach(id => val[id] = operations.instanciateEdge(val[id], this));
 		this[edges] = operations.prepareGraphList(this, "Edge", val);
 
 		this[update]("edges");
@@ -64,6 +62,8 @@ class Graph extends StoreItem {
 const operations = {
 
 	prepareGraphList(graph, type, val) {
+		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](val[id], graph));
+
 		val.add = this[`add${type}`].bind(this, graph);
 
 		return owe(val, owe.chain([

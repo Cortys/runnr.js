@@ -19,7 +19,7 @@ const constraints = new Set([
 module.exports = {
 	validate(constraint) {
 		if(!constraints.has(constraint))
-			throw new owe.exposed.Error("Invalid constraint.");
+			throw new owe.exposed.Error(`Invalid constraint '${constraint}'.`);
 
 		return constraint;
 	},

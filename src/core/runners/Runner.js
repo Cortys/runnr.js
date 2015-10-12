@@ -19,7 +19,12 @@ class Runner extends StoreItem {
 
 		const exposed = ["name", "active"];
 
-		super(exposed, exposed, preset);
+		super(exposed, exposed.concat(["graph"]), preset);
+
+		this[updateGraph] = () => super[update]();
+
+		if(!(graph in this))
+			this.graph = new Graph();
 
 		owe(this, owe.serve({
 			router: {
@@ -31,13 +36,6 @@ class Runner extends StoreItem {
 				writable: data => typeof data !== "object"
 			}
 		}));
-
-		if(!(graph in this))
-			this[graph] = new Graph();
-	}
-
-	[updateGraph]() {
-		super[update]();
 	}
 
 	[update](type, value) {
