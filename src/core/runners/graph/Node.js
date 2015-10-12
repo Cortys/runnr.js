@@ -41,27 +41,54 @@ class Node extends require("events") {
 	}
 
 	get edgesIn() {
+		const res = new Set();
 
+		Object.keys(this[graph].edges).forEach(id => {
+			const edge = this[graph].edges[id];
+
+			if(edge.to.node === this.id)
+				res.add(edge);
+		});
+
+		return res;
 	}
 
 	get edgesOut() {
+		const res = new Set();
 
+		Object.keys(this[graph].edges).forEach(id => {
+			const edge = this[graph].edges[id];
+
+			if(edge.from.node === this.id)
+				res.add(edge);
+		});
+
+		return res;
 	}
 
 	get edges() {
-		return [];
+		const res = new Set();
+
+		Object.keys(this[graph].edges).forEach(id => {
+			const edge = this[graph].edges[id];
+
+			if(edge.from.node === this.id || edge.to.node === this.id)
+				res.add(edge);
+		});
+
+		return res;
 	}
 
 	get predecessors() {
-
+		return new Set(this.edgesIn.map(edge => edge.fromNode));
 	}
 
 	get successors() {
-
+		return new Set(this.edgesOut.map(edge => edge.toNode));
 	}
 
 	get neighbours() {
-
+		return new Set(this.edges.map(edge => edge[edge.from.node === this.id ? "toNode" : "fromNode"]));
 	}
 
 	delete() {
