@@ -70,13 +70,21 @@ class Runner extends StoreItem {
 		if(this[graph])
 			this[graph].removeListener("update", this[updateGraph]);
 
-		if(!(val instanceof Graph))
-			val = new Graph(val);
+		const set = () => {
+			this[graph] = val;
+			this[graph].on("update", this[updateGraph]);
 
-		this[graph] = val;
-		this[graph].on("update", this[updateGraph]);
+			this[update]("graph", val);
+		};
 
-		this[update]("graph", val);
+		if(val instanceof Graph)
+			set();
+		else
+			// Graphs with data are initialized async because they require a loaded Loki DB:
+			setImmediate(() => {
+				val = new Graph(val);
+				set();
+			});
 	}
 
 	activate() {

@@ -39,7 +39,7 @@
 		"no-irregular-whitespace": 2,
 		"no-sparse-arrays": 2,
 		"no-cond-assign": [1, "except-parens"],
-		"operator-linebreak": [1, "after"],
+		"operator-linebreak": [1, "before"],
 		"space-after-keywords": [1, "never"],
 		"space-before-keywords": [1, "always"],
 		"key-spacing": [1, {
@@ -72,7 +72,7 @@
 		"eol-last": 1,
 		"lines-around-comment": [1, {
 			"beforeBlockComment": true,
-			"beforeLineComment": true,
+			"beforeLineComment": false,
 			"afterBlockComment": false,
 			"afterLineComment": false
 		}],
