@@ -95,7 +95,7 @@ const operations = {
 
 	instanciateEdge(edge, graph) {
 		edge = new Edge(edge, graph);
-		edge.on("delete", this.deleteNode.bind(this, graph, edge.id));
+		edge.on("delete", this.deleteEdge.bind(this, graph, edge.id));
 		return edge;
 	},
 
@@ -144,6 +144,8 @@ const operations = {
 	deleteNode(graph, id) {
 		if(!(id in graph.nodes))
 			throw new owe.exposed.Error(`There is no node with the id ${id}.`);
+
+		delete graph.nodes[id];
 
 		graph[update]("deleteNode", id);
 	},
