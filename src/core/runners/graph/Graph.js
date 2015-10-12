@@ -64,7 +64,9 @@ const operations = {
 	prepareGraphList(graph, type, val) {
 		Object.keys(val).forEach(id => val[id] = operations[`instanciate${type}`](val[id], graph));
 
-		val.add = this[`add${type}`].bind(this, graph);
+		Object.defineProperty(val, "add", {
+			value: this[`add${type}`].bind(this, graph)
+		});
 
 		return owe(val, owe.chain([
 			owe.serve({

@@ -25,7 +25,19 @@ class Node extends require("events") {
 		}, nodeTypes[preset.type](preset));
 
 		const that = this;
-		const exposed = new Set(["id", "type", "data", "name", "ports", "delete"]);
+		const exposed = new Set(["id",
+			"type",
+			"data",
+			"name",
+			"ports",
+			"edgesIn",
+			"edgesOut",
+			"edges",
+			"predecessors",
+			"successors",
+			"neighbours",
+			"delete"
+		]);
 
 		owe(this, owe.serve({
 			router: {
@@ -80,15 +92,27 @@ class Node extends require("events") {
 	}
 
 	get predecessors() {
-		return new Set(this.edgesIn.map(edge => edge.fromNode));
+		const res = new Set();
+
+		this.edgesIn.forEach(edge => res.add(edge.fromNode));
+
+		return res;
 	}
 
 	get successors() {
-		return new Set(this.edgesOut.map(edge => edge.toNode));
+		const res = new Set();
+
+		this.edgesIn.forEach(edge => res.add(edge.toNode));
+
+		return res;
 	}
 
 	get neighbours() {
-		return new Set(this.edges.map(edge => edge[edge.from.node === this.id ? "toNode" : "fromNode"]));
+		const res = new Set();
+
+		this.edges.forEach(edge => res.add(edge[edge.from.node === this.id ? "toNode" : "fromNode"]));
+
+		return res;
 	}
 
 	delete() {
@@ -106,8 +130,7 @@ const nodeTypes = {
 			type: "data",
 			data: plugins.constraints.match(node.data, node.constraint),
 			constraint: node.constraint,
-			ports: {
-				in: {},
+			ports: { in : {},
 				out: {
 					data: node.constraint
 				}
