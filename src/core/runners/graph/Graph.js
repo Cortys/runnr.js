@@ -105,10 +105,11 @@ const operations = {
 		if(!node || typeof node !== "object")
 			throw new owe.exposed.TypeError("Nodes have to be objects.");
 
-		const id = graph.idCount++;
+		const id = graph.idCount + 1;
 
 		node.id = id;
 		node = graph.nodes[id] = this.instanciateNode(node, graph);
+		graph.idCount = id;
 
 		graph[update]("addNode", node);
 
@@ -119,10 +120,11 @@ const operations = {
 		if(!edge || typeof edge !== "object")
 			throw new owe.exposed.TypeError("Edges have to be objects.");
 
-		const id = graph.idCount++;
+		const id = graph.idCount + 1;
 
 		edge.id = id;
 		edge = graph.edges[id] = this.instanciateEdge(edge, graph);
+		graph.idCount = id;
 
 		graph[update]("addEdge", edge);
 
