@@ -36,7 +36,8 @@
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.4",
 		"cpr": "0.4.1",
-		"remove": "0.1.5"
+		"remove": "0.1.5",
+		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {
 		"eslint": "1.6.0"
