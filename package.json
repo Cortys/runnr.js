@@ -1,5 +1,5 @@
 {
-	"name": "runnr.js",
+	"name": "runnr",
 	"version": "0.1.0",
 	"description": "An automated easy to use plugin based task runner.",
 	"keywords": [
