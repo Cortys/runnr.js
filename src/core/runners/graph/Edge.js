@@ -37,19 +37,21 @@ class Edge extends require("events") {
 		});
 
 		const that = this;
-		const exposed = new Set(["id", "from", "to", "delete"]);
+		const exposed = ["id", "from", "to"];
+		const routes = new Set(exposed.concat(["delete"]));
 
 		owe(this, owe.serve({
 			router: {
 				deep: true,
 				filter(route) {
-					return this.value === that ? exposed.has(route) : true;
+					return this.value === that ? routes.has(route) : true;
 				}
 			},
 			closer: {
 				filter: true
 			}
 		}));
+		owe.expose.properties(this, exposed);
 	}
 
 	get fromNode() {

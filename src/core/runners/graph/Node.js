@@ -22,14 +22,18 @@ class Node extends require("events") {
 		Object.assign(this, {
 			id: preset.id,
 			[graph]: parentGraph
-		}, nodeTypes[preset.type](preset));
+		});
+
+		const validatedPreset = nodeTypes[preset.type](preset);
+
+		Object.assign(this, {
+			id: preset.id,
+			[graph]: parentGraph
+		}, validatedPreset);
 
 		const that = this;
-		const exposed = new Set(["id",
-			"type",
-			"data",
-			"name",
-			"ports",
+		const exposed = ["id"].concat(Object.keys(validatedPreset));
+		const routes = new Set(exposed.concat([
 			"edgesIn",
 			"edgesOut",
 			"edges",
@@ -37,19 +41,20 @@ class Node extends require("events") {
 			"successors",
 			"neighbours",
 			"delete"
-		]);
+		]));
 
 		owe(this, owe.serve({
 			router: {
 				deep: true,
 				filter(route) {
-					return this.value === that ? exposed.has(route) : true;
+					return this.value === that ? routes.has(route) : true;
 				}
 			},
 			closer: {
 				filter: true
 			}
 		}));
+		owe.expose.properties(this, exposed);
 	}
 
 	get edgesIn() {

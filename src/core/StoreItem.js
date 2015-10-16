@@ -9,14 +9,7 @@ class StoreItem extends require("events") {
 		super();
 
 		if(exposed)
-			owe.expose(this, () => {
-				const o = {};
-
-				for(const key of exposed)
-					o[key] = this[key];
-
-				return o;
-			});
+			owe.expose.properties(this, exposed);
 
 		if(internalize)
 			for(const key of internalize) {
