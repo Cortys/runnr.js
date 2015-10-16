@@ -3,6 +3,7 @@
 const owe = require("owe.js");
 const StoreItem = require("../StoreItem");
 const Graph = require("./graph/Graph");
+const Sandbox = require("./sandbox/Sandbox");
 
 const addRunner = require("./manage/add");
 const deleteRunner = require("./manage/delete");
@@ -25,6 +26,8 @@ class Runner extends StoreItem {
 
 		if(!(graph in this))
 			this.graph = new Graph();
+
+		this.sandbox = new Sandbox();
 
 		owe(this, owe.serve({
 			router: {
