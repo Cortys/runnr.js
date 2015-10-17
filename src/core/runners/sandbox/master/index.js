@@ -1,3 +1,3 @@
 "use strict";
 
-console.log(runnr);
+setInterval(() => console.log("a"), 10);
