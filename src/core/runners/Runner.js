@@ -27,8 +27,6 @@ class Runner extends StoreItem {
 		if(!(graph in this))
 			this.graph = new Graph();
 
-		this.sandbox = new Sandbox(this);
-
 		owe(this, owe.serve({
 			router: {
 				filter: new Set(exposed.concat(["graph", "activate", "deactivate", "delete"])),
@@ -39,6 +37,8 @@ class Runner extends StoreItem {
 				writable: data => typeof data !== "object"
 			}
 		}));
+
+		this.sandbox = new Sandbox(this);
 	}
 
 	[update](type, value) {

@@ -25,10 +25,7 @@ class Sandbox {
 
 		this[sandbox].on("message", msg => this.handleMessage(msg));
 
-		this.api = owe.api(this, {
-			router: () => this,
-			closer: id => id
-		});
+		this.api = owe.api(this.runner);
 
 		owe.expose.properties(this, []);
 	}
@@ -37,12 +34,12 @@ class Sandbox {
 		if(!msg || typeof msg !== "object" || msg.type !== "owe")
 			return;
 
-		if(!Array.isArray(msg.request))
-			msg.request = [msg.request];
+		if(!Array.isArray(msg.route))
+			msg.route = [msg.route];
 
 		let response = this.api;
 
-		msg.request.forEach(route => response = response.route(route));
+		msg.route.forEach(route => response = response.route(route));
 
 		response.close(msg.data).then(response => ({
 			response
