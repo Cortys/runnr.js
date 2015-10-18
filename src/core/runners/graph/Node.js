@@ -43,6 +43,14 @@ class Node extends require("events") {
 			"delete"
 		]));
 
+		if(this.type === "plugin") {
+			Object.defineProperty(this, "plugin", {
+				get: () => plugins.get(this.name)
+			});
+
+			routes.add("plugin");
+		}
+
 		owe(this, owe.serve({
 			router: {
 				deep: true,
