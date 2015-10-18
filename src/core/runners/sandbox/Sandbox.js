@@ -16,23 +16,43 @@ class Sandbox {
 		});
 
 		this[sandbox].stdout.on("data", data => {
-			process.stdout.write(`${this.runner.name} > ${data.toString()}`);
+			process.stdout.write(`${this.runner.name} > ${data}`);
 		});
 
 		this[sandbox].stderr.on("data", data => {
-			process.stderr.write(`${this.runner.name} > ${data.toString()}`);
+			process.stderr.write(`${this.runner.name} > ${data}`);
 		});
 
-		this[sandbox].on("exit", () => {
-			console.log("exit");
+		this[sandbox].on("message", msg => this.handleMessage(msg));
+
+		this.api = owe.api(this, {
+			router: () => this,
+			closer: id => id
 		});
 
-		this[sandbox].on("error", err => {
-			console.log("error", err);
-		});
-
-		owe(this);
 		owe.expose.properties(this, []);
+	}
+
+	handleMessage(msg) {
+		if(!msg || typeof msg !== "object" || msg.type !== "owe")
+			return;
+
+		if(!Array.isArray(msg.request))
+			msg.request = [msg.request];
+
+		let response = this.api;
+
+		msg.request.forEach(route => response = response.route(route));
+
+		response.close(msg.data).then(response => ({
+			response
+		}), error => ({
+			response: error,
+			error: true
+		})).then(response => this[sandbox].send(Object.assign({
+			type: "owe",
+			id: msg.id
+		}, response)));
 	}
 
 	/**
