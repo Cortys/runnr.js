@@ -1,5 +1,5 @@
 "use strict";
 
-const request = require("./request");
+const api = require("./api");
 
-request(["name"]).then(res => console.log(`My name is ${res}!`), err => console.error(err));
+api.route("name").then(res => console.log(`My name is ${res}!`), err => console.error(err));

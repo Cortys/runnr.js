@@ -1,5 +1,7 @@
 "use strict";
 
+const oweClient = require("owe-client");
+
 const requests = new Map();
 
 let idCount = 0;
@@ -38,4 +40,4 @@ process.on("message", msg => {
 	request[msg.error ? "reject" : "resolve"](msg.response);
 });
 
-module.exports = request;
+module.exports = oweClient(request);
