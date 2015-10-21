@@ -23,7 +23,7 @@ class Graph extends StoreItem {
 			this.edges = {};
 
 		if(!this.idCount)
-			this.idCount = 1;
+			this.idCount = 0;
 
 		owe(this, owe.serve({
 			router: {
@@ -81,8 +81,7 @@ const operations = {
 				router: this[`get${type}`].bind(this, graph)
 			}
 		], {
-			errors: "last",
-			removeNonErrors: true
+			errors: "last"
 		}), "rebind");
 	},
 
