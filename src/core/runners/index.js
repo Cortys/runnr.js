@@ -37,14 +37,10 @@ owe(runnersApi, owe.chain([
 		}
 	}),
 	{
-		router: runners.get,
-		closer() {
-			throw undefined;
-		}
+		router: runners.get
 	}
 ], {
-	errors: "last",
-	removeNonErrors: true
+	errors: "last"
 }));
 
 owe(runners, owe.reroute(runnersApi));

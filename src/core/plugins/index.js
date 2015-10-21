@@ -39,14 +39,10 @@ owe(pluginsApi, owe.chain([
 		}
 	}),
 	{
-		router: plugins.get,
-		closer() {
-			throw undefined;
-		}
+		router: plugins.get
 	}
 ], {
-	errors: "last",
-	removeNonErrors: true
+	errors: "last"
 }));
 
 owe(plugins, owe.reroute(pluginsApi));

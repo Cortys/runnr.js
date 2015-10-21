@@ -78,10 +78,7 @@ const operations = {
 				}
 			}),
 			{
-				router: this[`get${type}`].bind(this, graph),
-				closer() {
-					throw undefined;
-				}
+				router: this[`get${type}`].bind(this, graph)
 			}
 		], {
 			errors: "last",
