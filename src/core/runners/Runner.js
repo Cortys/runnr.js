@@ -17,15 +17,16 @@ const updateGraph = Symbol("updateGraph");
 
 class Runner extends StoreItem {
 	constructor(preset) {
-
-		const exposed = ["name", "active"];
-
-		super(exposed, exposed.concat(["graph"]), preset);
+		super(preset, ["name", "active", "graph"]);
 
 		this[updateGraph] = () => super[update]();
 
 		if(!(graph in this))
 			this.graph = new Graph();
+
+		/* owe binding: */
+
+		const exposed = ["id", "name", "active"];
 
 		owe(this, owe.serve({
 			router: {
@@ -37,7 +38,9 @@ class Runner extends StoreItem {
 				writable: data => typeof data !== "object"
 			}
 		}));
+		owe.expose.properties(this, exposed);
 
+		// Since sandbox requires an API, it has to be initialized after runner is bound to owe:
 		this.sandbox = new Sandbox(this);
 	}
 
@@ -45,6 +48,10 @@ class Runner extends StoreItem {
 		super[update]();
 
 		this.emit("update", type, value);
+	}
+
+	get id() {
+		return this.$loki;
 	}
 
 	get name() {

@@ -5,11 +5,8 @@ const owe = require("owe.js");
 const update = Symbol("update");
 
 class StoreItem extends require("events") {
-	constructor(exposed, internalize, preset) {
+	constructor(preset, internalize) {
 		super();
-
-		if(exposed)
-			owe.expose.properties(this, exposed);
 
 		if(internalize)
 			for(const key of internalize) {

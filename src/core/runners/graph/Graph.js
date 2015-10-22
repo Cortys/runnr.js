@@ -11,10 +11,7 @@ const update = StoreItem.update;
 
 class Graph extends StoreItem {
 	constructor(preset) {
-
-		const exposed = ["nodes", "edges"];
-
-		super(exposed, exposed, preset);
+		super(preset, ["nodes", "edges"]);
 
 		if(!this.nodes)
 			this.nodes = {};
@@ -25,6 +22,10 @@ class Graph extends StoreItem {
 		if(!this.idCount)
 			this.idCount = 0;
 
+		/* owe binding: */
+
+		const exposed = ["nodes", "edges"];
+
 		owe(this, owe.serve({
 			router: {
 				deep: true,
@@ -34,6 +35,7 @@ class Graph extends StoreItem {
 				filter: true
 			}
 		}));
+		owe.expose.properties(this, exposed);
 	}
 
 	[update](type, value) {
@@ -76,8 +78,7 @@ const operations = {
 				closer: {
 					filter: true
 				}
-			}),
-			{
+			}), {
 				router: this[`get${type}`].bind(this, graph)
 			}
 		], {

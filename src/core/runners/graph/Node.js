@@ -19,11 +19,6 @@ class Node extends require("events") {
 
 		super();
 
-		Object.assign(this, {
-			id: preset.id,
-			[graph]: parentGraph
-		});
-
 		const validatedPreset = nodeTypes[preset.type](preset);
 
 		Object.assign(this, {
@@ -54,9 +49,12 @@ class Node extends require("events") {
 		owe(this, owe.serve({
 			router: {
 				deep: true,
-				filter(route) {
-					return this.value === that ? routes.has(route) : true;
-				}
+				filter: owe.switch(function() {
+					return this.value === that ? "root" : "deep";
+				}, {
+					root: routes,
+					deep: true
+				})
 			},
 			closer: {
 				filter: true

@@ -10,14 +10,15 @@ const uninstallPlugin = require("./manage/uninstall");
 
 class Plugin extends StoreItem {
 	constructor(preset) {
-
-		const exposed = ["name", "displayName", "version", "author", "source"];
-
-		super(exposed, undefined, preset);
+		super(preset);
 
 		this.fs = oweFs({
 			root: this.location
 		});
+
+		/* owe binding: */
+
+		const exposed = ["name", "displayName", "version", "author", "source"];
 
 		owe(this, owe.serve({
 			router: {
@@ -33,6 +34,7 @@ class Plugin extends StoreItem {
 				filter: true
 			}
 		}));
+		owe.expose.properties(this, exposed);
 	}
 
 	get mainLocation() {
