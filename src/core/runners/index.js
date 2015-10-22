@@ -16,8 +16,8 @@ const runners = {
 		return listView.mapReduce(runner => runner, res => res);
 	},
 
-	get(runnerName) {
-		return store.collection.by("name", runnerName);
+	get(runnerId) {
+		return store.collection.get(runnerId);
 	},
 
 	add(runner) {
