@@ -1,8 +1,27 @@
 "use strict";
 
-const api = require("../api/client")(process);
+const owe = require("owe.js");
+const api = require("../api");
 
-const graph = api.route("graph");
+const master = api.client(process);
 
-api.route("name").then(res => console.log(`My name is ${res}!`), err => console.error(err));
-graph.route("nodes", 1, "plugin", "mainLocation").then(res => console.log(`My plugin location is ${res}!`), err => console.error(err));
+const controller = {
+	master,
+
+	init() {
+		master.then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
+	},
+
+	greeting: "Hello!"
+};
+
+controller.init();
+
+owe(controller, owe.serve({
+	router: {
+		filter: new Set(["greeting"])
+	}
+}));
+
+// Expose the controller's API to master:
+api.server(process, owe.api(controller));
