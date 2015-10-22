@@ -12,7 +12,7 @@ class Sandbox {
 	constructor(runner) {
 		this.runner = runner;
 
-		this[sandbox] = childProcess.fork(path.join(__dirname, "master"), {
+		this[sandbox] = childProcess.fork(path.join(__dirname, "process"), {
 			silent: true
 		});
 
