@@ -25,7 +25,9 @@ class Sandbox {
 
 		this[sandbox].on("message", msg => this.handleMessage(msg));
 
-		this.api = owe.api(this.runner);
+		this.api = owe.api(this.runner).origin({
+			sandbox: true
+		});
 
 		owe.expose.properties(this, []);
 	}
@@ -33,9 +35,6 @@ class Sandbox {
 	handleMessage(msg) {
 		if(!msg || typeof msg !== "object" || msg.type !== "owe")
 			return;
-
-		if(!Array.isArray(msg.route))
-			msg.route = [msg.route];
 
 		let response = this.api;
 

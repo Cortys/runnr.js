@@ -3,6 +3,7 @@
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
 const StoreItem = require("../StoreItem");
+const path = require("path");
 
 const installPlugin = require("./manage/install");
 const uninstallPlugin = require("./manage/uninstall");
@@ -20,13 +21,22 @@ class Plugin extends StoreItem {
 
 		owe(this, owe.serve({
 			router: {
-				filter: new Set(exposed.concat(["uninstall"])),
+				filter: owe.switch(function() {
+					return this.origin.sandbox ? "private" : "public";
+				}, {
+					public: new Set(exposed.concat(["uninstall"])),
+					private: new Set(exposed.concat(["location", "main", "mainLocation"]))
+				}),
 				deep: true
 			},
 			closer: {
 				filter: true
 			}
 		}));
+	}
+
+	get mainLocation() {
+		return path.join(this.location, this.main);
 	}
 
 	uninstall() {
