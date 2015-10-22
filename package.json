@@ -18,6 +18,9 @@
 		"type": "git",
 		"url": "https://github.com/runnr/runnr.js.git"
 	},
+	"engines": {
+		"node": "^4.0"
+	},
 	"preferGlobal": true,
 	"main": "src/app.js",
 	"bin": {
