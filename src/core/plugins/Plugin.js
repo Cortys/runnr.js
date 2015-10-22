@@ -26,7 +26,7 @@ class Plugin extends StoreItem {
 					return this.origin.sandbox ? "private" : "public";
 				}, {
 					public: new Set(exposed.concat(["uninstall"])),
-					private: new Set(exposed.concat(["location", "main", "mainLocation"]))
+					private: new Set(exposed.concat(["location", "main", "mainLocation", "uninstall"]))
 				}),
 				deep: true
 			},

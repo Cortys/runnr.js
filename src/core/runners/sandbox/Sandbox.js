@@ -4,51 +4,27 @@ const owe = require("owe.js");
 const childProcess = require("child_process");
 const path = require("path");
 
+const apiServer = require("./api/server");
+
 const sandbox = Symbol("sandbox");
 
 class Sandbox {
 	constructor(runner) {
-
 		this.runner = runner;
 
 		this[sandbox] = childProcess.fork(path.join(__dirname, "master"), {
 			silent: true
 		});
 
-		this[sandbox].stdout.on("data", data => {
-			process.stdout.write(`${this.runner.name} > ${data}`);
-		});
+		this[sandbox].stdout.on("data",
+			data => process.stdout.write(`${this.runner.name} > ${data}`));
+		this[sandbox].stderr.on("data",
+			data => process.stderr.write(`${this.runner.name} > ${data}`));
 
-		this[sandbox].stderr.on("data", data => {
-			process.stderr.write(`${this.runner.name} > ${data}`);
-		});
+		owe.expose(this, {});
 
-		this[sandbox].on("message", msg => this.handleMessage(msg));
-
-		this.api = owe.api(this.runner).origin({
-			sandbox: true
-		});
-
-		owe.expose.properties(this, []);
-	}
-
-	handleMessage(msg) {
-		if(!msg || typeof msg !== "object" || msg.type !== "owe")
-			return;
-
-		let response = this.api;
-
-		msg.route.forEach(route => response = response.route(route));
-
-		response.close(msg.data).then(response => ({
-			response
-		}), error => ({
-			response: error,
-			error: true
-		})).then(response => this[sandbox].send(Object.assign({
-			type: "owe",
-			id: msg.id
-		}, response)));
+		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
+		apiServer(this[sandbox], owe.api(this.runner));
 	}
 
 	/**

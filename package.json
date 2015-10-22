@@ -34,7 +34,7 @@
 		"owe.js": "^0.7",
 		"owe-http": "^0.7",
 		"owe-fs": "^0.7",
-		"owe-client": "^0.6",
+		"owe-client": "^0.7",
 
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",
