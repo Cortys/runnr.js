@@ -31,7 +31,7 @@ class Runner extends StoreItem {
 		owe(this, owe.serve({
 			router: {
 				filter: new Set(exposed.concat(["graph", "activate", "deactivate", "delete"])),
-				writable: new Set(["name", "active"])
+				writable: new Set(["name"])
 			},
 			closer: {
 				filter: true,
