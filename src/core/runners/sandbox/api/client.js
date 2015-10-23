@@ -9,6 +9,9 @@ let idCount = 0;
 module.exports = target => {
 	function request(route, data) {
 		return new Promise((resolve, reject) => {
+			if(!Number.isSafeInteger(idCount))
+				idCount = 0;
+
 			const id = idCount++;
 
 			requests.set(id, {
@@ -24,7 +27,7 @@ module.exports = target => {
 
 			setTimeout(() => {
 				requests.delete(id);
-				reject(new Error("The controller did not respond in time."));
+				reject(new Error("The API did not respond in time."));
 			}, 10000);
 		});
 	}
