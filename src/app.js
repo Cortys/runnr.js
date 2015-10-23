@@ -11,19 +11,17 @@ core.then(core => {
 
 	http.createServer(oweHttp(coreApi, {
 		onError(req, res, err) {
-
 			if(!err)
-				return err;
+				return;
 
 			console.error(err.stack);
 
 			return err;
 		},
 
-		parseCloseData: {
-			GET: () => undefined,
+		parseCloseData: owe.switch(request => request.method, {
 			POST: oweHttp.parseCloseData.body
-		}
+		})
 	})).listen(3912);
 
 	process.once("SIGINT", exit);

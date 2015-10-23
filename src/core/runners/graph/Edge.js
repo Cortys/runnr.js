@@ -36,6 +36,12 @@ class Edge extends require("events") {
 			}
 		});
 
+		if(!(this.from.port in this.fromNode.ports.out))
+			throw new owe.exposed.Error(`Edge start node does not offer an output port '${this.from.port}'.`);
+
+		if(!(this.to.port in this.toNode.ports.in))
+			throw new owe.exposed.Error(`Edge end node does not offer an input port '${this.to.port}'.`);
+
 		const that = this;
 		const exposed = ["id", "from", "to"];
 		const routes = new Set(exposed.concat(["delete"]));

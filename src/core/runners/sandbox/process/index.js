@@ -12,7 +12,9 @@ const controller = {
 		master.then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
 	},
 
-	greeting: "Hello!"
+	get greeting() {
+		return `Hello, it's weekday ${new Date().getDay()}`;
+	}
 };
 
 controller.init();
