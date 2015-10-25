@@ -39,7 +39,7 @@
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.4",
-		"cpr": "0.4.1",
+		"cpr": "0.4.3",
 		"remove": "0.1.5",
 		"sandboxed-module": "2.0.3"
 	},
