@@ -2,7 +2,12 @@
 
 const expose = require("../expose");
 
-module.exports = function createListener(listeners) {
+/**
+ * Creates an event listener that will be used in the given listenerMap.
+ * @param {ListenerMap} listenerMap The ListenerMap instance this listener will be stored in.
+ * @return {function} A new event listener.
+ */
+module.exports = function createListener(listenerMap, event) {
 	return Object.assign(function oweEventListener() {
 		const args = Array.from(arguments);
 
@@ -73,7 +78,7 @@ module.exports = function createListener(listeners) {
 				this.apis.delete(api);
 
 			if(this.apis.size === 0)
-				listeners.delete(this);
+				listenerMap.delete(event);
 
 			if(res)
 				api.close({
