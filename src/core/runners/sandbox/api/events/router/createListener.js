@@ -5,6 +5,7 @@ const expose = require("../expose");
 /**
  * Creates an event listener that will be used in the given listenerMap.
  * @param {ListenerMap} listenerMap The ListenerMap instance this listener will be stored in.
+ * @param {string} event The event this listener will be listening for.
  * @return {function} A new event listener.
  */
 module.exports = function createListener(listenerMap, event) {
