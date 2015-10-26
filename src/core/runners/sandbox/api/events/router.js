@@ -123,12 +123,19 @@ function eventRouter() {
 			},
 
 			addToApi(api, id, once) {
+				if(!Number.isInteger(id))
+					throw expose(new Error(`Listener ids have to be integers.`));
+
 				const ids = this.apis.get(api);
 
 				if(!ids)
 					this.apis.set(api, new Map([[id, once]]));
-				else
+				else {
+					if(ids.has(id))
+						throw expose(new Error(`A listener with id ${id} was already added.`));
+
 					ids.set(id, once);
+				}
 			},
 
 			removeFromApi(api, id) {
@@ -155,16 +162,9 @@ function eventRouter() {
 		});
 	}
 
-	let idCount = 0;
-
-	function add(event, once) {
+	function add(event, id, once) {
 		if(typeof event !== "string" || event === "newListener" || event === "removeListener")
 			throw expose(new TypeError(`Invalid event '${event}'.`));
-
-		if(!Number.isSafeInteger(idCount))
-			idCount = 0;
-
-		const id = idCount++;
 
 		listeners.forTarget(this.value).getListener(event).addToApi(this.origin.eventsApi, id, once);
 
@@ -172,12 +172,18 @@ function eventRouter() {
 	}
 
 	const methods = {
-		on(event) {
-			return add.call(this, event, false);
+		on(data) {
+			if(!data || !typeof data !== "object")
+				throw expose(new TypeError("Invalid addListener request."));
+
+			return add.call(this, data.event, +data.id, false);
 		},
 
-		once(event) {
-			return add.call(this, event, true);
+		once(data) {
+			if(!data || !typeof data !== "object")
+				throw expose(new TypeError("Invalid addListener request."));
+
+			return add.call(this, data.event, +data.id, true);
 		},
 
 		removeListener(data) {
