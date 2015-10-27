@@ -1,6 +1,6 @@
 "use strict";
 
-const createListener = require("./createListener");
+const Listener = require("./Listener");
 
 /**
  * Stores all event listeners for a single target event emitter.
@@ -20,7 +20,7 @@ class ListenerMap extends Map {
 		let listener = this.get(event);
 
 		if(!listener) {
-			listener = createListener(this, event);
+			listener = Listener.create(this, event);
 
 			this.target.on(event, listener);
 			this.set(event, listener);

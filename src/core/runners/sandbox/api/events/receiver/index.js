@@ -17,29 +17,41 @@ function* counter() {
 function receiver() {
 	const count = counter();
 	const ids = new Map();
-	const listeners = new WeakMap();
 
 	const servedReceiver = {
 		add(listener) {
 			const id = count.next().value;
 
 			ids.set(id, listener);
-			listeners.set(listener, id);
 
 			return id;
-		}
+		},
 
-		remove(listener) {
+		remove(id) {
+			ids.delete(id);
+		},
 
+		call(id, args) {
+			const listener = ids.get(id);
+
+			if(!listener)
+				return;
+
+			listener.apply(undefined, args);
 		}
 	};
 
-	return owe(servedReceiver, undefined, data => {
-		if(!data || typeof data !== "object")
-			throw expose(new TypeError("Event receivers require objects."));
+	return owe(servedReceiver, {
+		closer(data) {
+			if(!data || typeof data !== "object")
+				throw expose(new TypeError("Event receivers require objects."));
 
-		if(Array.isArray(data.removed))
-			data.removed.forEach(id => servedReceiver.remove(id));
+			if(Array.isArray(data.ids))
+				data.ids.forEach(id => servedReceiver.call(id, data.arguments));
+
+			if(Array.isArray(data.removed))
+				data.removed.forEach(id => servedReceiver.remove(id));
+		}
 	});
 }
 
