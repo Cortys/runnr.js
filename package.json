@@ -30,11 +30,10 @@
 		"start": "node ./src/app.js"
 	},
 	"dependencies": {
-		"owe-core": "^0.7",
-		"owe.js": "^0.7",
-		"owe-http": "^0.7",
-		"owe-fs": "^0.7",
-		"owe-client": "^0.7",
+		"owe-core": "^0.8",
+		"owe.js": "^0.8",
+		"owe-http": "^0.8",
+		"owe-fs": "^0.8",
 
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",

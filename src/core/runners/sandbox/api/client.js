@@ -1,13 +1,30 @@
 "use strict";
 
-const oweClient = require("owe-client");
+const owe = require("owe.js");
 
 const requests = new Map();
 
 let idCount = 0;
 
 module.exports = target => {
-	function request(route, data) {
+	function init() {
+		target.on("message", msg => {
+			if(!msg || typeof msg !== "object" || msg.type !== "owe" || msg.request)
+				return;
+
+			const request = requests.get(msg.id);
+
+			if(!request)
+				return;
+
+			requests.delete(msg.id);
+			request[msg.error ? "reject" : "resolve"](msg.response);
+		});
+
+		target.on("exit", () => this.emit("disconnect"));
+	}
+
+	function closer(route, data) {
 		return new Promise((resolve, reject) => {
 			if(!Number.isSafeInteger(idCount))
 				idCount = 0;
@@ -32,18 +49,5 @@ module.exports = target => {
 		});
 	}
 
-	target.on("message", msg => {
-		if(!msg || typeof msg !== "object" || msg.type !== "owe" || msg.request)
-			return;
-
-		const request = requests.get(msg.id);
-
-		if(!request)
-			return;
-
-		requests.delete(msg.id);
-		request[msg.error ? "reject" : "resolve"](msg.response);
-	});
-
-	return oweClient(request);
+	return owe.client({ init, closer });
 };
