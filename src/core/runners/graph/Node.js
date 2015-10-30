@@ -27,8 +27,9 @@ class Node extends require("events") {
 		}, validatedPreset);
 
 		const that = this;
-		const exposed = ["id"].concat(Object.keys(validatedPreset));
-		const routes = new Set(exposed.concat([
+		const exposed = ["id", ...Object.keys(validatedPreset)];
+		const routes = new Set([
+			...exposed,
 			"edgesIn",
 			"edgesOut",
 			"edges",
@@ -36,7 +37,7 @@ class Node extends require("events") {
 			"successors",
 			"neighbours",
 			"delete"
-		]));
+		]);
 
 		if(this.type === "plugin") {
 			Object.defineProperty(this, "plugin", {

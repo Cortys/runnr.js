@@ -25,8 +25,8 @@ class Plugin extends StoreItem {
 				filter: owe.switch(function() {
 					return this.origin.sandbox ? "private" : "public";
 				}, {
-					public: new Set(exposed.concat(["uninstall"])),
-					private: new Set(exposed.concat(["location", "main", "mainLocation", "uninstall"]))
+					public: new Set([...exposed, "uninstall"]),
+					private: new Set([...exposed, "location", "main", "mainLocation", "uninstall"])
 				}),
 				deep: true
 			},

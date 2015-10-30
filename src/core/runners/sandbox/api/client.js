@@ -31,10 +31,7 @@ module.exports = target => {
 
 			const id = idCount++;
 
-			requests.set(id, {
-				resolve,
-				reject
-			});
+			requests.set(id, { resolve, reject });
 
 			target.send({
 				type: "owe",

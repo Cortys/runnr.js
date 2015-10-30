@@ -1,7 +1,5 @@
 "use strict";
 
-const owe = require("owe.js");
-
 const update = Symbol("update");
 
 class StoreItem extends require("events") {

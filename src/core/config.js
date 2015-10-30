@@ -8,7 +8,7 @@ module.exports = {
 	home,
 	userData: path.join(home, ".runnr.js"),
 
-	fromUserData(dest) {
-		return path.join(this.userData, dest);
+	fromUserData() {
+		return path.join(this.userData, ...arguments);
 	}
 };

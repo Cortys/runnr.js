@@ -39,9 +39,7 @@ owe(runnersApi, owe.chain([
 	{
 		router: runners.get
 	}
-], {
-	errors: "last"
-}));
+]));
 
 owe(runners, owe.reroute(runnersApi));
 

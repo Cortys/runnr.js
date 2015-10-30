@@ -44,7 +44,7 @@ class Edge extends require("events") {
 
 		const that = this;
 		const exposed = ["id", "from", "to"];
-		const routes = new Set(exposed.concat(["delete"]));
+		const routes = new Set([...exposed, "delete"]);
 
 		owe(this, owe.serve({
 			router: {

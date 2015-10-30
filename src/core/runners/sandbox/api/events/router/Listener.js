@@ -15,7 +15,7 @@ class Listener {
 	 */
 	static create(listenerMap, event) {
 		return Object.assign(function oweEventListener() {
-			const args = Array.from(arguments);
+			const args = [...arguments];
 
 			for(const entry of oweEventListener.apis) {
 				const api = entry[0];
@@ -47,7 +47,7 @@ class Listener {
 			idsForApi(api) {
 				const ids = this.apis.get(api);
 
-				return !ids ? [] : Array.from(ids.keys());
+				return !ids ? [] : [...ids.keys()];
 			},
 
 			idCountForApi(api) {

@@ -41,9 +41,7 @@ owe(pluginsApi, owe.chain([
 	{
 		router: plugins.get
 	}
-], {
-	errors: "last"
-}));
+]));
 
 owe(plugins, owe.reroute(pluginsApi));
 

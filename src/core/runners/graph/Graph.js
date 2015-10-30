@@ -29,7 +29,7 @@ class Graph extends StoreItem {
 		owe(this, owe.serve({
 			router: {
 				deep: true,
-				filter: new Set(exposed.concat("add", "delete"))
+				filter: new Set(exposed)
 			},
 			closer: {
 				filter: true
@@ -81,9 +81,7 @@ const operations = {
 			}), {
 				router: this[`get${type}`].bind(this, graph)
 			}
-		], {
-			errors: "last"
-		}), "rebind");
+		]), "rebind");
 	},
 
 	instanciateNode(node, graph) {
