@@ -2,6 +2,8 @@
 
 const expose = require("../expose");
 
+const listeningApis = require("./listeningApis");
+
 const Listener = {
 
 	/**
@@ -62,10 +64,12 @@ const Listener = {
 
 				const ids = this.apis.get(api);
 
-				if(!ids)
+				if(!ids) {
 					this.apis.set(api, new Map([
 						[id, once]
 					]));
+					listeningApis.addListener(api, this);
+				}
 				else {
 					if(ids.has(id))
 						throw expose(new Error(`A listener with id ${id} was already added.`));
@@ -81,6 +85,7 @@ const Listener = {
 					return false;
 
 				this.apis.delete(api);
+				listeningApis.removeListener(api, this);
 
 				if(this.apis.size === 0)
 					eventEmitter.delete(event);
@@ -104,8 +109,10 @@ const Listener = {
 
 				const res = ids.delete(id);
 
-				if(ids.size === 0)
+				if(ids.size === 0) {
 					this.apis.delete(api);
+					listeningApis.removeListener(api, this);
+				}
 
 				if(this.apis.size === 0)
 					eventEmitter.delete(event);

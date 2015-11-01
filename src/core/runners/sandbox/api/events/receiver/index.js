@@ -37,7 +37,7 @@ function receiver() {
 			if(!listener)
 				return;
 
-			listener.apply(undefined, args);
+			listener(...args);
 		}
 	};
 
