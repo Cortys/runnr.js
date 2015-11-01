@@ -5,7 +5,7 @@ const Listener = require("./Listener");
 /**
  * Stores all event listeners for a single target event emitter.
  */
-class ListenerMap extends Map {
+class EventEmitter extends Map {
 	constructor(target) {
 		super();
 		this.target = target;
@@ -85,4 +85,4 @@ class ListenerMap extends Map {
 	}
 }
 
-module.exports = ListenerMap;
+module.exports = EventEmitter;

@@ -6,11 +6,11 @@ const Listener = {
 
 	/**
 	 * Creates an event listener that will be used in the given listenerMap.
-	 * @param {ListenerMap} listenerMap The ListenerMap instance this listener will be stored in.
+	 * @param {EventEmitter} eventEmitter The ListenerMap instance this listener will be stored in.
 	 * @param {string} event The event this listener will be listening for.
 	 * @return {function} A new event listener.
 	 */
-	create(listenerMap, event) {
+	create(eventEmitter, event) {
 		return Object.assign(function oweEventListener() {
 			const args = [...arguments];
 
@@ -83,7 +83,7 @@ const Listener = {
 				this.apis.delete(api);
 
 				if(this.apis.size === 0)
-					listenerMap.delete(event);
+					eventEmitter.delete(event);
 
 				if(dontNotifyApi)
 					return ids;
@@ -108,7 +108,7 @@ const Listener = {
 					this.apis.delete(api);
 
 				if(this.apis.size === 0)
-					listenerMap.delete(event);
+					eventEmitter.delete(event);
 
 				if(res && api.connected)
 					api.close({

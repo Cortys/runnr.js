@@ -2,8 +2,8 @@
 
 const owe = require("owe-core");
 const expose = require("../expose");
-const Listeners = require("./Listeners");
-const listeners = new Listeners();
+const EventEmitters = require("./EventEmitters");
+const eventEmitters = new EventEmitters();
 
 function eventRouter() {
 	return function servedEventRouter(route) {
@@ -25,7 +25,7 @@ function add(event, id, once) {
 	if(typeof event !== "string" || event === "newListener" || event === "removeListener")
 		throw expose(new TypeError(`Invalid event '${event}'.`));
 
-	listeners.forTarget(this.value).getListener(event).addToApi(this.origin.eventsApi, id, once);
+	eventEmitters.forTarget(this.value).getListener(event).addToApi(this.origin.eventsApi, id, once);
 
 	return id;
 }
@@ -49,37 +49,37 @@ const methods = {
 		if(!data || !typeof data !== "object")
 			throw expose(new TypeError("Invalid removal request."));
 
-		const listenerMap = listeners.get(this.value);
+		const eventEmitter = eventEmitters.get(this.value);
 
-		if(!listenerMap)
+		if(!eventEmitter)
 			return false;
 
-		const listener = listenerMap.get(data.event);
+		const listener = eventEmitter.get(data.event);
 
 		return listener && listener.removeFromApi(this.origin.eventsApi, data.id) || false;
 	},
 
-	removeAllListeners(data) {
-		const listenerMap = listeners.get(this.value);
+	removeAllListeners(event) {
+		const eventEmitter = eventEmitters.get(this.value);
 
-		if(!listenerMap)
+		if(!eventEmitter)
 			return false;
 
-		if(data.event === undefined)
-			return listenerMap.removeAllListenersFromApi(this.origin.eventsApi);
+		if(event === undefined)
+			return eventEmitter.removeAllListenersFromApi(this.origin.eventsApi);
 
-		const listener = listenerMap.get(data.event);
+		const listener = eventEmitter.get(event);
 
 		return listener && listener.removeAllFromApi(this.origin.eventsApi) || false;
 	},
 
 	listeners(event) {
-		const listenerMap = listeners.get(this.value);
+		const eventEmitter = eventEmitters.get(this.value);
 
-		if(!listenerMap)
+		if(!eventEmitter)
 			return [];
 
-		const listener = listenerMap.get(event);
+		const listener = eventEmitter.get(event);
 
 		if(!listener)
 			return [];
@@ -88,12 +88,12 @@ const methods = {
 	},
 
 	listenerCount(event) {
-		const listenerMap = listeners.get(this.value);
+		const eventEmitter = eventEmitters.get(this.value);
 
-		if(!listenerMap)
+		if(!eventEmitter)
 			return 0;
 
-		const listener = listenerMap.get(event);
+		const listener = eventEmitter.get(event);
 
 		if(!listener)
 			return 0;
