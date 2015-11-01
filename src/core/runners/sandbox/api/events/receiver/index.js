@@ -3,6 +3,8 @@
 const owe = require("owe-core");
 const expose = require("../expose");
 
+require("./clientFixer");
+
 function* counter() {
 	let position = 0;
 

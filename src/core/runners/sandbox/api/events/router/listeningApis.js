@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = Object.assign(new WeakMap(), {
-
 	delete(api) {
 		const meta = this.get(api);
 
