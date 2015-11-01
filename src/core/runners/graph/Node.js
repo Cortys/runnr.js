@@ -20,13 +20,6 @@ class Node extends require("events") {
 		super();
 
 		const validatedPreset = nodeTypes[preset.type](preset);
-
-		Object.assign(this, {
-			id: preset.id,
-			[graph]: parentGraph
-		}, validatedPreset);
-
-		const that = this;
 		const exposed = ["id", ...Object.keys(validatedPreset)];
 		const routes = new Set([
 			...exposed,
@@ -39,6 +32,11 @@ class Node extends require("events") {
 			"delete"
 		]);
 
+		Object.assign(this, {
+			id: preset.id,
+			[graph]: parentGraph
+		}, validatedPreset);
+
 		if(this.type === "plugin") {
 			Object.defineProperty(this, "plugin", {
 				get: () => plugins.get(this.name)
@@ -46,6 +44,8 @@ class Node extends require("events") {
 
 			routes.add("plugin");
 		}
+
+		const that = this;
 
 		owe(this, owe.serve({
 			router: {

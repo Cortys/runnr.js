@@ -30,10 +30,10 @@
 		"start": "node ./src/app.js"
 	},
 	"dependencies": {
-		"owe-core": "^0.8",
-		"owe.js": "^0.8",
-		"owe-http": "^0.8",
-		"owe-fs": "^0.8",
+		"owe-core": "^0.9",
+		"owe.js": "^0.9",
+		"owe-http": "^0.9",
+		"owe-fs": "^0.9",
 
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",
@@ -43,6 +43,6 @@
 		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {
-		"eslint": "1.7.3"
+		"eslint": "1.8.0"
 	}
 }

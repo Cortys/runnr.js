@@ -92,7 +92,7 @@ const helpers = {
 		const startOfManifest = file.indexOf(startToken);
 		const endOfManifest = file.indexOf(endToken, startOfManifest + startToken.length);
 
-		if(startOfManifest < 0 || endOfManifest < 0 || !/\s/.test(file.charAt(startOfManifest + 1)))
+		if(startOfManifest < 0 || endOfManifest < 0 || !/\s/.test(file.charAt(startOfManifest + startToken.length)))
 			throw new owe.exposed.SyntaxError("No manifest declaration in the given plugin file.");
 
 		let manifest = file.substring(startOfManifest + startToken.length, endOfManifest);
