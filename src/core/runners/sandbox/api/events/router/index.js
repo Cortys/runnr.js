@@ -59,15 +59,18 @@ const methods = {
 		return listener && listener.removeFromApi(this.origin.eventsApi, data.id) || false;
 	},
 
-	removeAllListeners(event) {
+	removeAllListeners(data) {
 		const listenerMap = listeners.get(this.value);
 
 		if(!listenerMap)
 			return false;
 
-		return event === undefined
-			? listenerMap.removeAllListeners()
-			: listenerMap.removeListener(event);
+		if(data.event === undefined)
+			return listenerMap.removeAllListenersFromApi(this.origin.eventsApi);
+
+		const listener = listenerMap.get(data.event);
+
+		return listener && listener.removeAllFromApi(this.origin.eventsApi) || false;
 	},
 
 	listeners(event) {

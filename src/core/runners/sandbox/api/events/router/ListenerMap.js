@@ -60,44 +60,28 @@ class ListenerMap extends Map {
 			const ids = entry[1];
 			const removed = [];
 
-			ids.keys().forEach(id => removed.push(id));
+			removed.push(...ids.keys());
 
-			api.close({ removed });
+			if(api.connected)
+				api.close({ removed });
 		}
 
 		return true;
 	}
 
-	removeAllListeners() {
-		const apis = new Map();
+	removeAllListenersFromApi(api) {
+		const removed = [];
 
 		for(const entry of this) {
-			const event = entry[0];
 			const listener = entry[1];
+			const ids = listener.removeAllFromApi(api, true);
 
-			this.delete(event);
-
-			for(const entry of listener.apis) {
-				const api = entry[0];
-				const ids = entry[1];
-
-				let alreadyRemoved = apis.get(api);
-
-				if(!alreadyRemoved) {
-					alreadyRemoved = [];
-					apis.set(api, alreadyRemoved);
-				}
-
-				ids.keys().forEach(id => alreadyRemoved.push(id));
-			}
+			if(ids)
+				removed.push(...ids.keys());
 		}
 
-		for(const entry of apis) {
-			const api = entry[0];
-			const removed = entry[1];
-
+		if(api.connected)
 			api.close({ removed });
-		}
 	}
 }
 

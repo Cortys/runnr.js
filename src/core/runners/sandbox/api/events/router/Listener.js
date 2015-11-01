@@ -2,10 +2,7 @@
 
 const expose = require("../expose");
 
-class Listener {
-	constructor() {
-		throw new Error("Listener cannot be instanciated. Call Listener.create instead.");
-	}
+const Listener = {
 
 	/**
 	 * Creates an event listener that will be used in the given listenerMap.
@@ -13,7 +10,7 @@ class Listener {
 	 * @param {string} event The event this listener will be listening for.
 	 * @return {function} A new event listener.
 	 */
-	static create(listenerMap, event) {
+	create(listenerMap, event) {
 		return Object.assign(function oweEventListener() {
 			const args = [...arguments];
 
@@ -60,6 +57,9 @@ class Listener {
 				if(!Number.isInteger(id))
 					throw expose(new Error(`Listener ids have to be integers.`));
 
+				if(!api.connected)
+					throw expose(new Error("Only connected clients can listen for events."));
+
 				const ids = this.apis.get(api);
 
 				if(!ids)
@@ -72,6 +72,28 @@ class Listener {
 
 					ids.set(id, once);
 				}
+			},
+
+			removeAllFromApi(api, dontNotifyApi) {
+				const ids = this.apis.get(api);
+
+				if(!ids)
+					return false;
+
+				this.apis.delete(api);
+
+				if(this.apis.size === 0)
+					listenerMap.delete(event);
+
+				if(dontNotifyApi)
+					return ids;
+
+				if(ids.size > 0 && api.connected)
+					api.close({
+						removed: ids
+					});
+
+				return ids.size > 0;
 			},
 
 			removeFromApi(api, id) {
@@ -88,7 +110,7 @@ class Listener {
 				if(this.apis.size === 0)
 					listenerMap.delete(event);
 
-				if(res)
+				if(res && api.connected)
 					api.close({
 						removed: [id]
 					});
@@ -97,6 +119,6 @@ class Listener {
 			}
 		});
 	}
-}
+};
 
 module.exports = Listener;
