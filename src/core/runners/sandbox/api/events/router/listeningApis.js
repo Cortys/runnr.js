@@ -8,7 +8,7 @@ module.exports = Object.assign(new WeakMap(), {
 			return false;
 
 		meta.listeners.forEach(listener => listener.removeAllFromApi(api));
-		Object.unobserve(api, meta.observer);
+		api.unobserve(meta.observer);
 		super.delete(api);
 
 		return true;
@@ -18,8 +18,8 @@ module.exports = Object.assign(new WeakMap(), {
 		let meta = this.get(api);
 
 		if(!meta) {
-			const observer = () => {
-				if(!api.connected)
+			const observer = connected => {
+				if(!connected)
 					this.delete(api);
 			};
 
@@ -27,7 +27,7 @@ module.exports = Object.assign(new WeakMap(), {
 				listeners: new Set(),
 				observer
 			};
-			Object.observe(api, observer, ["update"]);
+			api.observe(observer);
 			this.set(api, meta);
 		}
 

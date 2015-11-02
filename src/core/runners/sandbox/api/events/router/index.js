@@ -7,7 +7,7 @@ const eventEmitters = new EventEmitters();
 
 function eventRouter() {
 	return function servedEventRouter(route) {
-		if(!(this.origin.eventsApi && typeof this.origin.eventsApi === "object"))
+		if(!owe.client.isApi(this.origin.eventsApi))
 			throw expose(new Error(`Events cannot be accessed via this protocol.`));
 
 		if(route in methods)
