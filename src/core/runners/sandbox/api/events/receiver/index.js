@@ -9,8 +9,8 @@ function* counter() {
 	let position = 0;
 
 	while(true) {
-		if(!Number.isSafeInteger(position))
-			position = 0;
+		if(!Number.isSafeInteger(position) || position === -1)
+			position = Number.MIN_SAFE_INTEGER;
 
 		yield position++;
 	}
@@ -21,25 +21,31 @@ function receiver() {
 	const ids = new Map();
 
 	const servedReceiver = {
-		add(listener) {
+		add(listener, removeListener) {
 			const id = count.next().value;
 
-			ids.set(id, listener);
+			ids.set(id, { listener, removeListener });
 
 			return id;
 		},
 
 		remove(id) {
+			const listeners = ids.get(id);
+
+			if(!listeners)
+				return false;
+
 			ids.delete(id);
+			listeners.removeListener(id);
 		},
 
 		call(id, args) {
-			const listener = ids.get(id);
+			const listeners = ids.get(id);
 
-			if(!listener)
+			if(!listeners)
 				return;
 
-			listener(...args);
+			listeners.listener(...args);
 		}
 	};
 

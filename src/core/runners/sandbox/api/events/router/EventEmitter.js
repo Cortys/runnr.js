@@ -2,6 +2,17 @@
 
 const Listener = require("./Listener");
 
+const count = function*() {
+	let position = 0;
+
+	while(true) {
+		if(!Number.isSafeInteger(position) || position === -1)
+			position = Number.MIN_SAFE_INTEGER;
+
+		yield position++;
+	}
+}();
+
 /**
  * Stores all event listeners for a single target event emitter.
  */
@@ -9,6 +20,7 @@ class EventEmitter extends Map {
 	constructor(target) {
 		super();
 		this.target = target;
+		this.id = count.next().value;
 
 		target.on(
 			"removeListener",

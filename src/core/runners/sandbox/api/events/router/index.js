@@ -25,9 +25,14 @@ function add(event, id, once) {
 	if(typeof event !== "string" || event === "newListener" || event === "removeListener")
 		throw expose(new TypeError(`Invalid event '${event}'.`));
 
-	eventEmitters.forTarget(this.value).getListener(event).addToApi(this.origin.eventsApi, id, once);
+	const eventEmitter = eventEmitters.forTarget(this.value);
 
-	return id;
+	eventEmitter.getListener(event).addToApi(this.origin.eventsApi, id, once);
+
+	return {
+		id,
+		eventEmitter: eventEmitter.id
+	};
 }
 
 const methods = {
