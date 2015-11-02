@@ -21,13 +21,16 @@ module.exports = target => {
 			request[msg.error ? "reject" : "resolve"](msg.response);
 		});
 
-		target.on("exit", () => this.emit("disconnect"));
+		target.on("disconnect", () => this.connected = false);
 	}
 
 	function closer(route, data) {
 		return new Promise((resolve, reject) => {
+			if(!this.connected)
+				return reject(new Error("This client is disconnected."));
+
 			if(!Number.isSafeInteger(idCount))
-				idCount = 0;
+				idCount = Number.MIN_SAFE_INTEGER;
 
 			const id = idCount++;
 
@@ -46,5 +49,8 @@ module.exports = target => {
 		});
 	}
 
-	return owe.client({ init, closer });
+	return owe.client({
+		init, closer,
+		connected: target.connected
+	});
 };
