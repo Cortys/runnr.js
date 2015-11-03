@@ -6,7 +6,12 @@ module.exports = receiver => {
 	function add(event, listener, method) {
 		const id = receiver.add(event, listener, () => {}, method);
 
-		return this.route(method).close({ event, id });
+		return this.route(method).close({ event, id })
+			.then(data => {
+				receiver.addToId(id, data.eventEmitter);
+
+				return this;
+			});
 	}
 
 	Object.assign(ClientApi.prototype, {

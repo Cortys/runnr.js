@@ -42,6 +42,15 @@ function createReceiver() {
 			return id;
 		},
 
+		addToId(id, eventEmitter) {
+			const listeners = idToListeners.get(id);
+
+			if(!listeners)
+				return;
+
+			listeners.eventEmitter = eventEmitter;
+		},
+
 		remove(id) {
 			const listeners = idToListeners.get(id);
 

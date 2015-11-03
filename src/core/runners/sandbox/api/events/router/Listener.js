@@ -107,10 +107,11 @@ const Listener = {
 				if(!ids)
 					return false;
 
-				let res = false;
+				let res = false,
+					id;
 
 				// Remove the first id found in idCandidates:
-				for(const id of idCandidates)
+				for(id of idCandidates)
 					if((res = ids.delete(id)))
 						break;
 
