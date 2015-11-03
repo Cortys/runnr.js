@@ -22,10 +22,15 @@ function eventRouter() {
 }
 
 function add(event, id, once) {
-	if(typeof event !== "string" || event === "newListener" || event === "removeListener")
+	if(typeof event !== "string" || event === "removeListener")
 		throw expose(new TypeError(`Invalid event '${event}'.`));
 
 	const eventEmitter = eventEmitters.forTarget(this.value);
+
+	if(event === "newListener")
+		return {
+			eventEmitter: eventEmitter.id
+		};
 
 	eventEmitter.getListener(event).addToApi(this.origin.eventsApi, id, once);
 
