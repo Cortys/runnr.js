@@ -3,8 +3,6 @@
 const owe = require("owe-core");
 const expose = require("../expose");
 
-require("./clientFixer");
-
 function* counter() {
 	let position = 0;
 
@@ -16,31 +14,53 @@ function* counter() {
 	}
 }
 
-function receiver() {
+function createReceiver() {
 	const count = counter();
-	const ids = new Map();
+	const idToListeners = new Map();
+	const listenerToIds = new WeakMap();
 
 	const servedReceiver = {
-		add(listener, removeListener) {
+		add(event, listener, removeListener, method) {
 			const id = count.next().value;
 
-			ids.set(id, { listener, removeListener });
+			idToListeners.set(id, {
+				event,
+				listener,
+				removeListener,
+				method
+			});
+
+			let ids = listenerToIds.get(listener);
+
+			if(!ids) {
+				ids = new Set();
+				listenerToIds.set(listener, ids);
+			}
+
+			ids.add(id);
 
 			return id;
 		},
 
 		remove(id) {
-			const listeners = ids.get(id);
+			const listeners = idToListeners.get(id);
 
 			if(!listeners)
 				return false;
 
-			ids.delete(id);
+			idToListeners.delete(id);
 			listeners.removeListener(id);
+			listenerToIds.get(listeners.listener).delete(id);
+		},
+
+		getIds(listener) {
+			const ids = listenerToIds.get(listener);
+
+			return ids ? [...ids] : [];
 		},
 
 		call(id, args) {
-			const listeners = ids.get(id);
+			const listeners = idToListeners.get(id);
 
 			if(!listeners)
 				return;
@@ -63,4 +83,6 @@ function receiver() {
 	});
 }
 
-module.exports = receiver;
+const receiver = module.exports = createReceiver();
+
+require("./clientFixer")(receiver);

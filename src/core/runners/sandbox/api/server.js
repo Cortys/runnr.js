@@ -2,20 +2,19 @@
 
 const owe = require("owe.js");
 
+const client = require("./client");
+
 module.exports = (target, api) => {
 	api = api.origin({
-		sandbox: true
+		sandbox: true,
+		eventsApi: client(target).route("receiver")
 	});
 
 	target.on("message", msg => {
 		if(!msg || typeof msg !== "object" || msg.type !== "owe" || !msg.request)
 			return;
 
-		let response = api;
-
-		msg.route.forEach(route => response = response.route(route));
-
-		response.close(msg.data).then(response => ({
+		api.route(...msg.route).close(msg.data).then(response => ({
 			response
 		}), error => ({
 			response: owe.isExposed(error) ? Object.defineProperty(error, "message", {

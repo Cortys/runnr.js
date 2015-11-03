@@ -37,21 +37,21 @@ function add(event, id, once) {
 
 const methods = {
 	on(data) {
-		if(!data || !typeof data !== "object")
+		if(!data || typeof data !== "object")
 			throw expose(new TypeError("Invalid addListener request."));
 
 		return add.call(this, data.event, +data.id, false);
 	},
 
 	once(data) {
-		if(!data || !typeof data !== "object")
+		if(!data || typeof data !== "object")
 			throw expose(new TypeError("Invalid addListener request."));
 
 		return add.call(this, data.event, +data.id, true);
 	},
 
 	removeListener(data) {
-		if(!data || !typeof data !== "object")
+		if(!data || typeof data !== "object")
 			throw expose(new TypeError("Invalid removal request."));
 
 		const eventEmitter = eventEmitters.get(this.value);
@@ -61,7 +61,7 @@ const methods = {
 
 		const listener = eventEmitter.get(data.event);
 
-		return listener && listener.removeFromApi(this.origin.eventsApi, data.id) || false;
+		return listener && listener.removeFromApi(this.origin.eventsApi, data.idCandidates) || false;
 	},
 
 	removeAllListeners(event) {
@@ -70,7 +70,7 @@ const methods = {
 		if(!eventEmitter)
 			return false;
 
-		if(event === undefined)
+		if(event == null)
 			return eventEmitter.removeAllListenersFromApi(this.origin.eventsApi);
 
 		const listener = eventEmitter.get(event);

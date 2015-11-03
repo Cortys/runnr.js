@@ -7,8 +7,8 @@ module.exports = Object.assign(new WeakMap(), {
 		if(!meta)
 			return false;
 
-		meta.listeners.forEach(listener => listener.removeAllFromApi(api));
-		api.unobserve(meta.observer);
+		meta.listeners.forEach(listener => setImmediate(() => listener.removeAllFromApi(api)));
+		api.unobserveProtocol(meta.observer);
 		super.delete(api);
 
 		return true;
@@ -27,7 +27,7 @@ module.exports = Object.assign(new WeakMap(), {
 				listeners: new Set(),
 				observer
 			};
-			api.observe(observer);
+			api.observeProtocol(observer);
 			this.set(api, meta);
 		}
 

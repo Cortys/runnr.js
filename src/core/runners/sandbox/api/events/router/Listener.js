@@ -22,7 +22,7 @@ const Listener = {
 				const ids = [];
 				const removed = [];
 
-				idsMap.forEach(idEntry => {
+				for(const idEntry of idsMap) {
 					const id = idEntry[0];
 					const once = idEntry[1];
 
@@ -32,7 +32,7 @@ const Listener = {
 						idsMap.delete(id);
 						removed.push(id);
 					}
-				});
+				}
 
 				api.close({
 					ids,
@@ -101,13 +101,18 @@ const Listener = {
 				return ids.size > 0;
 			},
 
-			removeFromApi(api, id) {
+			removeFromApi(api, idCandidates) {
 				const ids = this.apis.get(api);
 
 				if(!ids)
 					return false;
 
-				const res = ids.delete(id);
+				let res = false;
+
+				// Remove the first id found in idCandidates:
+				for(const id of idCandidates)
+					if((res = ids.delete(id)))
+						break;
 
 				if(ids.size === 0) {
 					this.apis.delete(api);

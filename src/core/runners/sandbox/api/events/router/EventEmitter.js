@@ -33,7 +33,6 @@ class EventEmitter extends Map {
 
 		if(!listener) {
 			listener = Listener.create(this, event);
-
 			this.target.on(event, listener);
 			this.set(event, listener);
 		}

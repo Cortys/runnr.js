@@ -1,7 +1,10 @@
 "use strict";
 
+const EventEmitter = require("events");
+
 const owe = require("owe.js");
 const api = require("../api");
+const events = require("../api/events");
 
 const master = api.client(process);
 
@@ -9,7 +12,15 @@ const controller = {
 	master,
 
 	init() {
-		master.then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
+		master.route("runner").then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
+
+		const emitter = new EventEmitter();
+
+		owe(emitter, events.router());
+
+		this.emitter = emitter;
+
+		setInterval(() => emitter.emit("test", Date.now()), 1000);
 	},
 
 	get greeting() {
@@ -21,7 +32,7 @@ controller.init();
 
 owe(controller, owe.serve({
 	router: {
-		filter: new Set(["greeting"])
+		filter: new Set(["greeting", "emitter"])
 	}
 }));
 

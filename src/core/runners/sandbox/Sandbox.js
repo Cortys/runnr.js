@@ -5,6 +5,7 @@ const childProcess = require("child_process");
 const path = require("path");
 
 const api = require("./api");
+const events = require("./api/events");
 
 const sandbox = Symbol("sandbox");
 
@@ -24,12 +25,21 @@ class Sandbox {
 		owe.expose(this, {});
 
 		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
-		api.server(this[sandbox], owe.api(this.runner));
+		api.server(this[sandbox], owe.api({
+			runner: this.runner,
+			receiver: events.receiver
+		}, owe.serve.router()));
 
 		// Start an owe client to request data from the sandbox's API:
 		this.api = api.client(this[sandbox]);
 
-		this.api.route("greeting").then(greeting => console.log(`${this.runner.name} says '${greeting}'.`));
+		// TEST:
+		this.api.route("greeting").then(greeting => console.log(`${this.runner.name} responds '${greeting}'.`));
+
+		this.api.route("emitter").on("test", data => console.log(`${this.runner.name} emits '${data}'.`)).then(
+			data => console.log("success", data),
+			err => console.error("error", err)
+		);
 	}
 
 	/**

@@ -30,7 +30,7 @@
 		"no-unneeded-ternary": 1,
 		"no-extra-boolean-cast": 1,
 		"no-extra-semi": 1,
-		"no-extra-parens": 1,
+		"no-extra-parens": [1, "functions"],
 		"no-array-constructor": 1,
 		"no-new-object": 1,
 		"no-dupe-keys": 2,
