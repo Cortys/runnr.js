@@ -36,7 +36,18 @@ class Sandbox {
 		// TEST:
 		this.api.route("greeting").then(greeting => console.log(`${this.runner.name} responds '${greeting}'.`));
 
-		this.api.route("emitter").on("test", data => console.log(`${this.runner.name} emits '${data}'.`)).then(
+		let i = 0;
+		const fn = data => {
+			console.log(`${this.runner.name} emits '${data}'.`);
+			if(++i > 1)
+				this.api.route("emitter").removeListener("test", fn);
+		};
+
+		this.api.route("emitter").on("test", fn).then(
+			data => console.log("success", data),
+			err => console.error("error", err)
+		);
+		this.api.route("emitter").on("test", console.log).then(
 			data => console.log("success", data),
 			err => console.error("error", err)
 		);

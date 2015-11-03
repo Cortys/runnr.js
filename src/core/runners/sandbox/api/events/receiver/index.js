@@ -68,6 +68,19 @@ function createReceiver() {
 			return ids ? [...ids] : [];
 		},
 
+		getListeners(ids) {
+			const result = [];
+
+			for(const id of ids) {
+				const listeners = idToListeners.get(id);
+
+				if(listeners)
+					result.push(listeners.listener);
+			}
+
+			return result;
+		},
+
 		call(id, args) {
 			const listeners = idToListeners.get(id);
 

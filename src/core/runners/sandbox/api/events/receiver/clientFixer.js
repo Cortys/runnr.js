@@ -7,11 +7,7 @@ module.exports = receiver => {
 		const id = receiver.add(event, listener, () => {}, method);
 
 		return this.route(method).close({ event, id })
-			.then(data => {
-				receiver.addToId(id, data.eventEmitter);
-
-				return this;
-			});
+			.then(data => receiver.addToId(id, data.eventEmitter));
 	}
 
 	Object.assign(ClientApi.prototype, {
@@ -31,7 +27,8 @@ module.exports = receiver => {
 			return this.route("removeAllListeners").close(event || null);
 		},
 		listeners(event) {
-			return this.route("listeners").close(event);
+			return this.route("listeners").close(event)
+				.then(receiver.getListeners);
 		},
 		listenerCount(event) {
 			return this.route("listenerCount").close(event);

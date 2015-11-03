@@ -20,7 +20,7 @@ const controller = {
 
 		this.emitter = emitter;
 
-		setInterval(() => emitter.emit("test", Date.now()), 0);
+		setInterval(() => emitter.emit("test", Date.now()), 1000);
 	},
 
 	get greeting() {
