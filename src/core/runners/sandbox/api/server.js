@@ -17,10 +17,7 @@ module.exports = (target, api) => {
 		api.route(...msg.route).close(msg.data).then(response => ({
 			response
 		}), error => ({
-			response: owe.isExposed(error) ? Object.defineProperty(error, "message", {
-				enumerable: true,
-				value: error.message
-			}) : error,
+			response: owe.isExposed(error) ? owe.exposed.value(error) : error,
 			error: true
 		})).then(response => target.send(Object.assign({
 			type: "owe",
