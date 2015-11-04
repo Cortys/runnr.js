@@ -4,7 +4,6 @@ const owe = require("owe.js");
 const store = require("./store");
 
 module.exports = store.loaded.then(() => {
-
 	console.log("DB loaded.");
 
 	return owe({
@@ -20,7 +19,11 @@ module.exports = store.loaded.then(() => {
 				throw err;
 			});
 		}
-	}, owe.serve());
+	}, owe.serve({
+		router: {
+			filter: new Set(["plugins", "runners"])
+		}
+	}));
 }, err => {
 	console.error("Loading DB failed.");
 	console.error(err.stack);
