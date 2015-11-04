@@ -4,7 +4,11 @@ const ClientApi = require("owe-core/src/ClientApi.js");
 
 module.exports = receiver => {
 	function add(event, listener, method) {
-		const id = receiver.add(event, listener, () => {}, method);
+		if(event === "newListener" || event === "removeListener")
+			return this.route(method).close({ event })
+				.then(data => receiver.add(event, listener, method, data.eventEmitter));
+
+		const id = receiver.add(event, listener, method);
 
 		return this.route(method).close({ event, id })
 			.then(data => receiver.addToId(id, data.eventEmitter));

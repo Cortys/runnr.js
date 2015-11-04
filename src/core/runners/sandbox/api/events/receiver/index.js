@@ -16,17 +16,33 @@ function* counter() {
 
 function createReceiver() {
 	const count = counter();
-	const idToListeners = new Map();
+	const idToListenerInfos = new Map();
 	const listenerToIds = new WeakMap();
+	const eventEmitterToListeners = new Map();
 
 	const servedReceiver = {
-		add(event, listener, removeListener, method) {
+		add(event, listener, method, eventEmitter) {
+			if(event === "newListener" || event === "removeListener") {
+				let listeners = eventEmitterToListeners.get(eventEmitter);
+
+				if(!listeners) {
+					listeners = {
+						newListener: [],
+						removeListener: []
+					};
+					eventEmitterToListeners.set(eventEmitter, listeners);
+				}
+
+				listeners[event].push({ listener, method });
+
+				return;
+			}
+
 			const id = count.next().value;
 
-			idToListeners.set(id, {
+			idToListenerInfos.set(id, {
 				event,
 				listener,
-				removeListener,
 				method
 			});
 
@@ -43,23 +59,42 @@ function createReceiver() {
 		},
 
 		addToId(id, eventEmitter) {
-			const listeners = idToListeners.get(id);
+			const listenerInfo = idToListenerInfos.get(id);
 
-			if(!listeners)
+			if(!listenerInfo)
 				return;
 
-			listeners.eventEmitter = eventEmitter;
+			listenerInfo.eventEmitter = eventEmitter;
+
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(listeners) {
+				listeners.newListener = listeners.newListener.filter(listener => {
+					listener.listener.call(undefined, listenerInfo.event, listenerInfo.listener);
+
+					return listener.method !== "once";
+				});
+			}
 		},
 
 		remove(id) {
-			const listeners = idToListeners.get(id);
+			const listenerInfo = idToListenerInfos.get(id);
 
-			if(!listeners)
+			if(!listenerInfo)
 				return false;
 
-			idToListeners.delete(id);
-			listeners.removeListener(id);
-			listenerToIds.get(listeners.listener).delete(id);
+			idToListenerInfos.delete(id);
+			listenerToIds.get(listenerInfo.listener).delete(id);
+
+			const listeners = eventEmitterToListeners.get(listenerInfo.eventEmitter);
+
+			if(listeners) {
+				listeners.removeListener = listeners.removeListener.filter(listener => {
+					listener.listener.call(undefined, listenerInfo.event, listenerInfo.listener);
+
+					return listener.method !== "once";
+				});
+			}
 		},
 
 		getIds(listener) {
@@ -72,7 +107,7 @@ function createReceiver() {
 			const result = [];
 
 			for(const id of ids) {
-				const listeners = idToListeners.get(id);
+				const listeners = idToListenerInfos.get(id);
 
 				if(listeners)
 					result.push(listeners.listener);
@@ -82,7 +117,7 @@ function createReceiver() {
 		},
 
 		call(id, args) {
-			const listeners = idToListeners.get(id);
+			const listeners = idToListenerInfos.get(id);
 
 			if(!listeners)
 				return;

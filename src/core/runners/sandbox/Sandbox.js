@@ -22,8 +22,6 @@ class Sandbox {
 		this[sandbox].stderr.on("data",
 			data => process.stderr.write(`${this.runner.name} > ${data}`));
 
-		owe.expose(this, {});
-
 		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
 		api.server(this[sandbox], owe.api({
 			runner: this.runner,

@@ -22,12 +22,12 @@ function eventRouter() {
 }
 
 function add(event, id, once) {
-	if(typeof event !== "string" || event === "removeListener")
+	if(typeof event !== "string")
 		throw expose(new TypeError(`Invalid event '${event}'.`));
 
 	const eventEmitter = eventEmitters.forTarget(this.value);
 
-	if(event === "newListener")
+	if(event === "newListener" || event === "removeListener")
 		return {
 			eventEmitter: eventEmitter.id
 		};
