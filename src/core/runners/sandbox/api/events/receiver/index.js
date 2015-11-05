@@ -33,6 +33,12 @@ function createReceiver() {
 					eventEmitterToListeners.set(eventEmitter, listeners);
 				}
 
+				listeners.newListener = listeners.newListener.filter(existingListener => {
+					existingListener.listener.call(undefined, event, listener);
+
+					return existingListener.method !== "once";
+				});
+
 				listeners[event].push({ listener, method });
 
 				return;

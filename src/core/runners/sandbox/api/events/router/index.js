@@ -12,9 +12,7 @@ function eventRouter() {
 
 		if(route in methods)
 			return owe(null, {
-				closer: data => {
-					return methods[route].call(this, data);
-				}
+				closer: data => methods[route].call(this, data)
 			});
 
 		throw expose(new Error(`Events cannot be accessed via method '${route}'.`));
@@ -41,6 +39,8 @@ function add(event, id, once) {
 }
 
 const methods = {
+	__proto__: null,
+
 	on(data) {
 		if(!data || typeof data !== "object")
 			throw expose(new TypeError("Invalid addListener request."));
