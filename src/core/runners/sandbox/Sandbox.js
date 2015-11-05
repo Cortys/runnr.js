@@ -38,25 +38,32 @@ class Sandbox {
 		const fn = data => {
 			console.log(`${this.runner.name} emits '${data}'.`);
 			if(++i > 1)
-				this.api.route("emitter").removeListener("test", fn);
+				this.api.route("emitter").removeListener("test", fn).catch(console.error);
 		};
 
-		this.api.route("emitter").on("test", fn).then(
-			data => console.log("success", data),
+		this.api.route("emitter").on("newListener", (event, listener) => {
+			console.log("new", event, listener);
+		});
+
+		this.api.route("emitter").on("removeListener", (event, listener) => {
+			console.log("removed", event, listener);
+		});
+
+		this.api.route("emitter").on("test", fn).catch(
 			err => console.error("error", err)
 		);
-		this.api.route("emitter").on("test", console.log).then(
-			data => console.log("success", data),
+
+		/* this.api.route("emitter").once("test", console.log).catch(
 			err => console.error("error", err)
-		);
+		);*/
 	}
 
 	/**
 	 * Sandbox should not appear in the JSON.stringify outputs used in LokiJS.
-	 * @return {null} Return nothing.
+	 * @return {undefined} Return nothing.
 	 */
 	toJSON() {
-		return null;
+		return;
 	}
 }
 
