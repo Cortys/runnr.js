@@ -15,13 +15,21 @@ function* counter() {
 }
 
 function createReceiver() {
+	// Generates event listener ids:
 	const count = counter();
-	const idToListenerInfos = new Map();
+
+	// Stores event name, listener function and method ("on" or "once") for each listener id:
+	const idToListenerInfo = new Map();
+
+	// Maps every listener function to the listener ids that use it:
 	const listenerToIds = new WeakMap();
+
+	// Stores listeners for events that are locally handled (newListener, removeListener)
+	// and maps them to eventEmitter ids:
 	const eventEmitterToListeners = new Map();
 
 	const servedReceiver = {
-		add(event, listener, method, eventEmitter) {
+		addListener(event, listener, method, eventEmitter) {
 			if(event === "newListener" || event === "removeListener") {
 				let listeners = eventEmitterToListeners.get(eventEmitter);
 
@@ -33,11 +41,11 @@ function createReceiver() {
 					eventEmitterToListeners.set(eventEmitter, listeners);
 				}
 
-				listeners.newListener = listeners.newListener.filter(existingListener => {
-					existingListener.listener.call(undefined, event, listener);
-
-					return existingListener.method !== "once";
-				});
+				this.callLocalListeners(
+					"newListener",
+					[event, listener],
+					eventEmitter
+				);
 
 				listeners[event].push({ listener, method });
 
@@ -46,7 +54,7 @@ function createReceiver() {
 
 			const id = count.next().value;
 
-			idToListenerInfos.set(id, {
+			idToListenerInfo.set(id, {
 				event,
 				listener,
 				method
@@ -64,46 +72,86 @@ function createReceiver() {
 			return id;
 		},
 
-		addToId(id, eventEmitter) {
-			const listenerInfo = idToListenerInfos.get(id);
+		addEventEmitterToId(id, eventEmitter) {
+			const listenerInfo = idToListenerInfo.get(id);
 
 			if(!listenerInfo)
 				return;
 
 			listenerInfo.eventEmitter = eventEmitter;
 
-			const listeners = eventEmitterToListeners.get(eventEmitter);
-
-			if(listeners) {
-				listeners.newListener = listeners.newListener.filter(listener => {
-					listener.listener.call(undefined, listenerInfo.event, listenerInfo.listener);
-
-					return listener.method !== "once";
-				});
-			}
+			this.callLocalListeners(
+				"newListener",
+				[listenerInfo.event, listenerInfo.listener],
+				eventEmitter
+			);
 		},
 
-		remove(id) {
-			const listenerInfo = idToListenerInfos.get(id);
+		removeListener(id) {
+			const listenerInfo = idToListenerInfo.get(id);
 
 			if(!listenerInfo)
 				return false;
 
-			idToListenerInfos.delete(id);
+			idToListenerInfo.delete(id);
 			listenerToIds.get(listenerInfo.listener).delete(id);
 
-			const listeners = eventEmitterToListeners.get(listenerInfo.eventEmitter);
-
-			if(listeners) {
-				listeners.removeListener = listeners.removeListener.filter(listener => {
-					listener.listener.call(undefined, listenerInfo.event, listenerInfo.listener);
-
-					return listener.method !== "once";
-				});
-			}
+			this.callLocalListeners(
+				"removeListener",
+				[listenerInfo.event, listenerInfo.listener],
+				listenerInfo.eventEmitter
+			);
 		},
 
-		getIds(listener) {
+		removeLocalListener(event, listener, eventEmitter) {
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(!listeners || !listeners[event])
+				return false;
+
+			let found = false,
+				i;
+
+			for(i = 0; i < listeners[event].length; i++)
+				if(listeners[event][i].listener === listener) {
+					found = true;
+					break;
+				}
+
+			if(!found)
+				return false;
+
+			listeners[event].splice(i, 1);
+			this.callLocalListeners(
+				"removeListener",
+				[event, listener],
+				eventEmitter
+			);
+
+			return true;
+		},
+
+		removeAllLocalListeners(event, eventEmitter) {
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(!listeners)
+				return false;
+
+			const listenersForEvent = listeners[event];
+
+			if(!listenersForEvent || !listenersForEvent.length)
+				return false;
+
+			listeners[event] = [];
+
+			listenersForEvent.forEach(listener => this.callLocalListeners(
+				"removeListener",
+				[event, listener.listener],
+				eventEmitter
+			));
+		},
+
+		getListenerIds(listener) {
 			const ids = listenerToIds.get(listener);
 
 			return ids ? [...ids] : [];
@@ -113,7 +161,7 @@ function createReceiver() {
 			const result = [];
 
 			for(const id of ids) {
-				const listeners = idToListenerInfos.get(id);
+				const listeners = idToListenerInfo.get(id);
 
 				if(listeners)
 					result.push(listeners.listener);
@@ -122,13 +170,57 @@ function createReceiver() {
 			return result;
 		},
 
-		call(id, args) {
-			const listeners = idToListenerInfos.get(id);
+		getLocalListeners(event, eventEmitter) {
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(!listeners || !listeners[event])
+				return [];
+
+			return listeners[event].map(listener => listener.listener);
+		},
+
+		getLocalListenersCount(event, eventEmitter) {
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(!listeners || !listeners[event])
+				return 0;
+
+			return listeners[event].length;
+		},
+
+		callLocalListeners(event, args, eventEmitter) {
+			const listeners = eventEmitterToListeners.get(eventEmitter);
+
+			if(!listeners || !listeners[event])
+				return;
+
+			const removed = [];
+
+			listeners[event] = listeners[event].filter(listener => {
+				listener.listener.apply(undefined, args);
+
+				if(listener.method !== "once")
+					return true;
+
+				removed.push(listener.listener);
+
+				return false;
+			});
+
+			removed.forEach(listener => this.callLocalListener(
+				"removeListener",
+				[event, listener],
+				eventEmitter
+			));
+		},
+
+		callListener(id, args) {
+			const listeners = idToListenerInfo.get(id);
 
 			if(!listeners)
 				return;
 
-			listeners.listener(...args);
+			listeners.listener.apply(undefined, args);
 		}
 	};
 
@@ -138,10 +230,10 @@ function createReceiver() {
 				throw expose(new TypeError("Event receivers require objects."));
 
 			if(Array.isArray(data.ids))
-				data.ids.forEach(id => servedReceiver.call(id, data.arguments));
+				data.ids.forEach(id => servedReceiver.callListener(id, data.arguments));
 
 			if(Array.isArray(data.removed))
-				data.removed.forEach(id => servedReceiver.remove(id));
+				data.removed.forEach(id => servedReceiver.removeListener(id));
 		}
 	});
 }

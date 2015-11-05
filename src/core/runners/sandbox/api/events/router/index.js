@@ -27,14 +27,14 @@ function add(event, id, once) {
 
 	if(event === "newListener" || event === "removeListener")
 		return {
-			eventEmitter: eventEmitter.id
+			eventEmitter
 		};
 
 	eventEmitter.getListener(event).addToApi(this.origin.eventsApi, id, once);
 
 	return {
 		id,
-		eventEmitter: eventEmitter.id
+		eventEmitter
 	};
 }
 
@@ -59,56 +59,59 @@ const methods = {
 		if(!data || typeof data !== "object")
 			throw expose(new TypeError("Invalid removal request."));
 
-		const eventEmitter = eventEmitters.get(this.value);
-
-		if(!eventEmitter)
-			return false;
-
+		const eventEmitter = eventEmitters.forTarget(this.value);
 		const listener = eventEmitter.get(data.event);
 
-		return listener && listener.removeFromApi(this.origin.eventsApi, data.idCandidates) || false;
+		return {
+			removed: listener && listener.removeFromApi(this.origin.eventsApi, data.idCandidates) || false,
+			eventEmitter
+		};
 	},
 
 	removeAllListeners(event) {
-		const eventEmitter = eventEmitters.get(this.value);
-
-		if(!eventEmitter)
-			return false;
+		const eventEmitter = eventEmitters.forTarget(this.value);
 
 		if(event == null)
-			return eventEmitter.removeAllListenersFromApi(this.origin.eventsApi);
+			return {
+				removed: eventEmitter.removeAllListenersFromApi(this.origin.eventsApi),
+				eventEmitter
+			};
 
 		const listener = eventEmitter.get(event);
 
-		return listener && listener.removeAllFromApi(this.origin.eventsApi) || false;
+		return {
+			removed: listener && listener.removeAllFromApi(this.origin.eventsApi) || false,
+			eventEmitter
+		};
 	},
 
 	listeners(event) {
-		const eventEmitter = eventEmitters.get(this.value);
-
-		if(!eventEmitter)
-			return [];
-
+		const eventEmitter = eventEmitters.forTarget(this.value);
 		const listener = eventEmitter.get(event);
 
 		if(!listener)
-			return [];
+			return {
+				listeners: [],
+				eventEmitter
+			};
 
 		return listener.idsForApi(this.origin.eventsApi);
 	},
 
 	listenerCount(event) {
-		const eventEmitter = eventEmitters.get(this.value);
-
-		if(!eventEmitter)
-			return 0;
-
+		const eventEmitter = eventEmitters.forTarget(this.value);
 		const listener = eventEmitter.get(event);
 
 		if(!listener)
-			return 0;
+			return {
+				count: 0,
+				eventEmitter
+			};
 
-		return listener.idCountForApi(this.origin.eventsApi);
+		return {
+			count: listener.idCountForApi(this.origin.eventsApi),
+			eventEmitter
+		};
 	}
 };
 

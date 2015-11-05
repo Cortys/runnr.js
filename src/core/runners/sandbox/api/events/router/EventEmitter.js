@@ -1,5 +1,6 @@
 "use strict";
 
+const owe = require("owe-core");
 const Listener = require("./Listener");
 
 const count = function*() {
@@ -22,10 +23,13 @@ class EventEmitter extends Map {
 		this.target = target;
 		this.id = count.next().value;
 
-		target.on(
-			"removeListener",
-			(event, removed) => this.get(event) === removed && this.removeListener(event)
-		);
+		target.on("removeListener",
+			(event, removed) => this.get(event) === removed && this.removeListener(event));
+
+		// EventEmitters are exposed via their id to prevent leaking data of target:
+		owe.resource(this, {
+			expose: this.id
+		});
 	}
 
 	getListener(event) {
