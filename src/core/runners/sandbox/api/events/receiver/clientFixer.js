@@ -1,6 +1,6 @@
 "use strict";
 
-const ClientApi = require("owe-core/src/ClientApi.js");
+const ClientApi = require("owe-core/src/ClientApi");
 
 module.exports = receiver => {
 	function add(event, listener, method) {
@@ -11,7 +11,14 @@ module.exports = receiver => {
 		const id = receiver.add(event, listener, method);
 
 		return this.route(method).close({ event, id })
-			.then(data => receiver.addToId(id, data.eventEmitter));
+			.then(
+				data => receiver.addToId(id, data.eventEmitter),
+				err => {
+					receiver.remove(id);
+
+					throw err;
+				}
+			);
 	}
 
 	Object.assign(ClientApi.prototype, {
