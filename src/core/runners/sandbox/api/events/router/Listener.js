@@ -19,24 +19,24 @@ const Listener = {
 			for(const entry of oweEventListener.apis) {
 				const api = entry[0];
 				const idsMap = entry[1];
-				const ids = [];
-				const removed = [];
+				const call = [];
+				const removeThenCall = [];
 
 				for(const idEntry of idsMap) {
 					const id = idEntry[0];
 					const once = idEntry[1];
 
-					ids.push(id);
-
 					if(once) {
 						idsMap.delete(id);
-						removed.push(id);
+						removeThenCall.push(id);
 					}
+					else
+						call.push(id);
 				}
 
 				api.close({
-					ids,
-					removed,
+					call,
+					removeThenCall,
 					arguments: args
 				});
 			}
@@ -95,7 +95,7 @@ const Listener = {
 
 				if(ids.size > 0 && api.connected)
 					api.close({
-						removed: ids
+						remove: ids
 					});
 
 				return ids.size > 0;
@@ -125,7 +125,7 @@ const Listener = {
 
 				if(res && api.connected)
 					api.close({
-						removed: [id]
+						remove: [id]
 					});
 
 				return res;

@@ -73,30 +73,30 @@ class EventEmitter extends Map {
 		for(const entry of listener.apis) {
 			const api = entry[0];
 			const ids = entry[1];
-			const removed = [];
+			const remove = [];
 
-			removed.push(...ids.keys());
+			remove.push(...ids.keys());
 
 			if(api.connected)
-				api.close({ removed });
+				api.close({ remove });
 		}
 
 		return true;
 	}
 
 	removeAllListenersFromApi(api) {
-		const removed = [];
+		const remove = [];
 
 		for(const entry of this) {
 			const listener = entry[1];
 			const ids = listener.removeAllFromApi(api, true);
 
 			if(ids)
-				removed.push(...ids.keys());
+				remove.push(...ids.keys());
 		}
 
 		if(api.connected)
-			api.close({ removed });
+			api.close({ remove });
 	}
 }
 

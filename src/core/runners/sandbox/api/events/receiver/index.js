@@ -91,7 +91,7 @@ function createReceiver() {
 			const listenerInfo = idToListenerInfo.get(id);
 
 			if(!listenerInfo)
-				return false;
+				return;
 
 			idToListenerInfo.delete(id);
 			listenerToIds.get(listenerInfo.listener).delete(id);
@@ -101,6 +101,8 @@ function createReceiver() {
 				[listenerInfo.event, listenerInfo.listener],
 				listenerInfo.eventEmitter
 			);
+
+			return listenerInfo.listener;
 		},
 
 		removeLocalListener(event, listener, eventEmitter) {
@@ -221,6 +223,15 @@ function createReceiver() {
 				return;
 
 			listeners.listener.apply(undefined, args);
+		},
+
+		removeThenCallListener(id, args) {
+			const listener = this.removeListener(id);
+
+			if(!listener)
+				return;
+
+			listener.apply(undefined, args);
 		}
 	};
 
@@ -229,11 +240,16 @@ function createReceiver() {
 			if(!data || typeof data !== "object")
 				throw expose(new TypeError("Event receivers require objects."));
 
-			if(Array.isArray(data.ids))
-				data.ids.forEach(id => servedReceiver.callListener(id, data.arguments));
+			if(Array.isArray(data.call))
+				data.call.forEach(id => servedReceiver.callListener(id, data.arguments));
 
-			if(Array.isArray(data.removed))
-				data.removed.forEach(id => servedReceiver.removeListener(id));
+			if(Array.isArray(data.remove))
+				data.remove.forEach(id => servedReceiver.removeListener(id));
+
+			// Listeners attached via "once" are removed first
+			// (triggering "removeListener" listeners) and then called:
+			if(Array.isArray(data.removeThenCall))
+				data.call.forEach(id => servedReceiver.removeThenCallListener(id, data.arguments));
 		}
 	});
 }
