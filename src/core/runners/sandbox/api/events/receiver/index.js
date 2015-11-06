@@ -24,7 +24,7 @@ function createReceiver() {
 	// Maps every listener function to the listener ids that use it:
 	const listenerToIds = new WeakMap();
 
-	// Stores listeners for events that are locally handled (newListener, removeListener)
+	// Stores listeners for meta events (newListener, removeListener)
 	// and maps them to eventEmitter ids:
 	const eventEmitterToListeners = new Map();
 
@@ -41,7 +41,7 @@ function createReceiver() {
 					eventEmitterToListeners.set(eventEmitter, listeners);
 				}
 
-				this.callLocalListeners(
+				this.callMetaListeners(
 					"newListener",
 					[event, listener],
 					eventEmitter
@@ -80,7 +80,7 @@ function createReceiver() {
 
 			listenerInfo.eventEmitter = eventEmitter;
 
-			this.callLocalListeners(
+			this.callMetaListeners(
 				"newListener",
 				[listenerInfo.event, listenerInfo.listener],
 				eventEmitter
@@ -96,7 +96,7 @@ function createReceiver() {
 			idToListenerInfo.delete(id);
 			listenerToIds.get(listenerInfo.listener).delete(id);
 
-			this.callLocalListeners(
+			this.callMetaListeners(
 				"removeListener",
 				[listenerInfo.event, listenerInfo.listener],
 				listenerInfo.eventEmitter
@@ -105,7 +105,7 @@ function createReceiver() {
 			return listenerInfo.listener;
 		},
 
-		removeLocalListener(event, listener, eventEmitter) {
+		removeMetaListener(event, listener, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners || !listeners[event])
@@ -124,7 +124,7 @@ function createReceiver() {
 				return false;
 
 			listeners[event].splice(i, 1);
-			this.callLocalListeners(
+			this.callMetaListeners(
 				"removeListener",
 				[event, listener],
 				eventEmitter
@@ -133,7 +133,7 @@ function createReceiver() {
 			return true;
 		},
 
-		removeAllLocalListeners(event, eventEmitter) {
+		removeAllMetaListeners(event, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners)
@@ -146,7 +146,7 @@ function createReceiver() {
 
 			listeners[event] = [];
 
-			listenersForEvent.forEach(listener => this.callLocalListeners(
+			listenersForEvent.forEach(listener => this.callMetaListeners(
 				"removeListener",
 				[event, listener.listener],
 				eventEmitter
@@ -172,7 +172,7 @@ function createReceiver() {
 			return result;
 		},
 
-		getLocalListeners(event, eventEmitter) {
+		getMetaListeners(event, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners || !listeners[event])
@@ -181,7 +181,7 @@ function createReceiver() {
 			return listeners[event].map(listener => listener.listener);
 		},
 
-		getLocalListenersCount(event, eventEmitter) {
+		getMetaListenersCount(event, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners || !listeners[event])
@@ -190,7 +190,7 @@ function createReceiver() {
 			return listeners[event].length;
 		},
 
-		callLocalListeners(event, args, eventEmitter) {
+		callMetaListeners(event, args, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners || !listeners[event])
@@ -209,7 +209,7 @@ function createReceiver() {
 				return false;
 			});
 
-			removed.forEach(listener => this.callLocalListener(
+			removed.forEach(listener => this.callMetaListener(
 				"removeListener",
 				[event, listener],
 				eventEmitter

@@ -30,7 +30,7 @@ module.exports = receiver => {
 		removeListener(event, listener) {
 			if(event === "newListener" || event === "removeListener")
 				return this.route("removeListener").close({ event })
-					.then(data => receiver.removeLocalListener(event, listener, data.eventEmitter));
+					.then(data => receiver.removeMetaListener(event, listener, data.eventEmitter));
 
 			return this.route("removeListener").close({
 				event,
@@ -40,14 +40,14 @@ module.exports = receiver => {
 
 		removeAllListeners(event) {
 			return this.route("removeAllListeners").close(event)
-				.then(data => receiver.removeAllLocalListeners(event, data.eventEmitter) || data.removed);
+				.then(data => receiver.removeAllMetaListeners(event, data.eventEmitter) || data.removed);
 		},
 
 		listeners(event) {
 			return this.route("listeners").close(event)
 				.then(data => {
 					if(event === "newListener" || event === "removeListener")
-						return receiver.getLocalListeners(event, data.eventEmitter);
+						return receiver.getMetaListeners(event, data.eventEmitter);
 
 					return receiver.getListeners(data.listeners);
 				});
@@ -57,7 +57,7 @@ module.exports = receiver => {
 			return this.route("listenerCount").close(event)
 				.then(data => {
 					if(event === "newListener" || event === "removeListener")
-						return receiver.getLocalListenersCount(event, data.eventEmitter);
+						return receiver.getMetaListenersCount(event, data.eventEmitter);
 
 					return data.count;
 				});
