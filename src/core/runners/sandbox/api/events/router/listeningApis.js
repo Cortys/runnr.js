@@ -1,6 +1,8 @@
 "use strict";
 
-module.exports = new class extends WeakMap {
+module.exports = {
+	__proto__: new WeakMap(),
+
 	delete(api) {
 		const meta = this.get(api);
 
@@ -12,7 +14,7 @@ module.exports = new class extends WeakMap {
 		super.delete(api);
 
 		return true;
-	}
+	},
 
 	addListener(api, listener) {
 		let meta = this.get(api);
@@ -35,7 +37,7 @@ module.exports = new class extends WeakMap {
 
 		if(!api.connected)
 			this.delete(api);
-	}
+	},
 
 	removeListener(api, listener) {
 		const meta = this.get(api);
