@@ -52,10 +52,6 @@ class Sandbox {
 		this.api.route("emitter").on("test", fn).catch(
 			err => console.error("error", err)
 		);
-
-		/* this.api.route("emitter").once("test", console.log).catch(
-			err => console.error("error", err)
-		);*/
 	}
 
 	/**

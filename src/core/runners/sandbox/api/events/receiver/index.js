@@ -249,7 +249,7 @@ function createReceiver() {
 			// Listeners attached via "once" are removed first
 			// (triggering "removeListener" listeners) and then called:
 			if(Array.isArray(data.removeThenCall))
-				data.call.forEach(id => servedReceiver.removeThenCallListener(id, data.arguments));
+				data.removeThenCall.forEach(id => servedReceiver.removeThenCallListener(id, data.arguments));
 		}
 	});
 }
