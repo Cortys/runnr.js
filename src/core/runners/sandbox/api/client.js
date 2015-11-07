@@ -18,7 +18,10 @@ module.exports = target => {
 				return;
 
 			requests.delete(msg.id);
-			request[msg.error ? "reject" : "resolve"](msg.response);
+
+			const response = typeof msg.response === "string" ? JSON.parse(msg.response) : msg.response;
+
+			request[msg.error ? "reject" : "resolve"](response);
 		});
 
 		target.on("disconnect", () => this.connected = false);

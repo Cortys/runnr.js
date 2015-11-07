@@ -17,12 +17,17 @@ module.exports = (target, api) => {
 		api.route(...msg.route).close(msg.data).then(response => ({
 			response
 		}), error => ({
-			response: owe.isExposed(error) ? owe.exposed.value(error) : error,
+			response: error,
 			error: true
-		})).then(response => target.send(Object.assign({
+		})).then(responseMsg => Object.assign({
 			type: "owe",
 			request: false,
 			id: msg.id
-		}, response)));
+		}, responseMsg)).then(responseMsg => {
+			responseMsg.response = JSON.stringify(responseMsg.response,
+				(key, value) => owe.isExposed(value) ? owe.exposed.value(value) : value);
+
+			target.send(responseMsg);
+		});
 	});
 };
