@@ -28,19 +28,35 @@ module.exports = receiver => {
 		},
 
 		removeListener(event, listener) {
-			if(event === "newListener" || event === "removeListener")
-				return this.route("removeListener").close({ event })
-					.then(data => receiver.removeMetaListener(event, listener, data.eventEmitter));
+			if(event === "newListener" || event === "removeListener") {
+				const result = this.route("removeListener").close({ event });
 
-			return this.route("removeListener").close({
+				receiver.addListenerCallDelayer(listener, result);
+
+				return result.then(data => receiver.removeMetaListener(event, listener, data.eventEmitter));
+			}
+
+			const idCandidates = receiver.getListenerIds(listener);
+
+			if(!idCandidates)
+				return Promise.resolve(false);
+
+			const result = this.route("removeListener").close({
 				event,
-				idCandidates: receiver.getListenerIds(listener)
-			}).then(data => data.removed);
+				idCandidates
+			});
+
+			receiver.addListenerCallDelayer(listener, result);
+
+			return result.then(data => data.removed);
 		},
 
 		removeAllListeners(event) {
-			return this.route("removeAllListeners").close(event)
-				.then(data => receiver.removeAllMetaListeners(event, data.eventEmitter) || data.removed);
+			const result = this.route("removeAllListeners").close(event);
+
+			receiver.addListenerCallDelayer(null, result);
+
+			return result.then(data => receiver.removeAllMetaListeners(event, data.eventEmitter) || data.removed);
 		},
 
 		listeners(event) {

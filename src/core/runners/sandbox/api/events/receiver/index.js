@@ -28,6 +28,14 @@ function createReceiver() {
 	// and maps them to eventEmitter ids:
 	const eventEmitterToListeners = new Map();
 
+	// Stores a set of Promises for each listener that have to be resolved calling it.
+	// Used to delay listeners that might be removed by a removeListener call
+	// that already took place but did not complete yet.
+	const listenerToCallDelayers = new WeakMap();
+
+	// A set of Promises that have to be resolved before any listener is called:
+	const globalDelayers = new Set();
+
 	const servedReceiver = {
 		addListener(event, listener, method, eventEmitter) {
 			if(event === "newListener" || event === "removeListener") {
@@ -87,6 +95,27 @@ function createReceiver() {
 			);
 		},
 
+		addListenerCallDelayer(listener, delayer) {
+			let delayers;
+
+			if(typeof listener === "function") {
+				delayers = listenerToCallDelayers.get(listener);
+
+				if(!delayers) {
+					delayers = new Set();
+
+					listenerToCallDelayers.set(listener, delayers);
+				}
+			}
+			else
+				delayers = globalDelayers;
+
+			const reaction = () => delayers.delete(selfDestructingDelayer);
+			const selfDestructingDelayer = delayer.then(reaction, reaction);
+
+			delayers.add(selfDestructingDelayer);
+		},
+
 		removeListener(id) {
 			const listenerInfo = idToListenerInfo.get(id);
 
@@ -111,16 +140,16 @@ function createReceiver() {
 			if(!listeners || !listeners[event])
 				return false;
 
-			let found = false,
-				i;
+			let i;
 
-			for(i = 0; i < listeners[event].length; i++)
-				if(listeners[event][i].listener === listener) {
-					found = true;
-					break;
-				}
+			if(typeof listener === "object") {
+				i = listeners[event].indexOf(listener);
+				listener = listener.listener;
+			}
+			else
+				i = listeners[event].findIndex(listenerInfo => listenerInfo.listener === listener);
 
-			if(!found)
+			if(i < 0)
 				return false;
 
 			listeners[event].splice(i, 1);
@@ -154,9 +183,11 @@ function createReceiver() {
 		},
 
 		getListenerIds(listener) {
-			const ids = listenerToIds.get(listener);
+			return [...listenerToIds.get(listener)];
+		},
 
-			return ids ? [...ids] : [];
+		getListener(id) {
+			return idToListenerInfo.get(id);
 		},
 
 		getListeners(ids) {
@@ -190,30 +221,52 @@ function createReceiver() {
 			return listeners[event].length;
 		},
 
+		getDelayersForListener(listener) {
+			const delayers = listenerToCallDelayers.get(listener);
+
+			if(!delayers)
+				return [...globalDelayers];
+
+			return [...globalDelayers, ...delayers];
+		},
+
 		callMetaListeners(event, args, eventEmitter) {
 			const listeners = eventEmitterToListeners.get(eventEmitter);
 
 			if(!listeners || !listeners[event])
 				return;
 
+			const that = this;
 			const removed = [];
 
-			listeners[event] = listeners[event].filter(listener => {
+			listeners[event] = listeners[event].filter(function callMetaListener(listener) {
+				const delayers = that.getDelayersForListener(listener.listener);
+
+				if(delayers.length) {
+					Promise.all(delayers).then(() => callMetaListener(listener));
+
+					return true;
+				}
+
 				listener.listener.apply(undefined, args);
 
 				if(listener.method !== "once")
 					return true;
 
-				removed.push(listener.listener);
+				if(!removed.done)
+					removed.push(listener.listener);
+				else
+					that.removeMetaListener(event, listener, eventEmitter);
 
 				return false;
 			});
 
-			removed.forEach(listener => this.callMetaListener(
+			removed.forEach(listener => this.callMetaListeners(
 				"removeListener",
 				[event, listener],
 				eventEmitter
 			));
+			removed.done = true;
 		},
 
 		callListener(id, args) {
@@ -222,16 +275,28 @@ function createReceiver() {
 			if(!listeners)
 				return;
 
-			listeners.listener.apply(undefined, args);
+			const delayers = this.getDelayersForListener(listeners.listener);
+
+			if(delayers.length)
+				Promise.all(delayers).then(() => this.callListener(id, args));
+			else
+				listeners.listener.apply(undefined, args);
 		},
 
 		removeThenCallListener(id, args) {
-			const listener = this.removeListener(id);
+			const listener = this.getListener(id);
 
 			if(!listener)
 				return;
 
-			listener.apply(undefined, args);
+			const delayers = this.getDelayersForListener(listener);
+
+			if(delayers.length)
+				Promise.all(delayers).then(() => this.removeThenCallListener(id, args));
+			else {
+				this.removeListener(id);
+				listener.apply(undefined, args);
+			}
 		}
 	};
 
