@@ -238,12 +238,17 @@ function createReceiver() {
 
 			const that = this;
 			const removed = [];
+			let done = false;
 
-			listeners[event] = listeners[event].filter(function callMetaListener(listener) {
+			listeners[event] = listeners[event].filter(function callMetaListener(listener, index) {
+				// Do nothing if this listener was already removed when trying to call it:
+				if(done && (index = listeners[event].lastIndexOf(listener, index)) < 0)
+					return;
+
 				const delayers = that.getDelayersForListener(listener.listener);
 
 				if(delayers.length) {
-					Promise.all(delayers).then(() => callMetaListener(listener));
+					Promise.all(delayers).then(() => callMetaListener(listener, index));
 
 					return true;
 				}
@@ -253,7 +258,7 @@ function createReceiver() {
 				if(listener.method !== "once")
 					return true;
 
-				if(!removed.done)
+				if(!done)
 					removed.push(listener.listener);
 				else
 					that.removeMetaListener(event, listener, eventEmitter);
@@ -266,7 +271,7 @@ function createReceiver() {
 				[event, listener],
 				eventEmitter
 			));
-			removed.done = true;
+			done = true;
 		},
 
 		callListener(id, args) {
