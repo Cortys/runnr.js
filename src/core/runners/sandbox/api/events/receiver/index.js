@@ -153,6 +153,10 @@ function createReceiver() {
 				return false;
 
 			listeners[event].splice(i, 1);
+
+			if(listeners.newListener.length === 0 && listeners.removeListener.length === 0)
+				eventEmitterToListeners.delete(listeners);
+
 			this.callMetaListeners(
 				"removeListener",
 				[event, listener],
