@@ -35,10 +35,16 @@ class Sandbox {
 		this.api.route("greeting").then(greeting => console.log(`${this.runner.name} responds '${greeting}'.`));
 
 		let i = 0;
+		let y = 0;
 		const fn = data => {
 			console.log(`${this.runner.name} emits '${data}'.`);
-			if(++i > 1)
-				this.api.route("emitter").removeListener("test", fn).catch(console.error);
+			if(++i >= 10) {
+				i = 0;
+				this.api.route("emitter").removeListener("test", fn).then(() => {
+					if(++y < 100)
+						this.api.route("emitter").on("test", fn);
+				});
+			}
 		};
 
 		this.api.route("emitter").on("newListener", (event, listener) => {
