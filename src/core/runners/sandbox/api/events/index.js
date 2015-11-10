@@ -2,6 +2,5 @@
 
 module.exports = {
 	router: require("./router"),
-	reconnector: require("./router/reconnector"),
-	receiver: require("./receiver")
+	controller: require("./controller")
 };

@@ -7,7 +7,7 @@ const client = require("./client");
 module.exports = (target, api) => {
 	api = api.origin({
 		sandbox: true,
-		eventsApi: client(target).route("receiver")
+		eventsApi: client(target).route("eventController")
 	});
 
 	target.on("message", msg => {

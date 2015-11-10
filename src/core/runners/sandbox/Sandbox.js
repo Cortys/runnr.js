@@ -25,7 +25,7 @@ class Sandbox {
 		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
 		api.server(this[sandbox], owe.api({
 			runner: this.runner,
-			receiver: events.receiver
+			eventController: events.controller
 		}, owe.serve.router()));
 
 		// Start an owe client to request data from the sandbox's API:
