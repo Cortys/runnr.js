@@ -5,7 +5,7 @@ const EventEmitter = require("./EventEmitter");
 /**
  * Stores listeners for multiple event emitters.
  */
-class EventEmitters extends WeakMap {
+module.exports = new class extends WeakMap {
 	forTarget(target) {
 		let eventEmitter = this.get(target);
 
@@ -16,6 +16,4 @@ class EventEmitters extends WeakMap {
 
 		return eventEmitter;
 	}
-}
-
-module.exports = EventEmitters;
+};

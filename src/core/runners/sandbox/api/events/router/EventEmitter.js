@@ -45,7 +45,7 @@ class EventEmitter extends Map {
 	}
 
 	/**
-	 * Override Map#delete to remove a listener from its event emitter when removed from this map.
+	 * Override Map#delete to remove the listener from its event emitter when removed from this map.
 	 * @param {string} event The event that should be removed.
 	 * @return {boolean} true if an event listener was removed, false elsewise.
 	 */
@@ -92,7 +92,7 @@ class EventEmitter extends Map {
 			const ids = listener.removeAllFromApi(api, true);
 
 			if(ids)
-				remove.push(...ids.keys());
+				remove.push(...ids);
 		}
 
 		if(api.connected)

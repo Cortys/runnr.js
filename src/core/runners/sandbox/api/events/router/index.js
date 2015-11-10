@@ -2,8 +2,7 @@
 
 const owe = require("owe-core");
 const expose = require("../expose");
-const EventEmitters = require("./EventEmitters");
-const eventEmitters = new EventEmitters();
+const eventEmitters = require("./eventEmitters");
 
 function eventRouter() {
 	return function servedEventRouter(route) {
@@ -26,16 +25,11 @@ function add(event, id, once) {
 	const eventEmitter = eventEmitters.forTarget(this.value);
 
 	if(event === "newListener" || event === "removeListener")
-		return {
-			eventEmitter
-		};
+		return { eventEmitter };
 
 	eventEmitter.getListener(event).addToApi(this.origin.eventsApi, id, once);
 
-	return {
-		id,
-		eventEmitter
-	};
+	return { id, eventEmitter };
 }
 
 const methods = {

@@ -3,6 +3,7 @@
 const expose = require("../expose");
 
 const listeningApis = require("./listeningApis");
+const reconnector = require("./reconnector");
 
 const Listener = {
 
@@ -15,6 +16,8 @@ const Listener = {
 	create(eventEmitter, event) {
 		return Object.assign(function oweEventListener() {
 			const args = [...arguments];
+
+			oweEventListener.reconnect();
 
 			for(const entry of oweEventListener.apis) {
 				const api = entry[0];
@@ -43,65 +46,82 @@ const Listener = {
 		}, {
 			apis: new Map(),
 
+			reconnect() {
+				const reconnectListeners = reconnector.takeAllFromEventEmitterEvent(eventEmitter, event);
+
+				for(const entry of reconnectListeners)
+					this.addToApi(entry.api, entry.id, entry.once, true);
+			},
+
 			idsForApi(api) {
+				this.reconnect();
+
 				const ids = this.apis.get(api);
 
 				return !ids ? [] : [...ids.keys()];
 			},
 
 			idCountForApi(api) {
+				this.reconnect();
+
 				const ids = this.apis.get(api);
 
 				return !ids ? 0 : ids.size;
 			},
 
-			addToApi(api, id, once) {
-				if(!Number.isInteger(id))
+			addToApi(api, id, once, dontThrow) {
+				if(!Number.isInteger(id)) {
+					if(dontThrow)
+						return;
 					throw expose(new Error(`Listener ids have to be integers.`));
+				}
 
-				if(!api.connected)
+				if(!api.connected) {
+					if(dontThrow)
+						return;
 					throw expose(new Error("Only connected clients can listen for events."));
+				}
 
-				const ids = this.apis.get(api);
+				let ids = this.apis.get(api);
 
 				if(!ids) {
-					this.apis.set(api, new Map([
-						[id, once]
-					]));
+					ids = new Map();
+					this.apis.set(api, ids);
 					listeningApis.addListener(api, this);
 				}
-				else {
-					if(ids.has(id))
-						throw expose(new Error(`A listener with id ${id} was already added.`));
-
-					ids.set(id, once);
+				else if(ids.has(id)) {
+					if(dontThrow)
+						return;
+					throw expose(new Error(`A listener with id ${id} was already added.`));
 				}
+
+				ids.set(id, once);
 			},
 
 			removeAllFromApi(api, dontNotifyApi) {
-				const ids = this.apis.get(api);
+				const ids = this.apis.get(api) || new Map();
+				const reconnectListeners = reconnector.removeAllFromApi(api, true) || new Map();
 
-				if(!ids)
+				if(ids.size === 0 && reconnectListeners.size === 0)
 					return false;
 
 				this.apis.delete(api);
 				listeningApis.removeListener(api, this);
 
-				if(this.apis.size === 0)
-					eventEmitter.delete(event);
-
 				if(dontNotifyApi)
-					return ids;
+					return [...ids.keys(), ...reconnectListeners.keys()];
 
-				if(ids.size > 0 && api.connected)
+				if(api.connected)
 					api.close({
-						remove: ids
+						remove: [...ids.keys(), ...reconnectListeners.keys()]
 					});
 
-				return ids.size > 0;
+				return true;
 			},
 
 			removeFromApi(api, idCandidates) {
+				this.reconnect();
+
 				const ids = this.apis.get(api);
 
 				if(!ids)
@@ -119,9 +139,6 @@ const Listener = {
 					this.apis.delete(api);
 					listeningApis.removeListener(api, this);
 				}
-
-				if(this.apis.size === 0)
-					eventEmitter.delete(event);
 
 				if(res && api.connected)
 					api.close({

@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * Stores all used Listener instances per ClientApi.
+ * Then calls removeAllFromApi() on all Listeners of an Api if it disconnects.
+ */
 module.exports = new class extends WeakMap {
 	delete(api) {
 		const meta = this.get(api);
