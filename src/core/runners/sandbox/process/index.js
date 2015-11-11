@@ -10,6 +10,7 @@ const master = api.client(process);
 
 const controller = {
 	master,
+	eventController: events.controller,
 
 	init() {
 		master.route("runner").then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
@@ -32,7 +33,7 @@ controller.init();
 
 owe(controller, owe.serve({
 	router: {
-		filter: new Set(["greeting", "emitter"])
+		filter: new Set(["greeting", "emitter", "eventController"])
 	}
 }));
 
