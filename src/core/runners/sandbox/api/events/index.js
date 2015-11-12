@@ -1,6 +1,8 @@
 "use strict";
 
-module.exports = {
-	router: require("./router"),
-	controller: require("./controller")
+const events = module.exports = {
+	controller: require("./controller"),
+	router: require("./router")
 };
+
+require("./clientFixer")(events.controller.receiver);
