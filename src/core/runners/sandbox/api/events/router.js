@@ -1,28 +1,25 @@
 "use strict";
 
 const owe = require("owe-core");
-const expose = require("../expose");
+const expose = require("./expose");
+const generating = require("./generatingMaps");
 
-const receiverApis = new WeakMap();
-const connector = require("../controller").connector;
+const receiverApis = new generating.WeakMap(api => api.route("receiver"));
+const connector = require("./connector");
 
 function eventRouter() {
 	return function servedEventRouter(route) {
 		if(!owe.client.isApi(this.origin.eventsApi))
 			throw expose(new Error(`Events cannot be accessed via this protocol.`));
 
-		if(route in connector) {
-			let api = receiverApis.get(this.origin.eventsApi);
-
-			if(!api) {
-				api = this.origin.eventsApi.route("receiver");
-				receiverApis.set(this.origin.eventsApi, api);
-			}
-
+		if(route in connector)
 			return owe(null, {
-				closer: event => connector[route](this.value, event, api)
+				closer: event => connector[route](
+					this.value,
+					event,
+					receiverApis.get(this.origin.eventsApi)
+				)
 			});
-		}
 
 		throw expose(new Error(`Events cannot be accessed via method '${route}'.`));
 	};

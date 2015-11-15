@@ -1,30 +1,30 @@
 "use strict";
 
-const apis = new WeakMap();
+const generating = require("./generatingMaps");
+
+const apis = new generating.WeakMap(api => {
+	const apiMeta = {
+		handlers: new Set(),
+		listener(connected) {
+			if(connected)
+				return;
+
+			apiMeta.handlers.forEach(handler => setImmediate(() => handler.removeApi(api)));
+		}
+	};
+
+	api.subscribeProtocol(apiMeta.listener);
+
+	return apiMeta;
+});
 
 const cleaner = {
 	attach(api, handler) {
-		let apiMeta = apis.get(api);
-
-		if(!apiMeta) {
-			apiMeta = {
-				handlers: new Set(),
-				listener(connected) {
-					if(connected)
-						return;
-
-					apiMeta.handlers.forEach(handler => setImmediate(() => handler.removeApi(api)));
-				}
-			};
-			apis.set(api, apiMeta);
-			api.subscribeProtocol(apiMeta.listener);
-		}
-
-		apiMeta.handlers.add(handler);
+		apis.get(api).handlers.add(handler);
 	},
 
 	detach(api, handler) {
-		const apiMeta = apis.get(api);
+		const apiMeta = apis.lookup(api);
 
 		if(!apiMeta)
 			return;

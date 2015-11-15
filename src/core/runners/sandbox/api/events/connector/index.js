@@ -1,26 +1,31 @@
 "use strict";
 
-const eventEmitters = require("./eventEmitters");
+const generating = require("../generatingMaps");
+const EventEmitter = require("./EventEmitter");
+
+const eventEmitters = new generating.WeakMap(object => new EventEmitter(object));
 
 const connector = {
 	__proto__: null,
 
 	addListener(object, event, api) {
-		eventEmitters.get(object).addListener(event, api);
+		return eventEmitters.get(object).addListener(event, api);
 	},
 
 	removeListener(object, event, api) {
 		const eventEmitter = eventEmitters.lookup(object);
 
-		if(eventEmitter)
-			eventEmitter.removeListener(event, api);
+		return eventEmitter
+			? eventEmitter.removeListener(event, api)
+			: false;
 	},
 
 	listeners(object, event, api) {
 		const eventEmitter = eventEmitters.lookup(object);
 
-		if(eventEmitter)
-			eventEmitter.listeners(event, api);
+		return eventEmitter
+			? eventEmitter.listeners(event, api)
+			: [];
 	}
 };
 

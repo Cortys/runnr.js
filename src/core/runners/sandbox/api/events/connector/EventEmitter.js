@@ -1,5 +1,8 @@
 "use strict";
 
+const expose = require("../expose");
+const generating = require("../generatingMaps");
+
 const counter = require("../counter")();
 const disconnectCleaner = require("../disconnectCleaner.js");
 
@@ -7,16 +10,8 @@ class EventEmitter {
 	constructor(object) {
 		this.id = counter.count();
 		this.object = object;
-		this.events = new Map();
-	}
-
-	addListener(event, api) {
-		let eventMeta = this.events.get(event);
-
-		if(!eventMeta) {
-			const object = this.id;
-
-			eventMeta = {
+		this.events = new generating.Map(event => {
+			const eventMeta = {
 				apis: new Set(),
 				listener() {
 					const send = {
@@ -28,11 +23,18 @@ class EventEmitter {
 					eventMeta.apis.forEach(api => api.close(send));
 				}
 			};
-			this.events.set(event, eventMeta);
-			this.object.addListener(event, eventMeta.listener);
-		}
 
-		eventMeta.apis.add(api);
+			this.object.addListener(event, eventMeta.listener);
+
+			return eventMeta;
+		});
+	}
+
+	addListener(event, api) {
+		if(event === "newListener" || event === "removeListener")
+			throw expose(new Error(`'${event}' listeners cannot be added by remote clients.`));
+
+		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);
 	}
 
@@ -40,7 +42,7 @@ class EventEmitter {
 		if(event == null)
 			return this.removeApi(api);
 
-		const eventMeta = this.events.get(event);
+		const eventMeta = this.events.lookup(event);
 
 		if(!eventMeta)
 			return false;
@@ -67,7 +69,7 @@ class EventEmitter {
 	}
 
 	listeners(event, api) {
-		const eventMeta = this.events.get(event);
+		const eventMeta = this.events.lookup(event);
 
 		if(!eventMeta)
 			return false;

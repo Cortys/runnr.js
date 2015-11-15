@@ -1,7 +1,10 @@
 "use strict";
 
 const events = module.exports = {
-	controller: require("./controller"),
+	controller: {
+		receiver: require("./receiver"),
+		connector: require("./connector")
+	},
 	router: require("./router")
 };
 
