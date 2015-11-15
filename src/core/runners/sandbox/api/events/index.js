@@ -7,5 +7,3 @@ const events = module.exports = {
 	},
 	router: require("./router")
 };
-
-require("./clientFixer")(events.controller.receiver);
