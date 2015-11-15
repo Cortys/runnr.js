@@ -1,6 +1,7 @@
 "use strict";
 
 const generating = require("../generatingMaps");
+const expose = require("../expose");
 const EventEmitter = require("./EventEmitter");
 
 const eventEmitters = new generating.WeakMap(object => new EventEmitter(object));
@@ -8,23 +9,23 @@ const eventEmitters = new generating.WeakMap(object => new EventEmitter(object))
 const connector = {
 	__proto__: null,
 
-	addListener(object, event, api) {
-		return eventEmitters.get(object).addListener(event, api);
+	addListener(object, data, api) {
+		return eventEmitters.get(object).addListener(data.event, data.id, api);
 	},
 
-	removeListener(object, event, api) {
+	removeListener(object, data, api) {
 		const eventEmitter = eventEmitters.lookup(object);
 
 		return eventEmitter
-			? eventEmitter.removeListener(event, api)
+			? eventEmitter.removeListener(data.event, api)
 			: false;
 	},
 
-	listeners(object, event, api) {
+	listeners(object, data, api) {
 		const eventEmitter = eventEmitters.lookup(object);
 
 		return eventEmitter
-			? eventEmitter.listeners(event, api)
+			? eventEmitter.listeners(data.event, api)
 			: [];
 	}
 };

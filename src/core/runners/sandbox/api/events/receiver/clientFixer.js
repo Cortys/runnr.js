@@ -1,37 +1,35 @@
 "use strict";
 
+const receiver = require(".");
+
 const ClientApi = require("owe-core/src/ClientApi");
 
 module.exports = receiver => {
-	function add(event, listener, method) {
-
-	}
-
 	Object.assign(ClientApi.prototype, {
-		on(event, listener) {
-			return add.call(this, event, listener, "on");
+		addListener(event, listener) {
+			return receiver.addListener(this, event, listener);
 		},
 
 		once(event, listener) {
-			return add.call(this, event, listener, "once");
+			return receiver.once(this, event, listener);
 		},
 
 		removeListener(event, listener) {
-
+			return receiver.removeListener(this, event, listener);
 		},
 
 		removeAllListeners(event) {
-
+			return receiver.removeAllListeners(this, event);
 		},
 
 		listeners(event) {
-
+			return receiver.listeners(this, event);
 		},
 
 		listenerCount(event) {
-
+			return receiver.listenersCount(this, event);
 		}
 	});
 
-	ClientApi.prototype.addListener = ClientApi.prototype.on;
+	ClientApi.prototype.on = ClientApi.prototype.addListener;
 };

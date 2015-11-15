@@ -10,12 +10,14 @@ class EventEmitter {
 	constructor(object) {
 		this.id = counter.count();
 		this.object = object;
+
 		this.events = new generating.Map(event => {
 			const eventMeta = {
 				apis: new Set(),
 				listener() {
 					const send = {
-						object,
+						type: "emit",
+						object: this.id,
 						event,
 						args: [...arguments]
 					};
@@ -28,14 +30,34 @@ class EventEmitter {
 
 			return eventMeta;
 		});
+
+		this.object.addListener("removeListener", (event, listener) => {
+			const eventMeta = this.events.lookup(event);
+
+			if(eventMeta && eventMeta.listener === listener)
+				eventMeta.apis.forEach(api => this.removeListener(event, api));
+		});
 	}
 
-	addListener(event, api) {
+	addListener(event, clientId, api) {
 		if(event === "newListener" || event === "removeListener")
 			throw expose(new Error(`'${event}' listeners cannot be added by remote clients.`));
 
 		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);
+
+		const id = `${clientId}-${Math.random()}`;
+
+		api.close({
+			type: "add",
+			object: this.id,
+			id
+		});
+
+		return {
+			object: this.id,
+			id
+		};
 	}
 
 	removeListener(event, api) {
@@ -55,6 +77,13 @@ class EventEmitter {
 			this.events.delete(event);
 			this.object.removeListener(event, eventMeta.listener);
 		}
+
+		if(res)
+			api.close({
+				type: "remove",
+				object: this.id,
+				event
+			});
 
 		return res;
 	}
