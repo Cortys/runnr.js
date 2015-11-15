@@ -13,7 +13,7 @@ const apis = new generating.WeakMap(api => {
 		}
 	};
 
-	api.subscribeProtocol(apiMeta.listener);
+	api.observeConnection(apiMeta.listener);
 
 	return apiMeta;
 });
@@ -33,7 +33,7 @@ const cleaner = {
 
 		if(apiMeta.handlers.size === 0) {
 			apis.delete(api);
-			api.unsubscribeProtocol(apiMeta.listener);
+			api.unobserveConnection(apiMeta.listener);
 		}
 	}
 };
