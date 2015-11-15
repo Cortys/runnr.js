@@ -2,13 +2,15 @@
 
 const owe = require("owe-core");
 
+const pending = require("./pending");
+
 const receiver = {
 	addListener(api, event, listener) {
-
+		return pending.add(api, event, listener, false);
 	},
 
 	once(api, event, listener) {
-
+		return pending.add(api, event, listener, true);
 	},
 
 	removeListener(api, event, listener) {
@@ -34,6 +36,6 @@ owe(receiver, {
 	}
 });
 
-module.exports = receiver;
-
 require("./clientFixer")(receiver);
+
+module.exports = receiver;

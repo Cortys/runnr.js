@@ -12,18 +12,19 @@ function eventRouter() {
 		if(!owe.client.isApi(this.origin.eventsApi))
 			throw expose(new Error(`Events cannot be accessed via this protocol.`));
 
-		if(route in connector) {
-			if(!data || typeof data !== "object")
-				throw expose(new TypeError(`Invalid ${route} request.`));
-
+		if(route in connector)
 			return owe(null, {
-				closer: data => connector[route](
-					this.value,
-					data,
-					receiverApis.get(this.origin.eventsApi)
-				)
+				closer: data => {
+					if(!data || typeof data !== "object")
+						throw expose(new TypeError(`Invalid ${route} request.`));
+
+					return connector[route](
+						this.value,
+						data,
+						receiverApis.get(this.origin.eventsApi)
+					)
+				}
 			});
-		}
 
 		throw expose(new Error(`Events cannot be accessed via method '${route}'.`));
 	};

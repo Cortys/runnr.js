@@ -1,7 +1,5 @@
 "use strict";
 
-const receiver = require(".");
-
 const ClientApi = require("owe-core/src/ClientApi");
 
 module.exports = receiver => {

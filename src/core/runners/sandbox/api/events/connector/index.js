@@ -1,7 +1,6 @@
 "use strict";
 
 const generating = require("../generatingMaps");
-const expose = require("../expose");
 const EventEmitter = require("./EventEmitter");
 
 const eventEmitters = new generating.WeakMap(object => new EventEmitter(object));

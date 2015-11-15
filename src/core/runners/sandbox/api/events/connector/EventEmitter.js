@@ -39,24 +39,24 @@ class EventEmitter {
 		});
 	}
 
-	addListener(event, clientId, api) {
+	addListener(event, id, api) {
 		if(event === "newListener" || event === "removeListener")
 			throw expose(new Error(`'${event}' listeners cannot be added by remote clients.`));
 
 		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);
 
-		const id = `${clientId}-${Math.random()}`;
+		const token = Math.random();
 
 		api.close({
 			type: "add",
 			object: this.id,
-			id
+			id, token
 		});
 
 		return {
 			object: this.id,
-			id
+			token
 		};
 	}
 
