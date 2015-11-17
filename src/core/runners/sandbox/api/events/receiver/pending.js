@@ -1,18 +1,23 @@
 "use strict";
 
+const expose = require("../expose");
+
 const counter = require("../counter")();
 
 const pendingMap = new Map();
 
 const pending = {
 	add(api, event, listener, once) {
+		if(event === "newListener" || event === "removeListener")
+			return Promise.reject(new Error("This event type is not yet supported."));
+
 		const id = counter.count();
 		const entry = { event, listener, once };
 
 		pendingMap.set(id, entry);
 
 		return Promise.all([
-			new Promise((reject, resolve) => {
+			new Promise((resolve, reject) => {
 				entry.tokenReceiver = { reject, resolve };
 			}),
 			api.route("addListener").close({ id, event }).then(result => {
@@ -22,15 +27,32 @@ const pending = {
 				entry.object = result.object;
 				entry.token = result.token;
 			})
-		]).then(() => undefined, err => {
+		]).then(() => {
+			pendingMap.delete(id);
+
+			return entry;
+		}, err => {
 			pendingMap.delete(id);
 
 			throw err;
 		});
 	},
 
-	handleAddConfirmation(confirmation) {
-		
+	handleAddConfirmation(id, token) {
+		const entry = pendingMap.get(id);
+
+		if(!entry)
+			throw expose(new Error(`Invalid listener id '${id}'.`));
+
+		if("token" in entry && entry.token !== result.token) {
+			entry.tokenReceiver.reject(new Error("The listener handshake was unexpectedly disrupted."));
+
+			return;
+		}
+
+		entry.token = token;
+
+		entry.tokenReceiver.resolve();
 	}
 };
 

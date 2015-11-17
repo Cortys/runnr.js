@@ -1,6 +1,7 @@
 "use strict";
 
 const owe = require("owe-core");
+const expose = require("../expose");
 
 const pending = require("./pending");
 
@@ -30,9 +31,24 @@ const receiver = {
 	}
 };
 
+const messageHandlers = {
+	__proto__: null,
+
+	addConfirmation(data) {
+		pending.handleAddConfirmation(data.id, data.token);
+	},
+
+	emit(data) {
+
+	}
+};
+
 owe(receiver, {
 	closer(data) {
+		if(!data || typeof data !== "object" || !(data.type in messageHandlers))
+			throw expose(new TypeError("Invalid message."));
 
+		return messageHandlers[data.type](data);
 	}
 });
 

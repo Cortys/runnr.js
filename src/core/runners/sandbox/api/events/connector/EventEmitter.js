@@ -8,7 +8,7 @@ const disconnectCleaner = require("../disconnectCleaner");
 
 class EventEmitter {
 	constructor(object) {
-		this.id = counter.count();
+		const id = this.id = counter.count();
 		this.object = object;
 
 		this.events = new generating.Map(event => {
@@ -17,7 +17,7 @@ class EventEmitter {
 				listener() {
 					const send = {
 						type: "emit",
-						object: this.id,
+						object: id,
 						event,
 						args: [...arguments]
 					};
@@ -51,10 +51,9 @@ class EventEmitter {
 		const token = Math.random();
 
 		api.close({
-			type: "add",
-			object: this.id,
+			type: "addConfirmation",
 			id, token
-		});
+		}).then(console.log, console.error);
 
 		return {
 			object: this.id,
