@@ -45,7 +45,11 @@ const messageHandlers = {
 	},
 
 	emit(api, data) {
-
+		listeners.call({
+			api,
+			object: data.object,
+			event: data.event
+		}, data.args);
 	}
 };
 

@@ -26,12 +26,18 @@ const listeners = {
 
 	},
 
-	call() {
+	call(entry, args) {
+		const listeners = apis.maybeLookup(entry.api).maybeLookup(entry.object).lookup(entry.event);
 
-	},
+		if(!listeners)
+			return;
 
-	removeThenCall() {
+		for(const listenerMeta of listeners) {
+			if(listenerMeta.once)
+				this.remove(entry, listenerMeta);
 
+			listenerMeta.listener.apply(undefined, args);
+		}
 	}
 };
 

@@ -1,5 +1,19 @@
 "use strict";
 
+const maybeMap = {
+	maybeLookup() {
+		return this;
+	},
+
+	get() {
+		return undefined;
+	},
+
+	lookup() {
+		return undefined;
+	}
+}
+
 function generateMap(map) {
 	return class extends map {
 		constructor(generator) {
@@ -21,6 +35,12 @@ function generateMap(map) {
 
 		lookup(key) {
 			return super.get(key);
+		}
+
+		maybeLookup(key) {
+			let value = super.get(key);
+
+			return value === undefined ? maybeMap : value;
 		}
 	};
 }
