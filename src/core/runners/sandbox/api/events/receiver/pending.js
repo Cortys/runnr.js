@@ -38,7 +38,7 @@ const pending = {
 		});
 	},
 
-	handleAddConfirmation(id, token) {
+	handleAddConfirmation(api, id, token) {
 		const entry = pendingMap.get(id);
 
 		if(!entry)
@@ -51,6 +51,7 @@ const pending = {
 		}
 
 		entry.token = token;
+		entry.api = api;
 
 		entry.tokenReceiver.resolve();
 	}

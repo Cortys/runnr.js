@@ -10,8 +10,7 @@ module.exports = {
 		connector: require("./connector")
 	}, {
 		router(route) {
-			if(route in this.value)
-				return this.value[route];
+			return this.value[route];
 		}
 	}),
 	router: require("./router")

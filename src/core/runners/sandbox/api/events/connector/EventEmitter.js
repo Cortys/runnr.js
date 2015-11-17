@@ -53,7 +53,7 @@ class EventEmitter {
 		api.close({
 			type: "addConfirmation",
 			id, token
-		}).then(console.log, console.error);
+		});
 
 		return {
 			object: this.id,
