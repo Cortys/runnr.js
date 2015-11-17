@@ -38,4 +38,4 @@ const cleaner = {
 	}
 };
 
-module.exporst = cleaner;
+module.exports = cleaner;

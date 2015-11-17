@@ -4,7 +4,7 @@ const expose = require("../expose");
 const generating = require("../generatingMaps");
 
 const counter = require("../counter")();
-const disconnectCleaner = require("../disconnectCleaner.js");
+const disconnectCleaner = require("../disconnectCleaner");
 
 class EventEmitter {
 	constructor(object) {
@@ -41,7 +41,9 @@ class EventEmitter {
 
 	addListener(event, id, api) {
 		if(event === "newListener" || event === "removeListener")
-			throw expose(new Error(`'${event}' listeners cannot be added by remote clients.`));
+			return {
+				object: this.id
+			};
 
 		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);

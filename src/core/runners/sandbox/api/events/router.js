@@ -22,7 +22,7 @@ function eventRouter() {
 						this.value,
 						data,
 						receiverApis.get(this.origin.eventsApi)
-					)
+					);
 				}
 			});
 
