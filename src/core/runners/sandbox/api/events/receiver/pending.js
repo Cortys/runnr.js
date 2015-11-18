@@ -44,7 +44,7 @@ const pending = {
 		if(!entry)
 			throw expose(new Error(`Invalid listener id '${id}'.`));
 
-		if("token" in entry && entry.token !== result.token) {
+		if("token" in entry && entry.token !== token) {
 			entry.tokenReceiver.reject(new Error("The listener handshake was unexpectedly disrupted."));
 
 			return;

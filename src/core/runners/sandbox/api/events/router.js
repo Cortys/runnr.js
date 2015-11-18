@@ -2,9 +2,7 @@
 
 const owe = require("owe-core");
 const expose = require("./expose");
-const generating = require("./generatingMaps");
 
-const receiverApis = new generating.WeakMap(api => api.route("receiver"));
 const connector = require("./connector");
 
 function eventRouter() {
@@ -21,7 +19,7 @@ function eventRouter() {
 					return connector[route](
 						this.value,
 						data,
-						receiverApis.get(this.origin.eventsApi)
+						this.origin.eventsApi
 					);
 				}
 			});

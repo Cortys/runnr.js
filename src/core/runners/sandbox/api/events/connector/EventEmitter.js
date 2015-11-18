@@ -1,14 +1,32 @@
 "use strict";
 
-const expose = require("../expose");
 const generating = require("../generatingMaps");
 
 const counter = require("../counter")();
 const disconnectCleaner = require("../disconnectCleaner");
 
+const objectToEventEmitter = new generating.WeakMap(object => new EventEmitter(object));
+const idToEventEmitter = new Map();
+
 class EventEmitter {
+	static forObject(object) {
+		return objectToEventEmitter.get(object);
+	}
+
+	static lookupObject(object) {
+		return objectToEventEmitter.lookup(object);
+	}
+
+	static lookupId(id) {
+		return idToEventEmitter.get(id);
+	}
+
 	constructor(object) {
+		if(objectToEventEmitter.has(object))
+			throw new Error("There already is an EventEmitter for this object.");
+
 		const id = this.id = counter.count();
+
 		this.object = object;
 
 		this.events = new generating.Map(event => {
@@ -37,6 +55,8 @@ class EventEmitter {
 			if(eventMeta && eventMeta.listener === listener)
 				eventMeta.apis.forEach(api => this.removeListener(event, api));
 		});
+
+		idToEventEmitter.set(id, this);
 	}
 
 	addListener(event, id, api) {
@@ -79,6 +99,11 @@ class EventEmitter {
 			this.object.removeListener(event, eventMeta.listener);
 		}
 
+		if(this.events.size === 0) {
+			idToEventEmitter.delete(this.id);
+			objectToEventEmitter.delete(this.object);
+		}
+
 		if(res)
 			api.close({
 				type: "remove",
@@ -96,15 +121,6 @@ class EventEmitter {
 			once = this.removeListener(event, api) || once;
 
 		return once;
-	}
-
-	listeners(event, api) {
-		const eventMeta = this.events.lookup(event);
-
-		if(!eventMeta)
-			return false;
-
-		return eventMeta.apis.has(api);
 	}
 }
 

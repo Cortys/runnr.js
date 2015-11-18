@@ -41,7 +41,7 @@ class Sandbox {
 			if(++i >= 10) {
 				i = 0;
 				this.api.route("emitter").removeListener("test", fn).then(() => {
-					if(++y < 100)
+					if(++y < 1000)
 						this.api.route("emitter").on("test", fn);
 				});
 			}

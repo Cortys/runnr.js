@@ -2,9 +2,24 @@
 
 const owe = require("owe-core");
 const expose = require("../expose");
+const generating = require("../generatingMaps");
 
 const pending = require("./pending");
 const listeners = require("./listeners");
+
+const connectorApis = new generating.WeakMap(api => api.route("connector"));
+
+const idToListener = Object.assign(new Map(), {
+	counter: require("../counter")(),
+
+	put(listener) {
+		const id = this.counter.count();
+
+		this.set(id, listener);
+
+		return id;
+	}
+});
 
 const receiver = {
 	add(api, event, listener, once) {
@@ -21,7 +36,21 @@ const receiver = {
 	},
 
 	removeListener(api, event, listener) {
+		const id = idToListener.put(listener);
 
+		return api.route("removeListener").close({
+			clientOnly: true,
+			event,
+			listener: id
+		}).then(data => {
+			idToListener.delete(id);
+
+			return data;
+		}, err => {
+			idToListener.delete(id);
+
+			throw err;
+		});
 	},
 
 	removeAllListeners(api, event) {
@@ -50,6 +79,14 @@ const messageHandlers = {
 			object: data.object,
 			event: data.event
 		}, data.args);
+	},
+
+	remove(api, data) {
+		return listeners.remove({
+			api,
+			object: data.object,
+			event: data.event
+		}, idToListener.get(data.listener));
 	}
 };
 
@@ -61,7 +98,7 @@ owe(receiver, {
 		if(!data || typeof data !== "object" || !(data.type in messageHandlers))
 			throw expose(new TypeError("Invalid message."));
 
-		return messageHandlers[data.type](this.origin.eventsApi, data);
+		return messageHandlers[data.type](connectorApis.get(this.origin.eventsApi), data);
 	}
 });
 

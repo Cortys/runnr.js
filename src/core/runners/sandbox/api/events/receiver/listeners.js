@@ -2,14 +2,14 @@
 
 const generating = require("../generatingMaps");
 
-// Store all event emitting objects with listeners for each API:
+// ClientApi => event emitting objects:
 const apis = new generating.WeakMap(
-	// Store all events for each event emitting object:
-	api => new generating.Map(
-		// Store a set of listeners for each event of an event emitting object:
-		object => new generating.Map(
+	// event emitting object => events:
+	() => new generating.Map(
+		// event => set of listeners:
+		() => new generating.Map(
 			// Every listener is stored as an object of the form { listener: [fn], once: [bool] }.
-			event => new Set()
+			() => new Set()
 		)
 	)
 );
@@ -22,19 +22,57 @@ const listeners = {
 		});
 	},
 
-	remove() {
+	getListeners(entry) {
+		return apis.maybeLookup(entry.api).maybeLookup(entry.object).lookup(entry.event);
+	},
 
+	remove(entry, listener) {
+		const listeners = this.getListeners(entry);
+
+		if(!listeners)
+			return false;
+
+		for(const listenerMeta of listeners)
+			if(listenerMeta.listener === listener)
+				return this.removeSpecific(entry, listenerMeta);
+
+		return false;
+	},
+
+	removeSpecific(entry, listenerMeta) {
+		const api = apis.lookup(entry.api);
+
+		if(!api)
+			return false;
+
+		const object = api.lookup(entry.object);
+
+		if(!object)
+			return false;
+
+		const listeners = object.lookup(entry.event);
+
+		if(!listeners)
+			return false;
+
+		const res = listeners.delete(listenerMeta);
+
+		if(listeners.size === 0) {
+			object.delete(entry.event);
+		}
+
+		return res;
 	},
 
 	call(entry, args) {
-		const listeners = apis.maybeLookup(entry.api).maybeLookup(entry.object).lookup(entry.event);
+		const listeners = this.getListeners(entry);
 
 		if(!listeners)
 			return;
 
 		for(const listenerMeta of listeners) {
 			if(listenerMeta.once)
-				this.remove(entry, listenerMeta);
+				this.removeSpecific(entry, listenerMeta);
 
 			listenerMeta.listener.apply(undefined, args);
 		}
