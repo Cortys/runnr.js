@@ -25,7 +25,7 @@ module.exports = receiver => {
 		},
 
 		listenerCount(event) {
-			return receiver.listenersCount(this, event);
+			return receiver.listenerCount(this, event);
 		}
 	});
 

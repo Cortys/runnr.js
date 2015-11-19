@@ -40,7 +40,7 @@ const receiver = {
 				if(!listeners)
 					return [];
 
-				return listeners.map(listenerMeta => listenerMeta.listener);
+				return Array.from(listeners, listenerMeta => listenerMeta.listener);
 			});
 	},
 
