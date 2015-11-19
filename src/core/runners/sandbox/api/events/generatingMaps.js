@@ -12,7 +12,7 @@ const maybeMap = {
 	lookup() {
 		return undefined;
 	}
-}
+};
 
 function generateMap(map) {
 	return class extends map {
@@ -38,7 +38,7 @@ function generateMap(map) {
 		}
 
 		maybeLookup(key) {
-			let value = super.get(key);
+			const value = super.get(key);
 
 			return value === undefined ? maybeMap : value;
 		}

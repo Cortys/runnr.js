@@ -9,21 +9,9 @@ const listeners = require("./listeners");
 
 const connectorApis = new generating.WeakMap(api => api.route("connector"));
 
-const idToListener = Object.assign(new Map(), {
-	counter: require("../counter")(),
-
-	put(listener) {
-		const id = this.counter.count();
-
-		this.set(id, listener);
-
-		return id;
-	}
-});
-
 const receiver = {
 	add(api, event, listener, once) {
-		return pending.add(api, event, listener, once)
+		return pending.createAddRequest(api, event, listener, once)
 			.then(entry => listeners.add(entry));
 	},
 
@@ -36,41 +24,38 @@ const receiver = {
 	},
 
 	removeListener(api, event, listener) {
-		const id = idToListener.put(listener);
-
-		return api.route("removeListener").close({
-			clientOnly: true,
-			event,
-			listener: id
-		}).then(data => {
-			idToListener.delete(id);
-
-			return data;
-		}, err => {
-			idToListener.delete(id);
-
-			throw err;
-		});
+		return pending.createIdentificationRequest(api)
+			.then(entry => listeners.remove(Object.assign({ event, listener }, entry)), () => false);
 	},
 
 	removeAllListeners(api, event) {
-
+		return pending.createRemoveRequest(api, event)
+			.then(entry => listeners.removeAll(entry), () => false);
 	},
 
 	listeners(api, event) {
+		return pending.createIdentificationRequest(api)
+			.then(entry => listeners.getListeners(Object.assign({ event }, entry)))
+			.then(listeners => {
+				if(!listeners)
+					return [];
 
+				return listeners.map(listenerMeta => listenerMeta.listener);
+			});
 	},
 
 	listenerCount(api, event) {
-
+		return pending.createIdentificationRequest(api)
+			.then(entry => listeners.getListeners(Object.assign({ event }, entry)))
+			.then(listeners => listeners ? listeners.size : 0);
 	}
 };
 
 const messageHandlers = {
 	__proto__: null,
 
-	addConfirmation(api, data) {
-		pending.handleAddConfirmation(api, data.id, data.token);
+	confirmation(api, confirmation) {
+		pending.handleRequestConfirmation(api, confirmation);
 	},
 
 	emit(api, data) {
@@ -82,11 +67,11 @@ const messageHandlers = {
 	},
 
 	remove(api, data) {
-		return listeners.remove({
+		listeners.removeAll({
 			api,
 			object: data.object,
 			event: data.event
-		}, idToListener.get(data.listener));
+		});
 	}
 };
 

@@ -1,5 +1,6 @@
 "use strict";
 
+const expose = require("../expose");
 const generating = require("../generatingMaps");
 
 const counter = require("../counter")();
@@ -49,36 +50,24 @@ class EventEmitter {
 			return eventMeta;
 		});
 
-		this.object.addListener("removeListener", (event, listener) => {
+		this.removalListener = (event, listener) => {
 			const eventMeta = this.events.lookup(event);
 
 			if(eventMeta && eventMeta.listener === listener)
 				eventMeta.apis.forEach(api => this.removeListener(event, api));
-		});
+		};
+
+		this.object.addListener("removeListener", this.removalListener);
 
 		idToEventEmitter.set(id, this);
 	}
 
-	addListener(event, id, api) {
+	addListener(event, api) {
 		if(event === "newListener" || event === "removeListener")
-			return {
-				object: this.id
-			};
+			throw expose(new Error(`${event} listeners are not allowed.`));
 
 		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);
-
-		const token = Math.random();
-
-		api.close({
-			type: "addConfirmation",
-			id, token
-		});
-
-		return {
-			object: this.id,
-			token
-		};
 	}
 
 	removeListener(event, api) {
@@ -102,6 +91,7 @@ class EventEmitter {
 		if(this.events.size === 0) {
 			idToEventEmitter.delete(this.id);
 			objectToEventEmitter.delete(this.object);
+			this.object.removeListener("removeListener", this.removalListener);
 		}
 
 		if(res)

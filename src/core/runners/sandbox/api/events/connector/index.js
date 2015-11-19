@@ -11,25 +11,52 @@ const receiverApis = new generating.WeakMap(api => api.route("receiver"));
 const connector = {
 	__proto__: null,
 
-	addListener(object, data, api) {
-		return EventEmitter.forObject(object).addListener(data.event, data.id, receiverApis.get(api));
+	addListener(api, object, data) {
+		api = receiverApis.get(api);
+
+		const eventEmitter = EventEmitter.forObject(object);
+
+		eventEmitter.addListener(data.event, api);
+
+		api.close({
+			type: "confirmation",
+			id: data.id,
+			token: data.token,
+			object: eventEmitter.id
+		});
 	},
 
-	removeListener(object, data, api) {
+	removeListener(api, object, data) {
 		const eventEmitter = EventEmitter.lookupObject(object);
 
-		if(!data.clientOnly)
-			return eventEmitter
-				? eventEmitter.removeListener(data.event, receiverApis.get(api))
-				: false;
+		if(!eventEmitter)
+			throw expose(new Error("This EventEmitter does not have any listeners yet."));
 
-		if(eventEmitter)
-			return receiverApis.get(api).close({
-				type: "remove",
-				object: eventEmitter.id,
-				event: data.event,
-				listener: data.listener
-			});
+		api = receiverApis.get(api);
+		eventEmitter.removeListener(data.event, api);
+
+		api.close({
+			type: "confirmation",
+			id: data.id,
+			token: data.token,
+			object: eventEmitter.id
+		});
+	},
+
+	// The listeners keyword is misused to identify event emitters instead of returning their listeners.
+	// This guarantees that the event router route names are a strict subset of EventEmitter instance method names.
+	listeners(api, object, data) {
+		const eventEmitter = EventEmitter.lookupObject(object);
+
+		if(!eventEmitter)
+			throw expose(new Error("This EventEmitter does not have any listeners yet."));
+
+		receiverApis.get(api).close({
+			type: "confirmation",
+			id: data.id,
+			token: data.token,
+			object: eventEmitter.id
+		});
 	}
 };
 

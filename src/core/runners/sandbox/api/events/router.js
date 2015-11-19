@@ -17,9 +17,9 @@ function eventRouter() {
 						throw expose(new TypeError(`Invalid ${route} request.`));
 
 					return connector[route](
+						this.origin.eventsApi,
 						this.value,
-						data,
-						this.origin.eventsApi
+						data
 					);
 				}
 			});

@@ -38,10 +38,12 @@ class Sandbox {
 		let y = 0;
 		const fn = data => {
 			console.log(`${this.runner.name} emits '${data}'.`);
-			if(++i >= 10) {
+
+			if(++i >= 1) {
 				i = 0;
 				this.api.route("emitter").removeListener("test", fn).then(() => {
-					if(++y < 1000)
+					console.log("---");
+					if(++y < 20)
 						this.api.route("emitter").on("test", fn);
 				});
 			}

@@ -26,17 +26,36 @@ const listeners = {
 		return apis.maybeLookup(entry.api).maybeLookup(entry.object).lookup(entry.event);
 	},
 
-	remove(entry, listener) {
+	remove(entry) {
 		const listeners = this.getListeners(entry);
 
 		if(!listeners)
 			return false;
 
 		for(const listenerMeta of listeners)
-			if(listenerMeta.listener === listener)
+			if(listenerMeta.listener === entry.listener)
 				return this.removeSpecific(entry, listenerMeta);
 
 		return false;
+	},
+
+	removeAll(entry) {
+		const api = apis.lookup(entry.api);
+
+		if(!api)
+			return false;
+
+		if(entry.event == null)
+			return api.delete(entry.object);
+
+		const object = api.lookup(entry.object);
+
+		if(!object)
+			return false;
+
+		// removeAll removes all listeners for the given event without notifying the server
+		// since all removeAll calls occur as a reaction to the server removing the event.
+		return object.delete(entry.event);
 	},
 
 	removeSpecific(entry, listenerMeta) {
@@ -59,6 +78,12 @@ const listeners = {
 
 		if(listeners.size === 0) {
 			object.delete(entry.event);
+
+			entry.api.close({
+				type: "remove",
+				object: entry.object,
+				event: entry.event
+			});
 		}
 
 		return res;
