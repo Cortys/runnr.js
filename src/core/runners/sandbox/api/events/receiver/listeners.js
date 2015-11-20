@@ -14,6 +14,8 @@ const apis = new generating.WeakMap(
 	)
 );
 
+const callDelayers = new generating.Map(() => new Set());
+
 const listeners = {
 	add(entry) {
 		apis.get(entry.api).get(entry.object).get(entry.event).add({
@@ -95,12 +97,51 @@ const listeners = {
 		if(!listeners)
 			return;
 
+		const delayers = this.getCallDelayers(entry.event);
+
+		if(delayers.length > 0) {
+			delayers.then(() => this.call(entry, args));
+
+			return;
+		}
+
 		for(const listenerMeta of listeners) {
 			if(listenerMeta.once)
 				this.removeSpecific(entry, listenerMeta);
 
 			listenerMeta.listener.apply(undefined, args);
 		}
+	},
+
+	addCallDelayer(event, delayer) {
+
+		if(event === undefined)
+			event = null;
+
+		const destructor = () => {
+			const delayers = callDelayers.lookup(event);
+
+			if(!delayers)
+				return;
+
+			delayers.delete(selfDestructingDelayer);
+
+			if(delayers.size === 0)
+				callDelayers.delete(event);
+		};
+
+		const selfDestructingDelayer = delayer.then(destructor, destructor);
+
+		callDelayers.get(event).add(selfDestructingDelayer);
+
+		return delayer;
+	},
+
+	getCallDelayers(event) {
+		const delayers = callDelayers.lookup(event) || [];
+		const globalDelayers = callDelayers.lookup(null) || [];
+
+		return [...delayers, ...globalDelayers];
 	}
 };
 

@@ -24,13 +24,13 @@ const receiver = {
 	},
 
 	removeListener(api, event, listener) {
-		return pending.createIdentificationRequest(api)
-			.then(entry => listeners.remove(Object.assign({ event, listener }, entry)), () => false);
+		return listeners.addCallDelayer(event, pending.createIdentificationRequest(api)
+			.then(entry => listeners.remove(Object.assign({ event, listener }, entry)), () => false));
 	},
 
 	removeAllListeners(api, event) {
-		return pending.createRemoveRequest(api, event)
-			.then(entry => listeners.removeAll(entry), () => false);
+		return listeners.addCallDelayer(event, pending.createRemoveRequest(api, event)
+			.then(entry => listeners.removeAll(entry), () => false));
 	},
 
 	listeners(api, event) {
