@@ -69,9 +69,18 @@ const messageHandlers = {
 };
 
 owe(connector, {
+	router(object) {
+		const emitter = EventEmitter.lookupId(object);
+
+		if(!emitter)
+			throw new Error("Invalid object id.");
+
+		return emitter.object;
+	},
+
 	closer(data) {
 		if(!owe.client.isApi(this.origin.eventsApi))
-			throw expose(new Error(`Events cannot be accessed via this protocol.`));
+			throw expose(new Error("Events cannot be accessed via this protocol."));
 
 		if(!data || typeof data !== "object" || !(data.type in messageHandlers))
 			throw expose(new TypeError("Invalid message."));

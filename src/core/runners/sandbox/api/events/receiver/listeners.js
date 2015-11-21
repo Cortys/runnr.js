@@ -151,7 +151,9 @@ const listeners = {
 			if(listenerMeta.once)
 				this.removeSpecific(entry, listenerMeta);
 
-			listenerMeta.listener.apply(undefined, args);
+			// Call the listener function with the given arguments,
+			// use a ClientApi pointing to the EventEmitter on the server as the context:
+			listenerMeta.listener.apply(entry.api.route(entry.object), args);
 		}
 	},
 
