@@ -39,23 +39,24 @@ class Sandbox {
 		const fn = data => {
 			console.log(`${this.runner.name} emits '${data}'.`);
 
-			if(++i >= 1) {
+			if(++i >= 5) {
 				i = 0;
 				this.api.route("emitter").removeListener("test", fn).then(() => {
-					console.log("---");
-					if(++y < 20)
+					if(++y < 10000)
 						this.api.route("emitter").on("test", fn);
 				});
 			}
 		};
 
+		fn.toString = () => "[function Function]";
+
 		this.api.route("emitter").on("newListener", (event, listener) => {
 			console.log("new", event, listener);
-		});
+		}).catch(console.error);
 
 		this.api.route("emitter").on("removeListener", (event, listener) => {
 			console.log("removed", event, listener);
-		});
+		}).catch(console.error);
 
 		this.api.route("emitter").on("test", fn).catch(
 			err => console.error("error", err)

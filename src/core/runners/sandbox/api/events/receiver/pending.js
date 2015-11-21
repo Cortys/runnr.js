@@ -34,9 +34,6 @@ const pending = {
 	},
 
 	createAddRequest(api, event, listener, once) {
-		if(event === "newListener" || event === "removeListener")
-			return Promise.reject(new Error("This event type is not yet supported."));
-
 		return this.createRequest(api, "addListener", { event, listener, once });
 	},
 

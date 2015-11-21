@@ -18,6 +18,12 @@ const callDelayers = new generating.Map(() => new Set());
 
 const listeners = {
 	add(entry) {
+		this.call({
+			api: entry.api,
+			object: entry.object,
+			event: "newListener"
+		}, [entry.event, entry.listener]);
+
 		apis.get(entry.api).get(entry.object).get(entry.event).add({
 			listener: entry.listener,
 			once: entry.once
@@ -87,6 +93,12 @@ const listeners = {
 				event: entry.event
 			});
 		}
+
+		this.call({
+			api: entry.api,
+			object: entry.object,
+			event: "removeListener"
+		}, [entry.event, listenerMeta.listener]);
 
 		return res;
 	},

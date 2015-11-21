@@ -31,6 +31,11 @@ class EventEmitter {
 		this.object = object;
 
 		this.events = new generating.Map(event => {
+			if(event === "newListener" || event === "removeListener")
+				return {
+					apis: new Set()
+				};
+
 			const eventMeta = {
 				apis: new Set(),
 				listener() {
@@ -63,9 +68,6 @@ class EventEmitter {
 	}
 
 	addListener(event, api) {
-		if(event === "newListener" || event === "removeListener")
-			throw expose(new Error(`${event} listeners are not allowed.`));
-
 		this.events.get(event).apis.add(api);
 		disconnectCleaner.attach(api, this);
 	}
