@@ -14,7 +14,8 @@ class Sandbox {
 		this.runner = runner;
 
 		this[sandbox] = childProcess.fork(path.join(__dirname, "process"), {
-			silent: true
+			silent: true,
+			execArgv: []
 		});
 
 		this[sandbox].stdout.on("data",
