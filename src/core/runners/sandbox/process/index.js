@@ -3,21 +3,24 @@
 const EventEmitter = require("events");
 
 const owe = require("owe.js");
+const oweEvents = require("owe-events");
 const api = require("../api");
-const events = require("../api/events");
 
 const master = api.client(process);
 
 const controller = {
 	master,
-	eventController: events.controller,
+	eventController: oweEvents.controller,
 
 	init() {
 		master.route("runner").then(runner => console.log(`Hi, my name is ${runner.name} and I'm ${runner.active ? "active" : "inactive"}!`));
 
 		const emitter = new EventEmitter();
 
-		owe(emitter, events.router());
+		owe(emitter, owe.chain([
+			oweEvents(),
+			owe.reroute(controller)
+		]));
 
 		this.emitter = emitter;
 

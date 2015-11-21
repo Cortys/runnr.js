@@ -34,6 +34,7 @@
 		"owe.js": "^0.9",
 		"owe-http": "^0.9",
 		"owe-fs": "^0.9",
+		"owe-events": "^0.9",
 
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",

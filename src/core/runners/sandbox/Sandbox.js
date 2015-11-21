@@ -1,11 +1,11 @@
 "use strict";
 
 const owe = require("owe.js");
+const oweEvents = require("owe-events");
 const childProcess = require("child_process");
 const path = require("path");
 
 const api = require("./api");
-const events = require("./api/events");
 
 const sandbox = Symbol("sandbox");
 
@@ -26,7 +26,7 @@ class Sandbox {
 		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
 		api.server(this[sandbox], owe.api({
 			runner: this.runner,
-			eventController: events.controller
+			eventController: oweEvents.controller
 		}, owe.serve.router()));
 
 		// Start an owe client to request data from the sandbox's API:
@@ -51,17 +51,13 @@ class Sandbox {
 
 		fn.toString = () => "[function Function]";
 
-		this.api.route("emitter").on("newListener", (event, listener) => {
+		this.api.route("emitter").on("newListener", function(event, listener) {
 			console.log("new", event, listener);
-		}).catch(console.error);
 
-		this.api.route("emitter").on("removeListener", (event, listener) => {
-			console.log("removed", event, listener);
-		}).catch(console.error);
+			this.route("greeting").then(console.log, console.log);
+		});
 
-		this.api.route("emitter").on("test", fn).catch(
-			err => console.error("error", err)
-		);
+		this.api.route("emitter").on("test", fn);
 	}
 
 	/**
