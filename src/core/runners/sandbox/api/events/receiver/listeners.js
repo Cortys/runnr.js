@@ -2,6 +2,8 @@
 
 const generating = require("../generatingMaps");
 
+const disconnectCleaner = require("../disconnectCleaner");
+
 // ClientApi => event emitting objects:
 const apis = new generating.WeakMap(
 	// event emitting object => events:
@@ -28,10 +30,24 @@ const listeners = {
 			listener: entry.listener,
 			once: entry.once
 		});
+
+		disconnectCleaner.attach(entry.api, this);
 	},
 
 	getListeners(entry) {
 		return apis.maybeLookup(entry.api).maybeLookup(entry.object).lookup(entry.event);
+	},
+
+	removeApi(api) {
+		const objects = apis.lookup(api);
+
+		if(!objects)
+			return false;
+
+		for(const object of objects)
+			this.removeAll({ api, object });
+
+		return true;
 	},
 
 	remove(entry) {
@@ -48,22 +64,28 @@ const listeners = {
 	},
 
 	removeAll(entry) {
-		const api = apis.lookup(entry.api);
+		if(entry.event == null) {
+			const events = apis.maybeLookup(entry.api).lookup(entry.object);
 
-		if(!api)
+			if(!events)
+				return false;
+
+			for(const event of events)
+				for(const listenerMeta of event)
+					this.removeSpecific(entry, listenerMeta);
+
+			return true;
+		}
+
+		const listeners = this.getListeners(entry);
+
+		if(!listeners)
 			return false;
 
-		if(entry.event == null)
-			return api.delete(entry.object);
+		for(const listenerMeta of listeners)
+			this.removeSpecific(entry, listenerMeta);
 
-		const object = api.lookup(entry.object);
-
-		if(!object)
-			return false;
-
-		// removeAll removes all listeners for the given event without notifying the server
-		// since all removeAll calls occur as a reaction to the server removing the event.
-		return object.delete(entry.event);
+		return true;
 	},
 
 	removeSpecific(entry, listenerMeta) {
@@ -92,6 +114,14 @@ const listeners = {
 				object: entry.object,
 				event: entry.event
 			});
+		}
+
+		if(object.size === 0)
+			api.delete(entry.object);
+
+		if(api.size === 0) {
+			apis.delete(entry.api);
+			disconnectCleaner.detach(entry.api, this);
 		}
 
 		this.call({
