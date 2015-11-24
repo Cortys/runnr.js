@@ -18,7 +18,9 @@ const controller = {
 		const emitter = new EventEmitter();
 
 		owe(emitter, owe.chain([
-			oweEvents(),
+			oweEvents({
+				filter: new Set(["newListener", "removeListener", "test"])
+			}),
 			owe.reroute(controller)
 		]));
 
