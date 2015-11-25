@@ -40,7 +40,7 @@ class Runner extends StoreItem {
 		}));
 		owe.expose.properties(this, exposed);
 
-		// Since sandbox requires an API, it has to be initialized after runner is bound to owe:
+		// Since sandbox requires a runner API, it has to be initialized after this is bound to owe:
 		this.sandbox = new Sandbox(this);
 	}
 

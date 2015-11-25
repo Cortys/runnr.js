@@ -2,13 +2,17 @@
 
 const owe = require("owe.js");
 
-const client = require("./client");
+module.exports = (target, api, options) => {
+	if(typeof options !== "object" || options === null)
+		options = {};
 
-module.exports = (target, api) => {
-	api = api.origin({
-		sandbox: true,
-		eventsApi: client(target).route("eventController")
-	});
+	options = {
+		origin: options.orign || {}
+	};
+
+	api = api.origin(Object.assign({
+		sandbox: true
+	}, options.origin));
 
 	target.on("message", msg => {
 		if(!msg || typeof msg !== "object" || msg.type !== "owe" || !msg.request)
