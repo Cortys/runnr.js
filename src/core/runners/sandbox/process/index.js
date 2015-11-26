@@ -1,9 +1,5 @@
 "use strict";
 
-const connector = require("./connector");
+const nodes = require("./nodes");
 
-const runner = connector.master.route("runner");
-
-const graph = runner.route("graph");
-
-graph.route("nodes").then(console.log, console.error);
+nodes.init();

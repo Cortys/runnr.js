@@ -52,7 +52,9 @@ class Edge extends require("events") {
 				filter: owe.switch(function() {
 					return this.value === that ? "root" : "deep";
 				}, {
+					// Allow all routes included in "routes" for this instance:
 					root: routes,
+					// Allow all routes for child objects of this instance:
 					deep: true
 				})
 			},

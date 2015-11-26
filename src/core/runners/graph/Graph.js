@@ -85,7 +85,7 @@ const operations = {
 	},
 
 	instanciateNode(node, graph) {
-		node = new Node(node, graph);
+		node = node instanceof Node ? node : new Node(node, graph);
 		node.on("delete", this.deleteNode.bind(this, graph, node.id));
 		return node;
 	},

@@ -2,26 +2,31 @@
 
 const owe = require("owe.js");
 
-const plugins = require("../../plugins");
-
 const graph = Symbol("graph");
+const oweRoutes = Symbol("routes");
+const oweWritable = Symbol("writable");
 
 class Node extends require("events") {
 	constructor(preset, parentGraph) {
-		if(preset instanceof Node)
-			return preset;
+		// Node is an abstract class.
+		// If instanciated directly, the intended concrete class will be read from preset.type and instanciated instead:
+		if(new.target === Node) {
+			if(typeof preset.id !== "number")
+				throw new TypeError(`Invalid node id '${preset.id}'.`);
 
-		if(typeof preset.id !== "number")
-			throw new TypeError(`Invalid node id '${preset.id}'.`);
+			if(!(preset.type in nodeTypes))
+				throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
 
-		if(!(preset.type in nodeTypes))
-			throw new owe.exposed.Error(`Unknown node type '${preset.type}'.`);
+			return Object.assign(new nodeTypes[preset.type](preset, parentGraph), {
+				id: preset.id,
+				type: preset.type
+			});
+		}
 
 		super();
 
-		const validatedPreset = nodeTypes[preset.type](preset);
-		const exposed = ["id", ...Object.keys(validatedPreset)];
-		const routes = new Set([
+		const exposed = ["id", "type", "ports", ...preset];
+		const routes = this[oweRoutes] = new Set([
 			...exposed,
 			"edgesIn",
 			"edgesOut",
@@ -33,17 +38,8 @@ class Node extends require("events") {
 		]);
 
 		Object.assign(this, {
-			id: preset.id,
 			[graph]: parentGraph
-		}, validatedPreset);
-
-		if(this.type === "plugin") {
-			Object.defineProperty(this, "plugin", {
-				get: () => plugins.get(this.name)
-			});
-
-			routes.add("plugin");
-		}
+		});
 
 		const that = this;
 
@@ -53,15 +49,22 @@ class Node extends require("events") {
 				filter: owe.switch(function() {
 					return this.value === that ? "root" : "deep";
 				}, {
+					// Allow all routes included in "routes" for this instance:
 					root: routes,
+					// Allow all routes for child objects of this instance:
 					deep: true
-				})
+				}),
+				writable: this[oweWritable] = new Set()
 			},
 			closer: {
 				filter: true
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	get ports() {
+		throw new owe.epxosed.Error(`Node#ports was not implemented by '${this.constructor.name}'.`);
 	}
 
 	get edgesIn() {
@@ -122,35 +125,16 @@ class Node extends require("events") {
 	}
 }
 
+Object.assign(Node, {
+	routes: oweRoutes,
+	writable: oweWritable
+});
+
+module.exports = Node;
+
 const nodeTypes = {
 	__proto__: null,
 
-	data(node) {
-		return {
-			type: "data",
-			data: plugins.constraints.match(node.data, node.constraint),
-			constraint: node.constraint,
-			ports: {
-				in: {},
-				out: {
-					data: node.constraint
-				}
-			}
-		};
-	},
-
-	plugin(node) {
-		const plugin = plugins.get(node.name);
-
-		if(!plugin)
-			throw new owe.exposed.Error(`There is no plugin with the name '${node.name}'.`);
-
-		return {
-			type: "plugin",
-			name: plugin.name,
-			ports: plugin.ports
-		};
-	}
+	data: require("./DataNode"),
+	plugin: require("./PluginNode")
 };
-
-module.exports = Node;
