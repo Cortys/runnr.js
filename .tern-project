@@ -1,5 +1,6 @@
 {
 	"ecmaVersion": 6,
+	"dependencyBudget": 5000,
 	"libs": [],
 	"loadEagerly": [
 		"src/**/*.js"

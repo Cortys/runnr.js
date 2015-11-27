@@ -9,7 +9,7 @@ const Node = require("./Node");
 
 const nodes = {
 	init() {
-		graph.route("nodes").then(nodes => Object.keys(nodes).forEach(nodeId => new Node(nodeId)));
+		graph.route("nodes").then(nodes => Object.keys(nodes).forEach(nodeId => new Node(nodes[nodeId])));
 	}
 };
 

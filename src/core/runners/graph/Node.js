@@ -25,6 +25,8 @@ class Node extends require("events") {
 
 		super();
 
+		this[graph] = parentGraph;
+
 		const exposed = ["id", "type", "ports", ...preset];
 		const routes = this[oweRoutes] = new Set([
 			...exposed,
@@ -36,10 +38,6 @@ class Node extends require("events") {
 			"neighbours",
 			"delete"
 		]);
-
-		Object.assign(this, {
-			[graph]: parentGraph
-		});
 
 		const that = this;
 

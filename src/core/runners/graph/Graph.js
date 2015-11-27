@@ -39,7 +39,9 @@ class Graph extends StoreItem {
 	}
 
 	[update](type, value) {
-		this.emit("update", type, value);
+		// Emit update to notify this graph's runner, which then sets a dirty mark to trigger DB persistence:
+		this.emit("update");
+		this.emit(type, value);
 	}
 
 	get nodes() {
@@ -48,7 +50,7 @@ class Graph extends StoreItem {
 	set nodes(val) {
 		this[nodes] = operations.prepareGraphList(this, "Node", val);
 
-		this[update]("nodes");
+		this[update]("updateNodes");
 	}
 
 	get edges() {
@@ -57,7 +59,7 @@ class Graph extends StoreItem {
 	set edges(val) {
 		this[edges] = operations.prepareGraphList(this, "Edge", val);
 
-		this[update]("edges");
+		this[update]("updateEdges");
 	}
 }
 
