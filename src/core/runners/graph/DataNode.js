@@ -1,5 +1,7 @@
 "use strict";
 
+const internalize = require("../../helpers/internalize");
+
 const Node = require("./Node");
 
 const plugins = require("../../plugins");
@@ -11,6 +13,7 @@ class DataNode extends Node {
 	constructor(preset, parentGraph) {
 		super(["data", "constraint"], parentGraph);
 		this[Node.writable].add("data", "constraint");
+		internalize(this, ["data", "constraint"]);
 
 		this.constraint = preset.constraint;
 		this.data = preset.data;
