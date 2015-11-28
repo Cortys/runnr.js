@@ -1,7 +1,10 @@
 "use strict";
 
 const owe = require("owe.js");
-const StoreItem = require("../StoreItem");
+
+const internalize = require("../helpers/internalize");
+const persist = require("../helpers/persist");
+
 const Graph = require("./graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 
@@ -12,14 +15,16 @@ const helpers = require("./manage/helpers");
 const name = Symbol("name");
 const active = Symbol("active");
 const graph = Symbol("graph");
-const update = StoreItem.update;
+const update = Symbol("update");
 const updateGraph = Symbol("updateGraph");
 
-class Runner extends StoreItem {
+class Runner extends require("events") {
 	constructor(preset) {
-		super(preset, ["name", "active", "graph"]);
+		super();
+		Object.assign(this, preset);
+		internalize(this, ["name", "active", "graph"]);
 
-		this[updateGraph] = () => super[update]();
+		this[updateGraph] = () => persist(this);
 
 		if(!(graph in this))
 			this.graph = new Graph();
@@ -45,7 +50,7 @@ class Runner extends StoreItem {
 	}
 
 	[update](type, value) {
-		super[update]();
+		persist(this);
 
 		this.emit("update", type, value);
 	}

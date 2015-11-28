@@ -9,4 +9,4 @@
 }
 **/
 
-console.log("I'm test-plugin-1 and my runnr is: ", runnr);
+console.log("I'm test-plugin-1 and my runnr is:", runnr);

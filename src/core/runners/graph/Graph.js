@@ -1,17 +1,19 @@
 "use strict";
 
 const owe = require("owe.js");
-const StoreItem = require("../../StoreItem");
+const internalize = require("../../helpers/internalize");
 const Node = require("./Node");
 const Edge = require("./Edge");
 
 const nodes = Symbol("nodes");
 const edges = Symbol("edges");
-const update = StoreItem.update;
+const update = Symbol("update");
 
-class Graph extends StoreItem {
+class Graph extends require("events") {
 	constructor(preset) {
-		super(preset, ["nodes", "edges"]);
+		super();
+		Object.assign(this, preset);
+		internalize(this, ["nodes", "edges"]);
 
 		if(!this.nodes)
 			this.nodes = {};

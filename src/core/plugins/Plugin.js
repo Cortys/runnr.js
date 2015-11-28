@@ -2,15 +2,15 @@
 
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
-const StoreItem = require("../StoreItem");
 const path = require("path");
 
 const installPlugin = require("./manage/install");
 const uninstallPlugin = require("./manage/uninstall");
 
-class Plugin extends StoreItem {
+class Plugin extends require("events") {
 	constructor(preset) {
-		super(preset);
+		super();
+		Object.assign(this, preset);
 
 		this.fs = oweFs({
 			root: this.location

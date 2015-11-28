@@ -19,7 +19,7 @@ class DataNode extends Node {
 			value: {
 				in: {},
 				out: {
-					data: preset.constraint
+					data: this.constraint
 				}
 			}
 		});

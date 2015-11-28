@@ -18,6 +18,10 @@ class Node {
 		this.id = node.id;
 		this.type = node.type;
 		this.api = graph.route("nodes", node.id);
+
+		this.api.route("ports").then(ports => {
+			console.log(ports);
+		});
 	}
 }
 
