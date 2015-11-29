@@ -30,11 +30,7 @@ class Node extends require("events") {
 		const exposed = ["id", "type", "ports", ...preset];
 		const routes = this[oweRoutes] = new Set([
 			...exposed,
-			"edgesIn",
-			"edgesOut",
 			"edges",
-			"predecessors",
-			"successors",
 			"neighbours",
 			"delete"
 		]);
@@ -62,62 +58,41 @@ class Node extends require("events") {
 	}
 
 	get ports() {
-		throw new owe.epxosed.Error(`Node#ports was not implemented by '${this.constructor.name}'.`);
+		throw new owe.exposed.Error(`Node#ports was not implemented by '${this.constructor.name}'.`);
 	}
 
-	get edgesIn() {
-		const res = new Set();
-
-		Object.keys(this[graph].edges).forEach(id => {
-			const edge = this[graph].edges[id];
-
-			if(edge.to.node === this.id)
-				res.add(edge);
-		});
-
-		return res;
-	}
-
-	get edgesOut() {
-		const res = new Set();
+	get edges() {
+		const res = {
+			in: new Set(),
+			out: new Set()
+		};
 
 		Object.keys(this[graph].edges).forEach(id => {
 			const edge = this[graph].edges[id];
 
 			if(edge.from.node === this.id)
-				res.add(edge);
+				res.out.add(edge);
+			else if(edge.to.node === this.id)
+				res.in.add(edge);
 		});
 
 		return res;
-	}
-
-	get edges() {
-		const res = new Set();
-
-		Object.keys(this[graph].edges).forEach(id => {
-			const edge = this[graph].edges[id];
-
-			if(edge.from.node === this.id || edge.to.node === this.id)
-				res.add(edge);
-		});
-
-		return res;
-	}
-
-	get predecessors() {
-		return new Set(this.edgesIn.map(edge => edge.fromNode));
-	}
-
-	get successors() {
-		return new Set(this.edgesOut.map(edge => edge.toNode));
 	}
 
 	get neighbours() {
-		return new Set(this.edges.map(edge => edge[edge.from.node === this.id ? "toNode" : "fromNode"]));
+		const edges = this.edges;
+
+		return {
+			before: new Set(edges.in.map(edge => edge.fromNode)),
+			after: new Set(edges.out.map(edge => edge.toNode))
+		};
 	}
 
 	delete() {
-		this.edges.forEach(edge => edge.delete());
+		const edges = this.edges;
+
+		edges.in.forEach(edge => edge.delete());
+		edges.out.forEach(edge => edge.delete());
 
 		this.emit("delete");
 	}
