@@ -1,6 +1,9 @@
 "use strict";
 
+const stream = require("stream");
+
 const connector = require("./connector");
+const nodes = require("./nodes");
 
 const graph = connector.master.route("runner", "graph");
 
@@ -19,9 +22,23 @@ class Node {
 		this.type = node.type;
 		this.api = graph.route("nodes", node.id);
 
-		this.api.route("ports").then(ports => {
-			console.log(ports);
-		});
+		this.ports = {
+			in: {},
+			out: {}
+		};
+
+		this.loaded = Promise.all([
+			this.api.route("edges"),
+			this.api.route("ports").then(ports => {
+				Object.keys(ports.in).forEach(portName => {
+					this.ports.in[portName] = new stream.Writable();
+				});
+
+				Object.keys(ports.out).forEach(portName => {
+					this.ports.out[portName] = new stream.Readable();
+				});
+			})
+		]).catch(console.log);
 	}
 }
 

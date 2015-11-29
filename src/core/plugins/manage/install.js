@@ -11,7 +11,6 @@ const config = require("../../config");
 const store = require("../store");
 
 function install(plugin, map) {
-
 	if(typeof plugin !== "object" || !plugin)
 		throw new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`);
 
@@ -24,7 +23,6 @@ function install(plugin, map) {
 
 const helpers = {
 	installationTypes: {
-
 		__proto__: null,
 
 		"local": "local",
@@ -35,7 +33,6 @@ const helpers = {
 	/* Installation Types: */
 
 	local(plugin) {
-
 		return new Promise((resolve, reject) => {
 			fs.stat(plugin.path, (err, stat) => {
 				if(err)
@@ -52,7 +49,6 @@ const helpers = {
 				});
 			});
 		}).then(file => this.parsePluginFile(file)).then(result => {
-
 			result.manifest.main = path.basename(plugin.path);
 
 			if(+plugin.copy) {
@@ -85,7 +81,6 @@ const helpers = {
 	/* Helpers: */
 
 	parsePluginFile(file) {
-
 		const startToken = "/**package";
 		const endToken = "**/";
 
@@ -111,7 +106,6 @@ const helpers = {
 	},
 
 	validateManifest(manifest) {
-
 		try {
 			normalizePackage(manifest, true);
 		}
@@ -131,7 +125,6 @@ const helpers = {
 	},
 
 	installManifest(manifest) {
-
 		const dbPlugin = store.collection.by("name", manifest.name);
 
 		if(dbPlugin)
