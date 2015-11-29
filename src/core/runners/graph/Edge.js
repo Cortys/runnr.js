@@ -42,6 +42,8 @@ class Edge extends require("events") {
 		if(!(this.to.port in this.toNode.ports.in))
 			throw new owe.exposed.Error(`Edge end node does not offer an input port '${this.to.port}'.`);
 
+		/* owe binding: */
+
 		const that = this;
 		const exposed = ["id", "from", "to"];
 		const routes = new Set([...exposed, "delete"]);

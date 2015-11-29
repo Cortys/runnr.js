@@ -27,6 +27,8 @@ class Node extends require("events") {
 
 		this[graph] = parentGraph;
 
+		/* owe binding: */
+
 		const exposed = ["id", "type", "ports", ...preset];
 		const routes = this[oweRoutes] = new Set([
 			...exposed,

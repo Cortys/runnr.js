@@ -7,8 +7,10 @@ const semver = require("semver");
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
-const config = require("../../config");
-const store = require("../store");
+const config = require("../../../config");
+const store = require("../../store");
+
+const ports = require("../ports");
 
 function install(plugin, map) {
 	if(typeof plugin !== "object" || !plugin)
@@ -113,13 +115,18 @@ const helpers = {
 			throw owe.expose(err);
 		}
 
-		if(!manifest.displayName || typeof manifest.displayName !== "string")
-			manifest.displayName = manifest.name;
-
 		const dbPlugin = store.collection.by("name", manifest.name);
 
 		if(dbPlugin && (dbPlugin.block || semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
 			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
+
+		if(!manifest.displayName || typeof manifest.displayName !== "string")
+			manifest.displayName = manifest.name;
+
+		// runnr specific manifest checks:
+
+		// Check ports:
+		manifest.ports = ports.validate(manifest.ports);
 
 		return manifest;
 	},

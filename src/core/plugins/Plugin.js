@@ -19,14 +19,16 @@ class Plugin extends require("events") {
 		/* owe binding: */
 
 		const exposed = ["name", "displayName", "version", "author", "source"];
+		const publicRoutes = new Set([...exposed, "ports", "uninstall"]);
+		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
 
 		owe(this, owe.serve({
 			router: {
 				filter: owe.switch(function() {
 					return this.origin.sandbox ? "private" : "public";
 				}, {
-					public: new Set([...exposed, "uninstall"]),
-					private: new Set([...exposed, "location", "main", "mainLocation", "uninstall"])
+					public: publicRoutes,
+					private: privateRoutes
 				}),
 				deep: true
 			},
@@ -43,7 +45,7 @@ class Plugin extends require("events") {
 
 	uninstall() {
 		return uninstallPlugin(this)
-			.then(() => this.emit("uninstalled"));
+			.then(() => this.emit("uninstall"));
 	}
 
 	static install(plugin) {
