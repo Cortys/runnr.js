@@ -22,13 +22,19 @@ class Plugin extends require("events") {
 		const publicRoutes = new Set([...exposed, "ports", "uninstall"]);
 		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
 
+		const that = this;
+
 		owe(this, owe.serve({
 			router: {
 				filter: owe.switch(function() {
+					if(this.value !== that)
+						return "deep";
+
 					return this.origin.sandbox ? "private" : "public";
 				}, {
 					public: publicRoutes,
-					private: privateRoutes
+					private: privateRoutes,
+					deep: true
 				}),
 				deep: true
 			},
