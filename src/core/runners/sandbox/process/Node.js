@@ -31,14 +31,14 @@ class Node {
 			this.api.route("edges"),
 			this.api.route("ports").then(ports => {
 				Object.keys(ports.in).forEach(portName => {
-					this.ports.in[portName] = new stream.Writable();
+					this.ports.in[portName] = new stream.Readable();
 				});
 
 				Object.keys(ports.out).forEach(portName => {
-					this.ports.out[portName] = new stream.Readable();
+					this.ports.out[portName] = new stream.Writable();
 				});
 			})
-		]).catch(console.log);
+		]);
 	}
 }
 

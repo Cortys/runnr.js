@@ -10,14 +10,17 @@ class PluginNode extends Node {
 
 		this.plugin = this.api.route("plugin");
 
-		Promise.all([this.loaded, this.plugin.route("mainLocation")])
-			.then(mainLocation => this.sandbox = sandboxedModule.load(mainLocation[1], {
+		Promise.all([this.plugin.route("mainLocation"), this.loaded]).then(result => {
+			const mainLocation = result[0];
+
+			this.sandbox = sandboxedModule.load(mainLocation, {
 				globals: {
 					runnr: {
-						test: "test"
+						ports: this.ports
 					}
 				}
-			}));
+			});
+		});
 	}
 }
 

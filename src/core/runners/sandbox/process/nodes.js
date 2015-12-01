@@ -11,13 +11,13 @@ const nodeMap = new Map();
 const nodes = module.exports = {
 	init() {
 		graph.route("nodes").then(nodes => Object.keys(nodes).forEach(nodeId => nodeMap.set(nodeId, new Node(nodes[nodeId]))));
+
+		connector.register("nodes", nodes);
 	},
 
 	get: id => nodeMap.get(id)
 };
 
-const Node = require("./Node");
-
 owe(nodes);
 
-connector.register("nodes", nodes);
+const Node = require("./Node");
