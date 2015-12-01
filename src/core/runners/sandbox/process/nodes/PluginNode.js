@@ -16,7 +16,7 @@ class PluginNode extends Node {
 			this.sandbox = sandboxedModule.load(mainLocation, {
 				globals: {
 					runnr: {
-						ports: this.ports
+						test: "tiptop"
 					}
 				}
 			});

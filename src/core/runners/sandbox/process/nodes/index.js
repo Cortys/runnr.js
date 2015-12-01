@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const connector = require("./connector");
+const connector = require("../connector");
 
 const graph = connector.master.route("runner", "graph");
 

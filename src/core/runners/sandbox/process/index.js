@@ -1,5 +1,3 @@
 "use strict";
 
-const nodes = require("./nodes");
-
-nodes.init();
+require("./nodes").init();
