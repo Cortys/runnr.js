@@ -3,6 +3,7 @@
 const sandboxedModule = require("sandboxed-module");
 
 const Node = require("./Node");
+const SandboxHandle = require("../SandboxHandle");
 
 class PluginNode extends Node {
 	constructor(node) {
@@ -15,9 +16,7 @@ class PluginNode extends Node {
 
 			this.sandbox = sandboxedModule.load(mainLocation, {
 				globals: {
-					runnr: {
-						test: "tiptop"
-					}
+					runnr: new SandboxHandle(this)
 				}
 			});
 		});
