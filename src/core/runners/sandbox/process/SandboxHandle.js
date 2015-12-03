@@ -10,11 +10,20 @@ class SandboxHandle {
 		};
 
 		Object.keys(node.ports.in).forEach(name => {
-			this.ports.in[name] = new stream.Readable();
+			const port = this.ports.in[name] = new stream.Readable({
+				read() {}
+			});
+
+			node.ports.in[name].partner = port;
 		});
 
 		Object.keys(node.ports.out).forEach(name => {
-			this.ports.out[name] = new stream.Writable();
+			this.ports.out[name] = new stream.Writable({
+				write(data, encoding, callback) {
+					node.ports.out[name].push(data);
+					callback();
+				}
+			});
 		});
 	}
 }

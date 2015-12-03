@@ -31,11 +31,20 @@ class Node {
 			this.api.route("edges"),
 			this.api.route("ports").then(ports => {
 				Object.keys(ports.in).forEach(portName => {
-					this.ports.in[portName] = new stream.Writable();
+					const port = this.ports.in[portName] = new stream.Writable({
+						write(data, encoding, callback) {
+							if(port.partner)
+								port.partner.push(data);
+
+							callback();
+						}
+					});
 				});
 
 				Object.keys(ports.out).forEach(portName => {
-					this.ports.out[portName] = new stream.Readable();
+					this.ports.out[portName] = new stream.Readable({
+						read() {}
+					});
 				});
 			})
 		]);
