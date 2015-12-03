@@ -9,18 +9,18 @@ class SandboxHandle {
 			out: {}
 		};
 
-		Object.keys(node.ports.in).forEach(name => {
-			const port = this.ports.in[name] = new stream.Readable({
+		Object.keys(node.ports.in).forEach(portName => {
+			const port = this.ports.in[portName] = new stream.Readable({
 				read() {}
 			});
 
-			node.ports.in[name].partner = port;
+			node.ports.in[portName].partner = port;
 		});
 
-		Object.keys(node.ports.out).forEach(name => {
-			this.ports.out[name] = new stream.Writable({
+		Object.keys(node.ports.out).forEach(portName => {
+			this.ports.out[portName] = new stream.Writable({
 				write(data, encoding, callback) {
-					node.ports.out[name].push(data);
+					node.ports.out[portName].push(data);
 					callback();
 				}
 			});

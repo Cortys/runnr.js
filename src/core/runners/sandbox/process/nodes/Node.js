@@ -45,6 +45,8 @@ class Node {
 					this.ports.out[portName] = new stream.Readable({
 						read() {}
 					});
+
+					this.ports.out[portName].on("data", console.log.bind(console, "out", portName));
 				});
 			})
 		]);

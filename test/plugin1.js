@@ -19,3 +19,5 @@
 **/
 
 console.log("I'm test-plugin-1 and my runnr is:", runnr);
+
+setInterval(() => runnr.ports.out.timestamp.write(`${Date.now()}`, "utf8"), 1000);
