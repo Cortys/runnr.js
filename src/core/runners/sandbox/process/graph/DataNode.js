@@ -3,8 +3,8 @@
 const Node = require("./Node");
 
 class DataNode extends Node {
-	constructor(node) {
-		super(node);
+	constructor(preset, parentGraph) {
+		super(preset, parentGraph);
 	}
 }
 

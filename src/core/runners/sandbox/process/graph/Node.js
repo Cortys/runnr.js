@@ -1,26 +1,24 @@
 "use strict";
 
-const DualStream = require("../DualStream");
+const DualStream = require("./DualStream");
 
-const connector = require("../connector");
-
-const graph = connector.master.route("runner", "graph");
+const graph = Symbol("graph");
 
 class Node {
-	constructor(node, runner) {
+	constructor(preset, parentGraph) {
 		// Node is an abstract class.
-		// If instanciated directly, the intended concrete class will be read from node.type and instanciated instead:
+		// If instanciated directly, the intended concrete class will be read from preset.type and instanciated instead:
 		if(new.target === Node) {
-			if(!(node.type in nodeTypes))
-				throw new Error(`Unknown node type '${node.type}'.`);
+			if(!(preset.type in nodeTypes))
+				throw new Error(`Unknown node type '${preset.type}'.`);
 
-			return new nodeTypes[node.type](node);
+			return new nodeTypes[preset.type](preset, parentGraph);
 		}
 
-		this.id = node.id;
-		this.type = node.type;
-		this.runner = runner;
-		this.api = graph.route("nodes", node.id);
+		this.id = preset.id;
+		this.type = preset.type;
+		this[graph] = parentGraph;
+		this.api = parentGraph.api.route("nodes", preset.id);
 
 		this.ports = {
 			in: {},

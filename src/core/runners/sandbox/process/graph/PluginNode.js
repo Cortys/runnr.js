@@ -3,11 +3,11 @@
 const sandboxedModule = require("sandboxed-module");
 
 const Node = require("./Node");
-const SandboxHandle = require("../SandboxHandle");
+const SandboxHandle = require("./SandboxHandle");
 
 class PluginNode extends Node {
-	constructor(node) {
-		super(node);
+	constructor(preset, parentGraph) {
+		super(preset, parentGraph);
 
 		this.plugin = this.api.route("plugin");
 

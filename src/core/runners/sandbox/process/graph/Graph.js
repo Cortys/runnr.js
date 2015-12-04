@@ -4,9 +4,10 @@ const owe = require("owe.js");
 
 const Node = require("./Node");
 
-class Runner {
+class Graph {
 	constructor(graph) {
 		this.nodeMap = new Map();
+		this.api = graph;
 
 		graph.route("nodes").then(nodes => {
 			Object.keys(nodes).forEach(nodeId => this.nodeMap.set(
@@ -22,4 +23,4 @@ class Runner {
 	}
 }
 
-module.exports = Runner;
+module.exports = Graph;
