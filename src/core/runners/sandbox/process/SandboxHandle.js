@@ -1,7 +1,5 @@
 "use strict";
 
-const stream = require("stream");
-
 class SandboxHandle {
 	constructor(node) {
 		this.ports = {
@@ -10,20 +8,13 @@ class SandboxHandle {
 		};
 
 		Object.keys(node.ports.in).forEach(portName => {
-			const port = this.ports.in[portName] = new stream.Readable({
-				read() {}
-			});
-
-			node.ports.in[portName].partner = port;
+			this.ports.in[portName] = node.ports.in[portName].readable;
 		});
 
 		Object.keys(node.ports.out).forEach(portName => {
-			this.ports.out[portName] = new stream.Writable({
-				write(data, encoding, callback) {
-					node.ports.out[portName].push(data);
-					callback();
-				}
-			});
+			this.ports.out[portName] = node.ports.out[portName].writable;
+
+			node.ports.out[portName].readable.pipe(process.stdout);
 		});
 	}
 }

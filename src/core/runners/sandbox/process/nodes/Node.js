@@ -1,6 +1,6 @@
 "use strict";
 
-const stream = require("stream");
+const DualStream = require("../DualStream");
 
 const connector = require("../connector");
 const nodes = require(".");
@@ -31,22 +31,11 @@ class Node {
 			this.api.route("edges"),
 			this.api.route("ports").then(ports => {
 				Object.keys(ports.in).forEach(portName => {
-					const port = this.ports.in[portName] = new stream.Writable({
-						write(data, encoding, callback) {
-							if(port.partner)
-								port.partner.push(data);
-
-							callback();
-						}
-					});
+					this.ports.in[portName] = new DualStream();
 				});
 
 				Object.keys(ports.out).forEach(portName => {
-					this.ports.out[portName] = new stream.Readable({
-						read() {}
-					});
-
-					this.ports.out[portName].on("data", console.log.bind(console, "out", portName));
+					this.ports.out[portName] = new DualStream();
 				});
 			})
 		]);
