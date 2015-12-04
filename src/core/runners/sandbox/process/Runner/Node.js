@@ -3,12 +3,11 @@
 const DualStream = require("../DualStream");
 
 const connector = require("../connector");
-const nodes = require(".");
 
 const graph = connector.master.route("runner", "graph");
 
 class Node {
-	constructor(node) {
+	constructor(node, runner) {
 		// Node is an abstract class.
 		// If instanciated directly, the intended concrete class will be read from node.type and instanciated instead:
 		if(new.target === Node) {
@@ -20,6 +19,7 @@ class Node {
 
 		this.id = node.id;
 		this.type = node.type;
+		this.runner = runner;
 		this.api = graph.route("nodes", node.id);
 
 		this.ports = {
