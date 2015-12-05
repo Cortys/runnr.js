@@ -1,10 +1,10 @@
 "use strict";
 
-const internalize = require("../../helpers/internalize");
+const internalize = require("../helpers/internalize");
 
 const Node = require("./Node");
 
-const plugins = require("../../plugins");
+const plugins = require("../plugins");
 
 const data = Symbol("data");
 const constraint = Symbol("constraint");

@@ -1,7 +1,7 @@
 "use strict";
 
 const owe = require("owe.js");
-const internalize = require("../../helpers/internalize");
+const internalize = require("../helpers/internalize");
 const Node = require("./Node");
 const Edge = require("./Edge");
 

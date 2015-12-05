@@ -5,7 +5,7 @@ const owe = require("owe.js");
 const internalize = require("../helpers/internalize");
 const persist = require("../helpers/persist");
 
-const Graph = require("./graph/Graph");
+const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 
 const addRunner = require("./manage/add");
