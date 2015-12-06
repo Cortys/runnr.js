@@ -27,7 +27,7 @@ class Runner extends require("events") {
 		this[updateGraph] = () => persist(this);
 
 		if(!(graph in this))
-			this.graph = new Graph();
+			this.graph = new Graph({}, this);
 
 		/* owe binding: */
 
@@ -97,7 +97,7 @@ class Runner extends require("events") {
 		else
 			// Graphs with data are initialized async because they require a loaded Loki DB:
 			setImmediate(() => {
-				val = new Graph(val);
+				val = new Graph(val, this);
 				set();
 			});
 	}

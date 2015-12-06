@@ -23,7 +23,7 @@ class Plugin extends require("events") {
 		/* owe binding: */
 
 		const exposed = ["name", "displayName", "version", "author", "source"];
-		const publicRoutes = new Set([...exposed, "ports", "uninstall"]);
+		const publicRoutes = new Set([...exposed, "ports", "dependents", "uninstall"]);
 		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
 
 		const that = this;
@@ -51,6 +51,20 @@ class Plugin extends require("events") {
 
 	get mainLocation() {
 		return path.join(this.location, this.main);
+	}
+
+	get dependents() {
+		const result = {
+			plugins: new Set(),
+			runners: new Set()
+		};
+
+		this[dependentNodes].forEach(node => result[node instanceof Plugin ? "plugins" : "runners"].add(node.graph.container));
+
+		return {
+			plugins: [...result.plugins],
+			runners: [...result.runners]
+		};
 	}
 
 	addDependentNode(node) {
