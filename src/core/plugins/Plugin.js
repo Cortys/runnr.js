@@ -38,7 +38,9 @@ class Plugin extends require("events") {
 				}, {
 					public: publicRoutes,
 					private: privateRoutes,
-					deep: true
+					deep(route) {
+						return this.value.hasOwnProperty(route);
+					}
 				}),
 				deep: true
 			},
