@@ -7,6 +7,8 @@ const path = require("path");
 const installPlugin = require("./manage/install");
 const uninstallPlugin = require("./manage/uninstall");
 
+const dependentNodes = Symbol("dependentNodes");
+
 class Plugin extends require("events") {
 	constructor(preset) {
 		super();
@@ -15,6 +17,8 @@ class Plugin extends require("events") {
 		this.fs = oweFs({
 			root: this.location
 		});
+
+		this[dependentNodes] = new Set();
 
 		/* owe binding: */
 
@@ -47,6 +51,13 @@ class Plugin extends require("events") {
 
 	get mainLocation() {
 		return path.join(this.location, this.main);
+	}
+
+	addDependentNode(node) {
+		this[dependentNodes].add(node);
+
+		this.once("uninstall", () => node.delete());
+		node.once("delete", () => this[dependentNodes].delete(node));
 	}
 
 	uninstall() {
