@@ -72,11 +72,11 @@ const helpers = {
 					});
 				});
 			}
-			else {
-				result.manifest.location = path.dirname(plugin.path);
 
-				return result.manifest;
-			}
+			result.manifest.location = path.dirname(plugin.path);
+			result.manifest.source = "local";
+
+			return result.manifest;
 		});
 	},
 
