@@ -22,9 +22,7 @@ const plugins = {
 
 	install(plugin) {
 		return Plugin.install(plugin);
-	},
-
-	constraints: require("./manage/constraints")
+	}
 };
 
 /* Api: */

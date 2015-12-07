@@ -8,11 +8,17 @@
 	"author": "Clemens Damke",
 	"ports": {
 		"in": {
-			"name": "string"
+			"name": {
+				"constraint": "string"
+			}
 		},
 		"out": {
-			"name": "string",
-			"timestamp": "number"
+			"name": {
+				"constraint": "string"
+			},
+			"timestamp": {
+				"constraint": "number"
+			}
 		}
 	}
 }

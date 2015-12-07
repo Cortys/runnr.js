@@ -10,7 +10,7 @@ const owe = require("owe.js");
 const config = require("../../../config");
 const store = require("../../store");
 
-const ports = require("../ports");
+const ports = require("../../../helpers/ports");
 
 function install(plugin, map) {
 	if(typeof plugin !== "object" || !plugin)
