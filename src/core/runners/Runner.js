@@ -119,7 +119,9 @@ class Runner extends require("../EventEmitter") {
 	delete() {
 		return this.deactivate()
 			.then(() => deleteRunner(this))
-			.then(() => this.emit("delete"));
+			.then(() => {
+				this.emit("delete");
+			});
 	}
 
 	static add(runner) {

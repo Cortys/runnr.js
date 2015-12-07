@@ -78,7 +78,9 @@ class Plugin extends require("../EventEmitter") {
 
 	uninstall() {
 		return uninstallPlugin(this)
-			.then(() => this.emit("uninstall"));
+			.then(() => {
+				this.emit("uninstall");
+			});
 	}
 
 	static install(plugin) {
