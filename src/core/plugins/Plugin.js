@@ -9,7 +9,7 @@ const uninstallPlugin = require("./manage/uninstall");
 
 const dependentNodes = Symbol("dependentNodes");
 
-class Plugin extends require("events") {
+class Plugin extends require("../EventEmitter") {
 	constructor(preset) {
 		super();
 		Object.assign(this, preset);

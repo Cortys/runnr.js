@@ -18,7 +18,7 @@ const graph = Symbol("graph");
 const update = Symbol("update");
 const updateGraph = Symbol("updateGraph");
 
-class Runner extends require("events") {
+class Runner extends require("../EventEmitter") {
 	constructor(preset) {
 		super();
 		Object.assign(this, preset);
