@@ -14,7 +14,7 @@ class SandboxHandle {
 		Object.keys(node.ports.out).forEach(portName => {
 			this.ports.out[portName] = node.ports.out[portName].writable;
 
-			node.ports.out[portName].readable.pipe(process.stdout);
+			// node.ports.out[portName].readable.pipe(process.stdout);
 		});
 	}
 }
