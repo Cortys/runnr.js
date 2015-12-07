@@ -25,18 +25,40 @@ class Node {
 			out: {}
 		};
 
-		this.loaded = Promise.all([
-			this.api.route("edges"),
-			this.api.route("ports").then(ports => {
-				Object.keys(ports.in).forEach(portName => {
-					this.ports.in[portName] = new DualStream();
-				});
+		this.loaded = this.api.route("ports").then(ports => {
+			Object.keys(ports.in).forEach(portName => {
+				this.ports.in[portName] = new DualStream();
+			});
 
-				Object.keys(ports.out).forEach(portName => {
-					this.ports.out[portName] = new DualStream();
+			Object.keys(ports.out).forEach(portName => {
+				this.ports.out[portName] = new DualStream();
+			});
+		});
+
+		this.connected = Promise.all([this.api.route("edges", "out"), this.loaded]).then(result => {
+			const edges = result[0];
+
+			return Promise.all(edges.map(edge => {
+				const toNode = this[graph].get(edge.to.node);
+
+				if(!toNode)
+					throw new Error(`Could not find node ${edge.from.node}.`);
+
+				return toNode.loaded.then(() => {
+					const source = this.ports.out[edge.from.port];
+
+					if(!source)
+						throw new Error(`Could not find port '${edge.from.port}' in node ${this.id}.`);
+
+					const target = toNode.ports.in[edge.to.port];
+
+					if(!target)
+						throw new Error(`Could not find port '${edge.to.port}' in node ${toNode.id}.`);
+
+					source.readable.pipe(target.writable);
 				});
-			})
-		]);
+			}));
+		});
 	}
 }
 

@@ -11,7 +11,7 @@ class Graph {
 
 		graph.route("nodes").then(nodes => {
 			Object.keys(nodes).forEach(nodeId => this.nodeMap.set(
-				nodeId, new Node(nodes[nodeId], this)
+				nodes[nodeId].id, new Node(nodes[nodeId], this)
 			));
 		});
 

@@ -14,6 +14,8 @@ class DualStream {
 				callback();
 			}
 		});
+
+		this.writable.setDefaultEncoding("utf8");
 	}
 }
 
