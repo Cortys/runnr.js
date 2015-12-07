@@ -19,4 +19,7 @@ class SandboxHandle {
 	}
 }
 
+Object.freeze(SandboxHandle);
+Object.freeze(SandboxHandle.prototype);
+
 module.exports = SandboxHandle;
