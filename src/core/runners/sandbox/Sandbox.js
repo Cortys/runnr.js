@@ -8,6 +8,7 @@ const path = require("path");
 const api = require("./api");
 
 const sandbox = Symbol("sandbox");
+const log = Symbol("log");
 
 class Sandbox {
 	constructor(runner) {
@@ -18,10 +19,15 @@ class Sandbox {
 			execArgv: []
 		});
 
+		this[sandbox].on("exit", (code, signal) => {
+			console.log(this[log](`[EXIT] code=${code} signal=${signal}`));
+		});
+
+		// Log output of sandboxes to stdout/stderr:
 		this[sandbox].stdout.on("data",
-			data => process.stdout.write(`${this.runner.name} (${this.runner.id}) > ${String(data).replace(/\n$/, "")}\n`));
+			data => console.log(this[log](data)));
 		this[sandbox].stderr.on("data",
-			data => process.stderr.write(`${this.runner.name} (${this.runner.id}) > ${String(data).replace(/\n$/, "")}\n`));
+			data => console.error(this[log](data)));
 
 		// Start an owe client to request data from the sandbox's API:
 		this.api = api.client(this[sandbox]);
@@ -35,6 +41,16 @@ class Sandbox {
 				eventsApi: this.api.route("eventController")
 			}
 		});
+	}
+
+	[log](data) {
+		return `${this.runner.name} (${this.runner.id}) > ${String(data).replace(/[\n\r]+$/, "")}`;
+	}
+
+	kill() {
+		this[sandbox].kill();
+
+		return new Promise(resolve => this[sandbox].once("exit", resolve));
 	}
 
 	/**

@@ -21,13 +21,7 @@ const updateGraph = Symbol("updateGraph");
 class Runner extends require("../EventEmitter") {
 	constructor(preset) {
 		super();
-		Object.assign(this, preset);
 		internalize(this, ["name", "active", "graph"]);
-
-		this[updateGraph] = () => persist(this);
-
-		if(!(graph in this))
-			this.graph = new Graph({}, this);
 
 		/* owe binding: */
 
@@ -45,13 +39,18 @@ class Runner extends require("../EventEmitter") {
 		}));
 		owe.expose.properties(this, exposed);
 
-		// Since sandbox requires a runner API, it has to be initialized after this is bound to owe:
-		this.sandbox = new Sandbox(this);
+		/* end owe binding */
+
+		Object.assign(this, preset, {
+			[updateGraph]: () => persist(this)
+		});
+
+		if(!(graph in this))
+			this.graph = new Graph({}, this);
 	}
 
 	[update](type, value) {
 		persist(this);
-
 		this.emit("update", type, value);
 	}
 
@@ -78,7 +77,6 @@ class Runner extends require("../EventEmitter") {
 		return this[graph];
 	}
 	set graph(val) {
-
 		if(this[graph] === val)
 			return;
 
@@ -103,17 +101,25 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	activate() {
-		this[active] = true;
-		this[update]("active", true);
+		this[update]("active", this[active] = true);
 
-		return Promise.resolve(this);
+		if(!this.sandbox)
+			this.sandbox = new Sandbox(this);
+
+		return Promise.resolve(true);
 	}
 
 	deactivate() {
-		this[active] = false;
-		this[update]("active", false);
+		this[update]("active", this[active] = false);
 
-		return Promise.resolve(this);
+		if(this.sandbox)
+			return this.sandbox.kill().then(() => {
+				this.sandbox = null;
+
+				return true;
+			});
+
+		return Promise.resolve(true);
 	}
 
 	delete() {
