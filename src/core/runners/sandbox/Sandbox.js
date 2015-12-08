@@ -19,9 +19,9 @@ class Sandbox {
 		});
 
 		this[sandbox].stdout.on("data",
-			data => process.stdout.write(`${this.runner.name} > ${data}`));
+			data => process.stdout.write(`${this.runner.name} (${this.runner.id}) > ${String(data).replace(/\n$/, "")}\n`));
 		this[sandbox].stderr.on("data",
-			data => process.stderr.write(`${this.runner.name} > ${data}`));
+			data => process.stderr.write(`${this.runner.name} (${this.runner.id}) > ${String(data).replace(/\n$/, "")}\n`));
 
 		// Start an owe client to request data from the sandbox's API:
 		this.api = api.client(this[sandbox]);
