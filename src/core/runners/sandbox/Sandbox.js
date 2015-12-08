@@ -20,7 +20,7 @@ class Sandbox {
 		});
 
 		this[sandbox].on("exit", (code, signal) => {
-			console.log(this[log](`[EXIT] code=${code} signal=${signal}`));
+			console.log(this[log](`[EXIT code=${code} signal=${signal}]`));
 
 			this.runner.deactivate();
 		});
