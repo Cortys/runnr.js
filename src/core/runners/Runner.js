@@ -41,9 +41,10 @@ class Runner extends require("../EventEmitter") {
 
 		/* end owe binding */
 
-		Object.assign(this, preset, {
+		Object.assign(this, {
+			[active]: false,
 			[updateGraph]: () => persist(this)
-		});
+		}, preset);
 
 		if(!(graph in this))
 			this.graph = new Graph({}, this);
@@ -101,25 +102,31 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	activate() {
-		this[update]("active", this[active] = true);
+		if(this[active])
+			return Promise.resolve(true);
 
 		if(!this.sandbox)
 			this.sandbox = new Sandbox(this);
+
+		this[update]("active", this[active] = true);
 
 		return Promise.resolve(true);
 	}
 
 	deactivate() {
-		this[update]("active", this[active] = false);
+		if(!this[active] || !this.sandbox) {
+			if(this[active])
+				this[update]("active", this[active] = false);
 
-		if(this.sandbox)
-			return this.sandbox.kill().then(() => {
-				this.sandbox = null;
+			return Promise.resolve(true);
+		}
 
-				return true;
-			});
+		return this.sandbox.kill().then(() => {
+			this.sandbox = null;
+			this[update]("active", this[active] = false);
 
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 
 	delete() {

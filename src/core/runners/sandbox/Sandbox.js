@@ -21,6 +21,8 @@ class Sandbox {
 
 		this[sandbox].on("exit", (code, signal) => {
 			console.log(this[log](`[EXIT] code=${code} signal=${signal}`));
+
+			this.runner.deactivate();
 		});
 
 		// Log output of sandboxes to stdout/stderr:
