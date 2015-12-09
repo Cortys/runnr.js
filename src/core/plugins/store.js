@@ -8,8 +8,7 @@ module.exports.loaded = store.loaded.then(() => {
 	if(collection === null) {
 		console.log("Added plugins collection.");
 		collection = store.addCollection("plugins", {
-			indices: ["name", "displayName"],
-			autoupdate: true
+			indices: ["name", "displayName"]
 		});
 
 		collection.ensureUniqueIndex("name");

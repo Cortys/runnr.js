@@ -8,8 +8,7 @@ module.exports.loaded = store.loaded.then(() => {
 	if(collection === null) {
 		console.log("Added runners collection.");
 		collection = store.addCollection("runners", {
-			indices: ["name", "active"],
-			autoupdate: true
+			indices: ["name", "active"]
 		});
 
 		collection.ensureUniqueIndex("name");

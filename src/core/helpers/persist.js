@@ -1,11 +1,7 @@
 "use strict";
 
+// LokiJS.Collection#update will be called if a "persist" event is emitted.
+// This mechanism is set up in the initializers of the loki store.
 module.exports = function persist(object) {
-	if(!("--update" in object))
-		Object.defineProperty(object, "--update", {
-			writable: true,
-			value: false
-		});
-
-	object["--update"] = !object["--update"];
+	object.emit("persist");
 };

@@ -16,7 +16,6 @@ const name = Symbol("name");
 const active = Symbol("active");
 const graph = Symbol("graph");
 const update = Symbol("update");
-const updateGraph = Symbol("updateGraph");
 
 class Runner extends require("../EventEmitter") {
 	constructor(preset) {
@@ -24,8 +23,7 @@ class Runner extends require("../EventEmitter") {
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
-			[active]: false,
-			[updateGraph]: () => persist(this)
+			[active]: false
 		}, preset);
 
 		if(!(graph in this))
@@ -80,11 +78,11 @@ class Runner extends require("../EventEmitter") {
 			return;
 
 		if(this[graph])
-			this[graph].removeListener("update", this[updateGraph]);
+			this[graph].removeListener("update", () => persist(this));
 
 		const set = () => {
 			this[graph] = val;
-			this[graph].on("update", this[updateGraph]);
+			this[graph].on("update", () => persist(this));
 
 			this[update]("graph", val);
 		};
@@ -139,5 +137,7 @@ class Runner extends require("../EventEmitter") {
 		return addRunner(runner, runner => new Runner(runner));
 	}
 }
+
+Runner.store = require("./store");
 
 module.exports = Runner;

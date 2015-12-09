@@ -61,7 +61,10 @@ class Plugin extends require("../EventEmitter") {
 			runners: new Set()
 		};
 
-		this[dependentNodes].forEach(node => result[node instanceof Plugin ? "plugins" : "runners"].add(node.graph.container));
+		this[dependentNodes].forEach(node => {
+			return result[node.graph.container instanceof Plugin ? "plugins" : "runners"]
+				.add(node.graph.container);
+		});
 
 		return {
 			plugins: [...result.plugins],
@@ -72,13 +75,14 @@ class Plugin extends require("../EventEmitter") {
 	addDependentNode(node) {
 		this[dependentNodes].add(node);
 
-		this.once("uninstall", () => node.delete());
 		node.once("delete", () => this[dependentNodes].delete(node));
 	}
 
 	uninstall() {
-		return uninstallPlugin(this)
+		return Promise.all(this.dependents.runners.map(runner => runner.deactivate()))
+			.then(() => uninstallPlugin(this))
 			.then(() => {
+				this[dependentNodes].forEach(node => node.delete());
 				this.emit("uninstall");
 			});
 	}
@@ -87,5 +91,7 @@ class Plugin extends require("../EventEmitter") {
 		return installPlugin(plugin, manifest => new Plugin(manifest));
 	}
 }
+
+Plugin.store = require("./store");
 
 module.exports = Plugin;

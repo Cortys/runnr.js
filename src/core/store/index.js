@@ -8,16 +8,27 @@ const store = module.exports = new Loki(config.fromUserData("store.json"), {
 });
 
 store.loaded = new Promise(resolve => {
-	setImmediate(() => store.loadDatabase({
-		plugins: {
-			proto: require("../plugins/Plugin"),
-			inflate: (src, dst) => Object.assign(dst, src)
-		},
-		runners: {
-			proto: require("../runners/Runner"),
-			inflate: (src, dst) => Object.assign(dst, src)
-		}
-	}, resolve));
+	setImmediate(() => {
+		const Plugin = require("../plugins/Plugin");
+		const Runner = require("../runners/Runner");
+
+		store.loadDatabase({
+			plugins: {
+				proto: Plugin,
+				inflate: (src, dst) => {
+					Object.assign(dst, src);
+					dst.on("persist", () => Plugin.store.collection.update(dst));
+				}
+			},
+			runners: {
+				proto: Runner,
+				inflate: (src, dst) => {
+					Object.assign(dst, src);
+					dst.on("persist", () => Runner.store.collection.update(dst));
+				}
+			}
+		}, resolve);
+	});
 }).then(() => store);
 
 store.exit = function exit() {
