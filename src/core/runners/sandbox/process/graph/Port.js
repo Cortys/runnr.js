@@ -2,7 +2,7 @@
 
 const stream = require("stream");
 
-class DualStream {
+class Port {
 	constructor() {
 		const readable = this.readable = new stream.Readable({
 			read() {}
@@ -19,4 +19,4 @@ class DualStream {
 	}
 }
 
-module.exports = DualStream;
+module.exports = Port;

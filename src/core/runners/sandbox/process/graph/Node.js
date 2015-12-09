@@ -1,6 +1,6 @@
 "use strict";
 
-const DualStream = require("./DualStream");
+const Port = require("./Port");
 
 const graph = Symbol("graph");
 
@@ -27,11 +27,11 @@ class Node {
 
 		this.loaded = this.api.route("ports").then(ports => {
 			Object.keys(ports.in).forEach(portName => {
-				this.ports.in[portName] = new DualStream();
+				this.ports.in[portName] = new Port();
 			});
 
 			Object.keys(ports.out).forEach(portName => {
-				this.ports.out[portName] = new DualStream();
+				this.ports.out[portName] = new Port();
 			});
 		});
 
