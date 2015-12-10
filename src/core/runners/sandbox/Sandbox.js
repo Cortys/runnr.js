@@ -19,6 +19,9 @@ class Sandbox {
 			execArgv: []
 		});
 
+		this[sandbox].on("error", err => console.log(err));
+		this[sandbox].on("uncaughtException", err => console.log(err));
+
 		this[sandbox].on("exit", (code, signal) => {
 			console.log(this[log](`[EXIT code=${code} signal=${signal}]`));
 
@@ -46,13 +49,18 @@ class Sandbox {
 	}
 
 	[log](data) {
-		return `${this.runner.name} (${this.runner.id}) > ${String(data).replace(/[\n\r]+$/, "")}`;
+		return `${this.runner.name} #${this.runner.id} > ${String(data).replace(/[\n\r]+$/, "")}`;
 	}
 
-	kill() {
-		this[sandbox].kill();
+	kill(signal) {
+		this[sandbox].kill(signal);
 
-		return new Promise(resolve => this[sandbox].once("exit", resolve));
+		return new Promise((resolve, reject) => {
+			this[sandbox].once("exit", resolve);
+
+			if(signal === undefined)
+				setTimeout(reject, 10000);
+		});
 	}
 
 	/**
