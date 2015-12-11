@@ -16,6 +16,7 @@ const name = Symbol("name");
 const active = Symbol("active");
 const graph = Symbol("graph");
 const update = Symbol("update");
+const persistRunner = Symbol("persistRunner");
 
 class Runner extends require("../EventEmitter") {
 	constructor(preset) {
@@ -23,7 +24,8 @@ class Runner extends require("../EventEmitter") {
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
-			[active]: false
+			[active]: false,
+			[persistRunner]: () => persist(this)
 		}, preset);
 
 		if(!(graph in this))
@@ -47,8 +49,9 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	[update](type, value) {
-		persist(this);
-		this.emit("update", type, value);
+		this[persistRunner]();
+		this.emit("update");
+		this.emit(type, value);
 	}
 
 	get id() {
@@ -78,11 +81,11 @@ class Runner extends require("../EventEmitter") {
 			return;
 
 		if(this[graph])
-			this[graph].removeListener("update", () => persist(this));
+			this[graph].removeListener("update", this[persistRunner]);
 
 		const set = () => {
 			this[graph] = val;
-			this[graph].on("update", () => persist(this));
+			this[graph].on("update", this[persistRunner]);
 
 			this[update]("graph", val);
 		};
@@ -129,6 +132,9 @@ class Runner extends require("../EventEmitter") {
 		return this.deactivate()
 			.then(() => deleteRunner(this))
 			.then(() => {
+				if(this[graph])
+					this[graph].removeListener("update", this[persistRunner]);
+
 				this.emit("delete");
 			});
 	}
