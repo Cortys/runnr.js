@@ -25,10 +25,8 @@ class Sandbox {
 		});
 
 		// Log output of sandboxes to stdout/stderr:
-		this[sandbox].stdout.on("data",
-			data => console.log(this[log](data)));
-		this[sandbox].stderr.on("data",
-			data => console.error(this[log](data)));
+		this[sandbox].stdout.on("data", data => console.log(this[log](data)));
+		this[sandbox].stderr.on("data", data => console.error(this[log](data)));
 
 		// Start an owe client to request data from the sandbox's API:
 		this.api = api.client(this[sandbox]);
