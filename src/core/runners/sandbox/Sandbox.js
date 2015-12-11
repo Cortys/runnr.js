@@ -19,12 +19,8 @@ class Sandbox {
 			execArgv: []
 		});
 
-		this[sandbox].on("error", err => console.log(err));
-		this[sandbox].on("uncaughtException", err => console.log(err));
-
 		this[sandbox].on("exit", (code, signal) => {
 			console.log(this[log](`[EXIT code=${code} signal=${signal}]`));
-
 			this.runner.deactivate();
 		});
 

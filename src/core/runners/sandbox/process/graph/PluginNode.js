@@ -19,7 +19,7 @@ class PluginNode extends Node {
 					runnr: new SandboxHandle(this)
 				}
 			});
-		});
+		}).catch(() => process.exit(1));
 	}
 }
 
