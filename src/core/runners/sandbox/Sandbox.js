@@ -9,10 +9,13 @@ const api = require("./api");
 
 const sandbox = Symbol("sandbox");
 const log = Symbol("log");
+const dead = Symbol("dead");
 
 class Sandbox {
 	constructor(runner) {
 		this.runner = runner;
+
+		this[dead] = false;
 
 		this[sandbox] = childProcess.fork(path.join(__dirname, "process"), {
 			silent: true,
@@ -21,6 +24,7 @@ class Sandbox {
 
 		this[sandbox].on("exit", (code, signal) => {
 			console.log(this[log](`[EXIT code=${code} signal=${signal}]`));
+			this[dead] = { code, signal };
 			this.runner.deactivate();
 		});
 
@@ -42,18 +46,22 @@ class Sandbox {
 		});
 	}
 
+	get dead() {
+		return this[dead];
+	}
+
 	[log](data) {
-		return `${this.runner.name} #${this.runner.id} > ${String(data).replace(/[\n\r]+$/, "")}`;
+		return `${this.runner.name} #${this.runner.id}:${this[sandbox].pid} > ${String(data).replace(/[\n\r]+$/, "")}`;
 	}
 
 	kill(signal) {
+		if(this[dead])
+			return Promise.resolve(this[dead]);
+
 		this[sandbox].kill(signal);
 
-		return new Promise((resolve, reject) => {
-			this[sandbox].once("exit", resolve);
-
-			if(signal === undefined)
-				setTimeout(reject, 10000);
+		return new Promise(resolve => {
+			this[sandbox].once("exit", (code, signal) => resolve({ code, signal }));
 		});
 	}
 

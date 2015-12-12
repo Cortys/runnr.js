@@ -15,6 +15,4 @@
 }
 **/
 
-console.log("I'm test-plugin-1 and my runnr is:", runnr);
-
 runnr.ports.in.input.pipe(process.stdout);

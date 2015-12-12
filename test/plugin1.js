@@ -24,8 +24,6 @@
 }
 **/
 
-console.log("I'm test-plugin-1 and my runnr is:", runnr);
-
 runnr.ports.in.name.pipe(runnr.ports.out.name);
 
 setInterval(() => runnr.ports.out.timestamp.write(`${Date.now()}`), 1000);
