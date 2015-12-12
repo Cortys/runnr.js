@@ -1,7 +1,7 @@
 "use strict";
 
 const owe = require("owe.js");
-const remove = require("remove");
+const fs = require("fs-extra");
 
 const store = require("../store");
 
@@ -10,7 +10,7 @@ function uninstall(plugin) {
 		if(!plugin.copied)
 			return resolve();
 
-		remove(plugin.location, err => {
+		fs.remove(plugin.location, err => {
 			if(err)
 				reject(err);
 			resolve();

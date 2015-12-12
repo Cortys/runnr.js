@@ -1,8 +1,7 @@
 "use strict";
 
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
-const copy = require("cpr");
 const owe = require("owe.js");
 
 const config = require("../../../../config");
@@ -17,21 +16,18 @@ function localFile(plugin) {
 			resolve(file.toString());
 		});
 	}).then(file => parsePluginFile(file)).then(result => {
-		result.manifest.main = path.basename(plugin.path);
-
 		if(+plugin.copy) {
 			return new Promise((resolve, reject) => {
-				const location = path.join(config.fromUserData("plugins"), result.manifest.name);
+				const location = config.fromUserData("plugins", result.manifest.name);
 
-				copy(plugin.path, location, {
-					deleteFirst: true,
-					overwrite: true,
-					confirm: true
+				fs.copy(plugin.path, path.join(location, "index.js"), {
+					clobber: true
 				}, err => {
 					if(err)
 						return reject(new owe.exposed.Error("Plugin files could not be installed."));
 
 					result.manifest.location = location;
+					result.manifest.main = "index.js";
 					result.manifest.copied = true;
 
 					resolve(result.manifest);
@@ -40,6 +36,7 @@ function localFile(plugin) {
 		}
 
 		result.manifest.location = path.dirname(plugin.path);
+		result.manifest.main = path.basename(plugin.path);
 		result.manifest.source = "local";
 
 		return result.manifest;
