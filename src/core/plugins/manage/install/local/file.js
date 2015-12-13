@@ -1,6 +1,6 @@
 "use strict";
 
-const fs = require("fs-extra");
+const fs = require("fs-extra-promise");
 const path = require("path");
 const owe = require("owe.js");
 
@@ -8,40 +8,23 @@ const config = require("../../../../config");
 const helpers = require("../helpers");
 
 function localFile(plugin) {
-	return new Promise((resolve, reject) => {
-		fs.readFile(plugin.path, (err, file) => {
-			if(err)
-				reject(new owe.exposed.Error("Plugin file could not be read."));
-
-			resolve(file.toString());
-		});
-	}).then(file => parsePluginFile(file)).then(result => {
+	return fs.readFileAsync(plugin.path).catch(() => {
+		throw new owe.exposed.Error("Plugin file could not be read.");
+	}).then(file => parsePluginFile(file.toString())).then(result => {
 		if(+plugin.copy) {
 			const location = config.fromUserData("plugins", result.manifest.name);
 
-			return new Promise((resolve, reject) => {
-				fs.copy(plugin.path, path.join(location, "index.js"), {
-					clobber: true
-				}, err => {
-					if(err)
-						return reject(new owe.exposed.Error("Plugin file could not be installed."));
-
-					resolve();
-				});
+			return fs.copyAsync(plugin.path, path.join(location, "index.js"), {
+				clobber: true
 			}).then(() => {
 				result.manifest.location = location;
 				result.manifest.main = "index.js";
 				result.manifest.copied = true;
 
-				return new Promise((resolve, reject) => {
-					fs.writeJSON(path.join(location, "package.json"), result.manifest, err => {
-						if(err)
-							return reject(new owe.exposed.Error("Plugin file could not be installed."));
-
-						resolve();
-					});
-				});
-			}).then(() => result.manifest);
+				return fs.writeJsonAsync(path.join(location, "package.json"), result.manifest);
+			}).then(() => result.manifest, () => {
+				throw new owe.exposed.Error("Plugin file could not be installed.");
+			});
 		}
 
 		result.manifest.location = path.dirname(plugin.path);

@@ -39,7 +39,7 @@
 		"lokijs": "techfort/LokiJS",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.4",
-		"fs-extra": "0.26.2",
+		"fs-extra-promise": "0.3.1",
 		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {

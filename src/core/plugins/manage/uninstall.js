@@ -1,26 +1,18 @@
 "use strict";
 
 const owe = require("owe.js");
-const fs = require("fs-extra");
+const fs = require("fs-extra-promise");
 
 const store = require("../store");
 
 function uninstall(plugin) {
-	return new Promise((resolve, reject) => {
-		if(!plugin.copied)
-			return resolve();
+	return (plugin.copied ? fs.removeAsync(plugin.location) : Promise.resolve())
+		.then(() => store.collection.remove(plugin), err => {
+			if(err && err.code === "ENOENT")
+				return store.collection.remove(plugin);
 
-		fs.remove(plugin.location, err => {
-			if(err)
-				reject(err);
-			resolve();
+			throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 		});
-	}).then(() => store.collection.remove(plugin), err => {
-		if(err && err.code === "ENOENT")
-			return store.collection.remove(plugin);
-
-		throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
-	});
 }
 
 module.exports = uninstall;
