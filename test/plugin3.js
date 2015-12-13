@@ -11,6 +11,9 @@
 			"input": {}
 		},
 		"out": {}
+	},
+	"dependencies": {
+		"owe-core": "latest"
 	}
 }
 **/

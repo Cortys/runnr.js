@@ -17,22 +17,31 @@ function localFile(plugin) {
 		});
 	}).then(file => parsePluginFile(file)).then(result => {
 		if(+plugin.copy) {
-			return new Promise((resolve, reject) => {
-				const location = config.fromUserData("plugins", result.manifest.name);
+			const location = config.fromUserData("plugins", result.manifest.name);
 
+			return new Promise((resolve, reject) => {
 				fs.copy(plugin.path, path.join(location, "index.js"), {
 					clobber: true
 				}, err => {
 					if(err)
-						return reject(new owe.exposed.Error("Plugin files could not be installed."));
+						return reject(new owe.exposed.Error("Plugin file could not be installed."));
 
-					result.manifest.location = location;
-					result.manifest.main = "index.js";
-					result.manifest.copied = true;
-
-					resolve(result.manifest);
+					resolve();
 				});
-			});
+			}).then(() => {
+				result.manifest.location = location;
+				result.manifest.main = "index.js";
+				result.manifest.copied = true;
+
+				return new Promise((resolve, reject) => {
+					fs.writeJSON(path.join(location, "package.json"), result.manifest, err => {
+						if(err)
+							return reject(new owe.exposed.Error("Plugin file could not be installed."));
+
+						resolve();
+					});
+				});
+			}).then(() => result.manifest);
 		}
 
 		result.manifest.location = path.dirname(plugin.path);
@@ -53,7 +62,7 @@ function parsePluginFile(file) {
 	if(startOfManifest < 0 || endOfManifest < 0 || !/\s/.test(file.charAt(startOfManifest + startToken.length)))
 		throw new owe.exposed.SyntaxError("No manifest declaration in the given plugin file.");
 
-	let manifest = file.substring(startOfManifest + startToken.length, endOfManifest);
+	let manifest = file.substring(startOfManifest + startToken.length, endOfManifest).replace(/^\s*\*/mg, "");
 
 	try {
 		manifest = JSON.parse(manifest);
