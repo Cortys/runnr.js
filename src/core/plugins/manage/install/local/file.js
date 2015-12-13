@@ -42,7 +42,10 @@ function parsePluginFile(file) {
 	const startOfManifest = file.indexOf(startToken);
 	const endOfManifest = file.indexOf(endToken, startOfManifest + startToken.length);
 
-	if(startOfManifest < 0 || endOfManifest < 0 || !/\s/.test(file.charAt(startOfManifest + startToken.length)))
+	if(startOfManifest < 0 || endOfManifest < 0
+		|| !/\s/.test(file.charAt(startOfManifest + startToken.length))
+		|| !/\n|\r/.test(file.charAt(endOfManifest + endToken.length))
+	)
 		throw new owe.exposed.SyntaxError("No manifest declaration in the given plugin file.");
 
 	let manifest = file.substring(startOfManifest + startToken.length, endOfManifest).replace(/^\s*\*/mg, "");
