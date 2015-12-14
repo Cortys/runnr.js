@@ -12,14 +12,13 @@ function localFile(plugin) {
 		throw new owe.exposed.Error("Plugin file could not be read.");
 	}).then(file => parsePluginFile(file.toString())).then(manifest => {
 		if(+plugin.copy) {
-			const location = config.fromUserData("plugins", manifest.name);
+			const location = config.fromPlugins(manifest.name);
 
 			return fs.copyAsync(plugin.path, path.join(location, "index.js"), {
 				clobber: true
 			}).then(() => {
-				manifest.location = location;
+				manifest.location = manifest.name;
 				manifest.main = "index.js";
-				manifest.copied = true;
 
 				return fs.writeJsonAsync(path.join(location, "package.json"), manifest);
 			}).then(() => manifest, () => {

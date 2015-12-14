@@ -4,6 +4,8 @@ const owe = require("owe.js");
 const oweFs = require("owe-fs");
 const path = require("path");
 
+const config = require("../config");
+
 const installPlugin = require("./manage/install");
 const uninstallPlugin = require("./manage/uninstall");
 
@@ -52,7 +54,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	get mainLocation() {
-		return path.join(this.location, this.main);
+		return config.fromPlugins(this.location, this.main);
 	}
 
 	get dependents() {

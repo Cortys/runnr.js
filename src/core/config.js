@@ -9,6 +9,10 @@ module.exports = {
 	userData: path.join(home, ".runnr.js"),
 
 	fromUserData() {
-		return path.join(this.userData, ...arguments);
+		return path.resolve(this.userData, ...arguments);
+	},
+
+	fromPlugins() {
+		return this.fromUserData("plugins", ...arguments);
 	}
 };
