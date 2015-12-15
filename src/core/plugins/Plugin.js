@@ -2,7 +2,6 @@
 
 const owe = require("owe.js");
 const oweFs = require("owe-fs");
-const path = require("path");
 
 const config = require("../config");
 

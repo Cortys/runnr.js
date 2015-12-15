@@ -1,12 +1,16 @@
 "use strict";
 
+const childProcess = require("child_process");
 const semver = require("semver");
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
+const config = require("../../../config");
 const store = require("../../store");
 
 const ports = require("../../../helpers/ports");
+
+const npmCli = require.resolve("npm/bin/npm-cli");
 
 module.exports = {
 	validateManifest(manifest) {
@@ -40,5 +44,17 @@ module.exports = {
 		store.collection.insert(manifest);
 
 		return manifest;
+	},
+
+	installDependencies(manifest) {
+		return new Promise((resolve, reject) => {
+			childProcess.fork(npmCli, ["install"], {
+				cwd: config.fromPlugins(manifest.location),
+				stdio: "ignore",
+				execArgv: []
+			}).once("exit", code => (code ? reject : resolve)(code));
+		}).catch(() => {
+			throw new owe.exposed.Error("Plugin dependencies could not be installed.");
+		});
 	}
 };

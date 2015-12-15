@@ -31,9 +31,9 @@ function localDirectory(plugin) {
 				manifest.location = manifest.name;
 
 				return fs.writeJsonAsync(path.join(location, "package.json"), manifest);
-			}).then(() => manifest, () => {
+			}).catch(() => {
 				throw new owe.exposed.Error("Plugin file could not be installed.");
-			});
+			}).then(() => helpers.installDependencies(manifest)).then(() => manifest);
 		}
 
 		if(!("main" in manifest))

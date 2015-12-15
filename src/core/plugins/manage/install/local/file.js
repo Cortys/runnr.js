@@ -21,9 +21,9 @@ function localFile(plugin) {
 				manifest.main = "index.js";
 
 				return fs.writeJsonAsync(path.join(location, "package.json"), manifest);
-			}).then(() => manifest, () => {
+			}).catch(() => {
 				throw new owe.exposed.Error("Plugin file could not be installed.");
-			});
+			}).then(() => helpers.installDependencies(manifest)).then(() => manifest);
 		}
 
 		manifest.location = path.dirname(plugin.path);
