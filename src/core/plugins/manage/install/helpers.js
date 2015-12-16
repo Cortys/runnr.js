@@ -48,7 +48,7 @@ module.exports = {
 
 	installDependencies(manifest) {
 		return new Promise((resolve, reject) => {
-			childProcess.fork(npmCli, ["install"], {
+			childProcess.fork(npmCli, ["install", "--production"], {
 				cwd: config.fromPlugins(manifest.location),
 				silent: true,
 				execArgv: []

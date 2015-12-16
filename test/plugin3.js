@@ -14,6 +14,9 @@
 	},
 	"dependencies": {
 		"owe-core": "latest"
+	},
+	"devDependencies": {
+		"owe-fs": "latest"
 	}
 }
 **/
