@@ -23,7 +23,7 @@ module.exports = {
 
 		const dbPlugin = store.collection.by("name", manifest.name);
 
-		if(dbPlugin && (dbPlugin.block || semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
+		if(dbPlugin && (semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
 			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
 
 		if(!manifest.displayName || typeof manifest.displayName !== "string")
@@ -50,7 +50,7 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			childProcess.fork(npmCli, ["install"], {
 				cwd: config.fromPlugins(manifest.location),
-				stdio: "ignore",
+				silent: true,
 				execArgv: []
 			}).once("exit", code => (code ? reject : resolve)(code));
 		}).catch(() => {

@@ -1,7 +1,6 @@
 "use strict";
 
 const owe = require("owe.js");
-const oweFs = require("owe-fs");
 
 const config = require("../config");
 
@@ -14,10 +13,6 @@ class Plugin extends require("../EventEmitter") {
 	constructor(preset) {
 		super();
 		Object.assign(this, preset);
-
-		this.fs = oweFs({
-			root: this.location
-		});
 
 		this[dependentNodes] = new Set();
 

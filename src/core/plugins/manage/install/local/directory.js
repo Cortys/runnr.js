@@ -25,10 +25,10 @@ function localDirectory(plugin) {
 			return fs.copyAsync(plugin.path, location, {
 				clobber: true
 			}).then(() => {
+				manifest.location = manifest.name;
+
 				if(!("main" in manifest))
 					manifest.main = "index.js";
-
-				manifest.location = manifest.name;
 
 				return fs.writeJsonAsync(path.join(location, "package.json"), manifest);
 			}).catch(() => {
@@ -36,10 +36,10 @@ function localDirectory(plugin) {
 			}).then(() => helpers.installDependencies(manifest)).then(() => manifest);
 		}
 
+		manifest.location = plugin.path;
+
 		if(!("main" in manifest))
 			manifest.main = "index.js";
-
-		manifest.location = plugin.path;
 
 		return manifest;
 	});
