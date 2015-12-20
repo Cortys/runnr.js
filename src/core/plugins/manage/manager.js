@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const generating = require("../../../helpers/generatingMaps");
+const generating = require("../../helpers/generatingMaps");
 
 const pluginTasks = new generating.Map(() => ({}));
 
@@ -14,19 +14,23 @@ function addTask(plugin, task) {
 			tasks.current = undefined;
 
 			if(tasks.next) {
-				tasks.next = undefined;
 				addTask(plugin, tasks.next.task)
 					.then(tasks.next.promise.resolve, tasks.next.promise.reject);
+				tasks.next = undefined;
 			}
 			else
 				pluginTasks.delete(plugin);
 		};
 
 		tasks.current = task();
+		tasks.current.intent = task.intent;
 		tasks.current.then(done, done);
 
 		return tasks.current;
 	}
+
+	if(task.intent && tasks.current.intent === task.intent)
+		return Promise.reject(new owe.exposed.Error(`There already is a running ${task.intent} task for this plugin.`));
 
 	if(tasks.next)
 		tasks.next.promise.reject(new owe.exposed.Error("This task was replaced by another one."));
@@ -41,4 +45,23 @@ function addTask(plugin, task) {
 	return nextPromise;
 }
 
-module.exports = { addTask };
+function taskify(task, map, intent) {
+	if(!map)
+		map = x => x;
+
+	return Object.assign(function(plugin) {
+		return addTask(map(plugin), () => task(...arguments));
+	}, { intent });
+}
+
+function delay(plugin, promise, intent) {
+	return new Promise((resolve, reject) => {
+		addTask(plugin, Object.assign(() => {
+			resolve();
+
+			return promise;
+		}, { intent })).catch(reject);
+	});
+}
+
+module.exports = { addTask, taskify, delay };

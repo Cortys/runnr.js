@@ -7,6 +7,8 @@ const fs = require("fs-extra-promise");
 const config = require("../../config");
 const store = require("../store");
 
+const manager = require("./manager");
+
 function uninstall(plugin) {
 	return (path.isAbsolute(plugin.location)
 		? Promise.resolve()
@@ -19,4 +21,4 @@ function uninstall(plugin) {
 		});
 }
 
-module.exports = uninstall;
+module.exports = manager.taskify(uninstall, plugin => plugin.name, "uninstall");
