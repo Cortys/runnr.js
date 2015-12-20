@@ -6,7 +6,7 @@ const generating = require("../../helpers/generatingMaps");
 
 const pluginTasks = new generating.Map(() => ({}));
 
-function addTask(plugin, task) {
+function addTask(plugin, task, intent) {
 	const tasks = pluginTasks.forceGet(plugin);
 
 	if(!tasks.current) {
@@ -23,14 +23,14 @@ function addTask(plugin, task) {
 		};
 
 		tasks.current = task();
-		tasks.current.intent = task.intent;
+		tasks.current.intent = intent;
 		tasks.current.then(done, done);
 
 		return tasks.current;
 	}
 
-	if(task.intent && tasks.current.intent === task.intent)
-		return Promise.reject(new owe.exposed.Error(`There already is a running ${task.intent} task for this plugin.`));
+	if(intent && tasks.current.intent === intent)
+		return Promise.reject(new owe.exposed.Error(`There already is a running ${intent} task for this plugin.`));
 
 	if(tasks.next)
 		tasks.next.promise.reject(new owe.exposed.Error("This task was replaced by another one."));
@@ -49,18 +49,18 @@ function taskify(task, map, intent) {
 	if(!map)
 		map = x => x;
 
-	return Object.assign(function(plugin) {
-		return addTask(map(plugin), () => task(...arguments));
-	}, { intent });
+	return function(plugin) {
+		return addTask(map(plugin), () => task(...arguments), intent);
+	};
 }
 
 function delay(plugin, promise, intent) {
 	return new Promise((resolve, reject) => {
-		addTask(plugin, Object.assign(() => {
+		addTask(plugin, () => {
 			resolve();
 
 			return promise;
-		}, { intent })).catch(reject);
+		}, intent).catch(reject);
 	});
 }
 
