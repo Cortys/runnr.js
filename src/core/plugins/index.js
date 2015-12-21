@@ -13,7 +13,7 @@ store.loaded.then(() => listView = store.collection.getDynamicView("list") || st
 
 const plugins = {
 	get list() {
-		return listView.mapReduce(plugin => plugin, res => res);
+		return listView.data();
 	},
 
 	getByName(pluginName) {

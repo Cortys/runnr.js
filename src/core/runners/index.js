@@ -13,7 +13,7 @@ store.loaded.then(() => listView = store.collection.getDynamicView("list") || st
 
 const runners = {
 	get list() {
-		return listView.mapReduce(runner => runner, res => res);
+		return listView.data();
 	},
 
 	get(runnerId) {

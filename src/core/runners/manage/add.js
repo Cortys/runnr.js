@@ -6,7 +6,6 @@ const store = require("../store");
 const runnerHelpers = require("./helpers");
 
 function add(runner, map) {
-
 	if(typeof runner !== "object" || !runner)
 		throw new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`);
 
