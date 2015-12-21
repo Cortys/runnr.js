@@ -16,7 +16,7 @@ const runners = {
 		return listView.data();
 	},
 
-	get(runnerId) {
+	getById(runnerId) {
 		return store.collection.get(runnerId);
 	},
 
@@ -35,9 +35,8 @@ owe(runnersApi, owe.chain([
 		router: {
 			filter: new Set(["add"])
 		}
-	}),
-	{
-		router: runners.get
+	}), {
+		router: runners.getById
 	}
 ]));
 

@@ -31,17 +31,17 @@ const plugins = {
 
 /* Api: */
 const pluginsApi = Object.assign(() => plugins.list, {
-	install: plugins.install
+	install: plugins.install,
+	byName: owe(plugins.getByName, plugins.getByName)
 });
 
 owe(pluginsApi, owe.chain([
 	owe.serve({
 		router: {
-			filter: new Set(["install"])
+			filter: new Set(["install", "byName"])
 		}
-	}),
-	{
-		router: plugins.getByName
+	}), {
+		router: plugins.getById
 	}
 ]));
 
