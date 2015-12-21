@@ -18,7 +18,7 @@ class Plugin extends require("../EventEmitter") {
 
 		/* owe binding: */
 
-		const exposed = ["name", "displayName", "version", "author", "source"];
+		const exposed = ["id", "name", "displayName", "version", "author", "source"];
 		const publicRoutes = new Set([...exposed, "ports", "dependents", "uninstall"]);
 		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
 
@@ -45,6 +45,10 @@ class Plugin extends require("../EventEmitter") {
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	get id() {
+		return this.$loki;
 	}
 
 	get mainLocation() {

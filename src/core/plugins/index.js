@@ -16,8 +16,12 @@ const plugins = {
 		return listView.mapReduce(plugin => plugin, res => res);
 	},
 
-	get(pluginName) {
+	getByName(pluginName) {
 		return store.collection && store.collection.by("name", pluginName);
+	},
+
+	getById(pluginId) {
+		return store.collection && store.collection.get(pluginId);
 	},
 
 	install(plugin) {
@@ -37,7 +41,7 @@ owe(pluginsApi, owe.chain([
 		}
 	}),
 	{
-		router: plugins.get
+		router: plugins.getByName
 	}
 ]));
 
