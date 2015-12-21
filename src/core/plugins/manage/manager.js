@@ -14,7 +14,7 @@ function addTask(plugin, task, intent) {
 			tasks.current = undefined;
 
 			if(tasks.next) {
-				addTask(plugin, tasks.next.task)
+				addTask(plugin, tasks.next.task, tasks.next.intent)
 					.then(tasks.next.promise.resolve, tasks.next.promise.reject);
 				tasks.next = undefined;
 			}
@@ -22,11 +22,13 @@ function addTask(plugin, task, intent) {
 				pluginTasks.delete(plugin);
 		};
 
-		tasks.current = task();
-		tasks.current.intent = intent;
-		tasks.current.then(done, done);
+		tasks.current = {
+			task: task(),
+			intent
+		};
+		tasks.current.task.then(done, done);
 
-		return tasks.current;
+		return tasks.current.task;
 	}
 
 	if(intent && tasks.current.intent === intent)
@@ -35,12 +37,12 @@ function addTask(plugin, task, intent) {
 	if(tasks.next)
 		tasks.next.promise.reject(new owe.exposed.Error("This task was replaced by another one."));
 
-	tasks.next = { task };
+	tasks.next = { task, intent };
 
 	const nextPromise = new Promise((resolve, reject) => tasks.next.promise = { resolve, reject });
 
-	if(typeof tasks.current.cancel === "function")
-		tasks.current.cancel();
+	if(typeof tasks.current.task.cancel === "function")
+		tasks.current.task.cancel();
 
 	return nextPromise;
 }
