@@ -5,6 +5,7 @@ const owe = require("owe.js");
 const config = require("../config");
 
 const installPlugin = require("./manage/install");
+const updatePlugin = require("./manage/update");
 const uninstallPlugin = require("./manage/uninstall");
 const integrityCheck = require("./manage/integrityCheck");
 
@@ -88,6 +89,10 @@ class Plugin extends require("../EventEmitter") {
 		};
 	}
 
+	get dependentNodes() {
+		return this[dependentNodes];
+	}
+
 	addDependentNode(node) {
 		this[dependentNodes].add(node);
 
@@ -95,7 +100,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	update() {
-
+		return updatePlugin(this);
 	}
 
 	uninstall() {

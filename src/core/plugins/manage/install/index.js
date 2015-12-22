@@ -5,18 +5,23 @@ const owe = require("owe.js");
 const manager = require("../manager");
 const helpers = require("./helpers");
 
-function install(plugin, map) {
+function install(plugin, map, dontManage) {
 	if(typeof plugin !== "object" || !plugin)
 		throw new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`);
 
 	if(plugin.type in installationTypes) {
-		const promise = installationTypes[plugin.type](plugin, manifest => {
-			return manager.delay(
-				manifest.name,
-				new Promise(resolve => setImmediate(() => resolve(promise))),
-				"install"
-			).then(() => manifest);
-		}).then(manifest => helpers.installManifest(map(manifest)));
+		const delayer = dontManage
+			? manifest => manifest
+			: manifest => {
+				return manager.delay(
+					manifest.name,
+					new Promise(resolve => setImmediate(() => resolve(promise))),
+					"install"
+				).then(() => manifest);
+			};
+
+		const promise = installationTypes[plugin.type](plugin, delayer)
+			.then(manifest => helpers.installManifest(map(manifest)));
 
 		return promise;
 	}
