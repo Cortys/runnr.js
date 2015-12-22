@@ -15,11 +15,11 @@ store.loaded = new Promise(resolve => {
 		store.loadDatabase({
 			plugins: {
 				proto: Plugin,
-				inflate: (src, dst) => Object.assign(dst, src)
+				inflate: (src, dst) => dst.assign(src)
 			},
 			runners: {
 				proto: Runner,
-				inflate: (src, dst) => Object.assign(dst, src)
+				inflate: (src, dst) => dst.assign(src)
 			}
 		}, resolve);
 	});

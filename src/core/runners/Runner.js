@@ -26,10 +26,9 @@ class Runner extends require("../EventEmitter") {
 		Object.assign(this, {
 			[active]: false,
 			[persistRunner]: () => persist(this)
-		}, preset);
+		});
 
-		if(!(graph in this))
-			this.graph = new Graph({}, this);
+		this.assign(preset);
 
 		/* owe binding: */
 
@@ -46,6 +45,16 @@ class Runner extends require("../EventEmitter") {
 			}
 		}));
 		owe.expose.properties(this, exposed);
+	}
+
+	assign(preset) {
+		if(!preset)
+			return;
+
+		Object.assign(this, preset);
+
+		if(!(graph in this))
+			this.graph = new Graph({}, this);
 	}
 
 	[update](type, value) {

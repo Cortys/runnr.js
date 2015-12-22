@@ -6,15 +6,16 @@ const config = require("../config");
 
 const installPlugin = require("./manage/install");
 const uninstallPlugin = require("./manage/uninstall");
+const integrityCheck = require("./manage/integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
 
 class Plugin extends require("../EventEmitter") {
 	constructor(preset) {
 		super();
-		Object.assign(this, preset);
-
 		this[dependentNodes] = new Set();
+
+		this.assign(preset);
 
 		/* owe binding: */
 
@@ -47,6 +48,16 @@ class Plugin extends require("../EventEmitter") {
 		owe.expose.properties(this, exposed);
 	}
 
+	assign(preset) {
+		if(!preset)
+			return;
+
+		Object.assign(this, preset);
+
+		// Uninstall plugin if it was removed from fs, update otherwise:
+		integrityCheck(this).then(() => this.update(), () => this.uninstall());
+	}
+
 	get id() {
 		return this.$loki;
 	}
@@ -76,6 +87,10 @@ class Plugin extends require("../EventEmitter") {
 		this[dependentNodes].add(node);
 
 		node.once("delete", () => this[dependentNodes].delete(node));
+	}
+
+	update() {
+
 	}
 
 	uninstall() {
