@@ -29,6 +29,9 @@ module.exports = {
 		if(!manifest.displayName || typeof manifest.displayName !== "string")
 			manifest.displayName = manifest.name;
 
+		if(typeof manifest.source !== "string" || manifest.source === "local")
+			manifest.source = undefined;
+
 		// Check ports:
 		manifest.ports = ports.validate(manifest.ports);
 
