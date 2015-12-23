@@ -1,3 +1,3 @@
 "use strict";
 
-module.exports = require("../../helpers/manager")();
+module.exports = require("../../helpers/taskManager")();
