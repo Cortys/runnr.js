@@ -15,7 +15,7 @@ module.exports = store.loaded.then(() => {
 				console.log("DB saved.");
 				console.log("Exiting runnr core.");
 			}, err => {
-				console.log("Failed to exit runnr core.", err);
+				console.error("Failed to exit runnr core.", err.stack);
 				throw err;
 			});
 		}
@@ -25,6 +25,5 @@ module.exports = store.loaded.then(() => {
 		}
 	}));
 }, err => {
-	console.error("Loading DB failed.");
-	console.error(err.stack);
+	console.error("Loading DB failed.", err.stack);
 });
