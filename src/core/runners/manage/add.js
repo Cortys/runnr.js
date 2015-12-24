@@ -7,14 +7,14 @@ const runnerHelpers = require("./helpers");
 
 function add(runner, map) {
 	if(typeof runner !== "object" || !runner)
-		throw new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`);
+		return Promise.reject(new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`));
 
 	if(helpers.installationTypes[runner.type] in helpers) {
 		return helpers[helpers.installationTypes[runner.type]](runner)
 			.then(runner => helpers.insertRunner(map(runner)));
 	}
 	else
-		throw new owe.exposed.Error("Runners cannot be added with the given method.");
+		return Promise.reject(new owe.exposed.Error("Runners cannot be added with the given method."));
 }
 
 const helpers = {

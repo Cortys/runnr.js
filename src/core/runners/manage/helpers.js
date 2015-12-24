@@ -4,7 +4,6 @@ const owe = require("owe.js");
 const store = require("../store");
 
 module.exports = {
-
 	exists(name) {
 		return store.collection && typeof store.collection.by("name", name) === "object";
 	},

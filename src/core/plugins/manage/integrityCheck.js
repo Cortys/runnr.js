@@ -4,6 +4,9 @@ const path = require("path");
 const fs = require("fs-extra-promise");
 
 function integrityCheck(plugin) {
+	if(typeof plugin.location !== "string")
+		return Promise.reject();
+
 	return path.isAbsolute(plugin.location)
 		? Promise.resolve()
 		: fs.statAsync(plugin.mainLocation).then(stat => {

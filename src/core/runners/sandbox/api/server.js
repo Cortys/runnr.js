@@ -29,7 +29,7 @@ module.exports = (target, api, options) => {
 			id: msg.id
 		}, responseMsg)).then(responseMsg => {
 			responseMsg.response = JSON.stringify(responseMsg.response,
-				(key, value) => owe.isExposed(value) ? owe.exposed.value(value) : value);
+				(key, value) => owe.isExposed(value) ? owe.exposed.getValue(value) : value);
 
 			target.send(responseMsg);
 		});

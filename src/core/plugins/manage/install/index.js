@@ -7,7 +7,7 @@ const helpers = require("./helpers");
 
 function install(plugin, map, dontManage) {
 	if(typeof plugin !== "object" || !plugin)
-		throw new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`);
+		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`));
 
 	if(plugin.type in installationTypes) {
 		const delayer = dontManage
@@ -26,7 +26,7 @@ function install(plugin, map, dontManage) {
 		return promise;
 	}
 	else
-		throw new owe.exposed.Error("Plugins cannot be installed with the given installation method.");
+		return Promise.reject(new owe.exposed.Error("Plugins cannot be installed with the given installation method."));
 }
 
 const installationTypes = {
