@@ -24,9 +24,9 @@ core.then(core => {
 		})
 	})).listen(3912);
 
-	process.once("SIGINT", exit);
-	process.once("SIGTERM", exit);
-	process.once("SIGUSR2", restart);
+	process.on("SIGINT", exit);
+	process.on("SIGTERM", exit);
+	process.on("SIGUSR2", restart);
 
 	function exit() {
 		core.onExit().then(() => process.exit());
