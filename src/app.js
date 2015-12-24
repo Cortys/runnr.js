@@ -41,4 +41,4 @@ core.then(core => {
 	}
 }).catch(err => console.error(err));
 
-process.on("unhandledRejection", err => console.error(`Unhandled rejection ${err.stack}`));
+process.on("unhandledRejection", err => console.error("Unhandled rejection", err.stack));
