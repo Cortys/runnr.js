@@ -24,18 +24,21 @@ core.then(core => {
 		})
 	})).listen(3912);
 
-	process.on("SIGINT", exit);
-	process.on("SIGTERM", exit);
-	process.on("SIGUSR2", restart);
+	function addExitListeners() {
+		process.once("SIGINT", exit);
+		process.once("SIGTERM", exit);
+		process.once("SIGUSR2", restart);
+	}
+
+	addExitListeners();
 
 	function exit() {
-		core.onExit().then(() => process.exit());
+		core.onExit().then(() => process.exit(), addExitListeners);
 	}
 
 	function restart() {
-		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"));
+		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"), addExitListeners);
 	}
-
 }).catch(err => console.error(err));
 
 process.on("unhandledRejection", err => console.error(`Unhandled rejection ${err.stack}`));
