@@ -10,7 +10,7 @@ const store = require("../store");
 const manager = require("./manager");
 
 function uninstall(plugin) {
-	return (typeof plugin.location !== "string" || path.isAbsolute(plugin.location)
+	return (path.isAbsolute(plugin.location)
 		? Promise.resolve()
 		: fs.removeAsync(config.fromPlugins(plugin.location)))
 		.then(() => store.collection.remove(plugin), err => {
