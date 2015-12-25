@@ -90,7 +90,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	get dependentNodes() {
-		return this[dependentNodes];
+		return this[dependentNodes].values();
 	}
 
 	addDependentNode(node) {
