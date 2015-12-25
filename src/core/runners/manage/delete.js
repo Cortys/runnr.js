@@ -1,9 +1,11 @@
 "use strict";
 
+const manager = require("./manager");
+
 const store = require("../store");
 
 function deleteRunner(runner) {
 	return runner.deactivate().then(() => store.collection.remove(runner));
 }
 
-module.exports = deleteRunner;
+module.exports = manager.taskify(deleteRunner, runner => runner.name, "delete");

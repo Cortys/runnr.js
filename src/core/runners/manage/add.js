@@ -3,6 +3,7 @@
 const owe = require("owe.js");
 const store = require("../store");
 
+const manager = require("./manager");
 const runnerHelpers = require("./helpers");
 
 function add(runner, map) {
@@ -41,4 +42,4 @@ const helpers = {
 
 };
 
-module.exports = add;
+module.exports = manager.taskify(add, () => null);
