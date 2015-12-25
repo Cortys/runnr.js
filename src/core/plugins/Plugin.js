@@ -99,17 +99,18 @@ class Plugin extends require("../EventEmitter") {
 		node.once("delete", () => this[dependentNodes].delete(node));
 	}
 
+	deactivateDependents() {
+		return Promise.all(this.dependents.runners.map(runner => runner.deactivate()));
+	}
+
 	update() {
 		return updatePlugin(this);
 	}
 
 	uninstall() {
-		return Promise.all(this.dependents.runners.map(runner => runner.deactivate()))
-			.then(() => uninstallPlugin(this))
-			.then(() => {
-				this[dependentNodes].forEach(node => node.delete());
-				this.emit("uninstall");
-			});
+		return uninstallPlugin(this).then(() => {
+			this.emit("uninstall");
+		});
 	}
 
 	static install(plugin) {

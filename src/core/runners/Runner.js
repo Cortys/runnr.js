@@ -143,14 +143,12 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	delete() {
-		return this.deactivate()
-			.then(() => deleteRunner(this))
-			.then(() => {
-				if(this[graph])
-					this[graph].removeListener("update", this[persistRunner]);
+		return deleteRunner(this).then(() => {
+			if(this[graph])
+				this[graph].removeListener("update", this[persistRunner]);
 
-				this.emit("delete");
-			});
+			this.emit("delete");
+		});
 	}
 
 	static add(runner) {
