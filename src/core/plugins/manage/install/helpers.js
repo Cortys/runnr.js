@@ -23,7 +23,7 @@ module.exports = {
 
 		const dbPlugin = store.collection.by("name", manifest.name);
 
-		if(dbPlugin && (semver.gte(dbPlugin.version, manifest.version) || dbPlugin.author !== manifest.author))
+		if(dbPlugin && semver.gte(dbPlugin.version, manifest.version))
 			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
 
 		if(!manifest.displayName || typeof manifest.displayName !== "string")

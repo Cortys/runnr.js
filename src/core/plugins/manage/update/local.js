@@ -8,7 +8,7 @@ function updateLocal(plugin) {
 	return path.isAbsolute(plugin.location)
 		? install({
 			type: "local",
-			path: plugin.location,
+			path: plugin.source === "localFile" ? plugin.mainLocation : plugin.location,
 			copy: false
 		}, manifest => plugin.assign(manifest), true)
 		: Promise.resolve();

@@ -28,7 +28,7 @@ function localFile(plugin, delayer) {
 
 		manifest.location = path.dirname(plugin.path);
 		manifest.main = path.basename(plugin.path);
-		manifest.source = "local";
+		manifest.source = "localFile";
 
 		return manifest;
 	});

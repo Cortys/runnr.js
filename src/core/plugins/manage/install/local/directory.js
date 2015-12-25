@@ -41,7 +41,7 @@ function localDirectory(plugin, delayer) {
 		if(!("main" in manifest))
 			manifest.main = "index.js";
 
-		manifest.source = "local";
+		manifest.source = "localDirectory";
 
 		return manifest;
 	});
