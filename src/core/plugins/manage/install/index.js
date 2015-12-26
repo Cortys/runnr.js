@@ -5,7 +5,7 @@ const owe = require("owe.js");
 const manager = require("../manager");
 const helpers = require("./helpers");
 
-function install(plugin, map, dontManage) {
+function install(plugin, getTarget, dontManage) {
 	if(typeof plugin !== "object" || !plugin)
 		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`));
 
@@ -16,13 +16,13 @@ function install(plugin, map, dontManage) {
 			"install"
 		);
 
-		if(typeof map !== "function")
-			map = helpers.getTarget;
+		if(typeof getTarget !== "function")
+			getTarget = helpers.getTarget;
 
 		let target;
 
 		const validator = manifest => delayer(manifest).then(() => {
-			target = map(manifest);
+			target = getTarget(manifest);
 
 			return manifest;
 		});
