@@ -8,7 +8,7 @@ const owe = require("owe.js");
 const config = require("../../../config");
 const store = require("../../store");
 
-const ports = require("../../../helpers/ports");
+const ports = require("../../../graph/helpers/ports");
 
 const npmCli = require.resolve("npm/bin/npm-cli");
 
