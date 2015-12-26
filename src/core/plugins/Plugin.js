@@ -21,7 +21,7 @@ class Plugin extends require("../EventEmitter") {
 		/* owe binding: */
 
 		const exposed = ["id", "name", "displayName", "version", "author", "source"];
-		const publicRoutes = new Set([...exposed, "ports", "dependents", "uninstall"]);
+		const publicRoutes = new Set([...exposed, "ports", "dependents", "update", "uninstall"]);
 		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
 
 		const that = this;
