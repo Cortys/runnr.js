@@ -51,11 +51,6 @@ class Runner extends require("../EventEmitter") {
 		if(!preset)
 			return;
 
-		Object.keys(this).forEach(key => {
-			if(key !== "$loki")
-				delete this[key];
-		});
-
 		Object.assign(this, preset);
 
 		if(!(graph in this))
