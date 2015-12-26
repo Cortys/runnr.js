@@ -9,7 +9,7 @@ function add(runner, map) {
 	if(typeof runner !== "object" || !runner)
 		return Promise.reject(new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`));
 
-	if(runner.type in installationTypes) {
+	if(runner.type in additionTypes) {
 		const delayer = runner => {
 			return manager.delay(
 				runner.name,
@@ -18,7 +18,7 @@ function add(runner, map) {
 			).then(() => runner);
 		};
 
-		const promise = installationTypes[runner.type](runner, delayer)
+		const promise = additionTypes[runner.type](runner, delayer)
 			.then(runner => helpers.insertRunner(map(runner)));
 
 		return promise;
@@ -27,7 +27,7 @@ function add(runner, map) {
 		return Promise.reject(new owe.exposed.Error("Runners cannot be added with the given method."));
 }
 
-const installationTypes = {
+const additionTypes = {
 	__proto__: null,
 
 	empty: require("./empty")
