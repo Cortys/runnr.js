@@ -32,7 +32,7 @@ const plugins = {
 /* Api: */
 const pluginsApi = Object.assign(() => plugins.list, {
 	install: plugins.install,
-	byName: owe(plugins.getByName, plugins.getByName)
+	byName: owe(null, plugins.getByName)
 });
 
 owe(pluginsApi, owe.chain([
