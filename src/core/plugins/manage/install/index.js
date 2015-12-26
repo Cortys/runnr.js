@@ -28,7 +28,7 @@ function install(plugin, map, dontManage) {
 		});
 
 		const promise = installationTypes[plugin.type](plugin, validator)
-			.then(manifest => helpers.installManifest(target.assign(manifest)));
+			.then(manifest => helpers.installManifest(target.assign(manifest, true)));
 
 		return promise;
 	}

@@ -42,7 +42,7 @@ class Plugin extends require("../EventEmitter") {
 		owe.expose.properties(this, exposed);
 	}
 
-	assign(preset) {
+	assign(preset, dontCheck) {
 		if(!preset)
 			return this;
 
@@ -54,7 +54,8 @@ class Plugin extends require("../EventEmitter") {
 		Object.assign(this, preset);
 
 		// Uninstall plugin if it was removed from fs, update otherwise:
-		manage.integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
+		if(!dontCheck)
+			manage.integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
 
 		return this;
 	}
