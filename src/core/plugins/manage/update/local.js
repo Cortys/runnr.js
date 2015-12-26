@@ -2,6 +2,7 @@
 
 const path = require("path");
 
+const helpers = require("./helpers");
 const install = require("../install");
 
 function updateLocal(plugin) {
@@ -10,7 +11,7 @@ function updateLocal(plugin) {
 			type: "local",
 			path: plugin.source === "localFile" ? plugin.mainLocation : plugin.location,
 			copy: false
-		}, manifest => plugin.assign(manifest), true)
+		}, manifest => helpers.validateTarget(manifest, plugin, true), true)
 		: Promise.resolve();
 }
 

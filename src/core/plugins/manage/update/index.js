@@ -6,7 +6,7 @@ const manager = require("../manager");
 
 function update(plugin) {
 	if(plugin.source == null)
-		return Promise.resolve(false);
+		return Promise.reject(new owe.exposed.Error("This plugin has no update source."));
 
 	if(plugin.source === "localFile" || plugin.source === "localDirectory")
 		return sources.local(plugin);

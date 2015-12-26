@@ -4,19 +4,12 @@ const owe = require("owe.js");
 
 const config = require("../config");
 
-const installPlugin = require("./manage/install");
-const updatePlugin = require("./manage/update");
-const uninstallPlugin = require("./manage/uninstall");
-const integrityCheck = require("./manage/integrityCheck");
-
 const dependentNodes = Symbol("dependentNodes");
 
 class Plugin extends require("../EventEmitter") {
-	constructor(preset) {
+	constructor() {
 		super();
 		this[dependentNodes] = new Set();
-
-		this.assign(preset);
 
 		/* owe binding: */
 
@@ -51,7 +44,7 @@ class Plugin extends require("../EventEmitter") {
 
 	assign(preset) {
 		if(!preset)
-			return;
+			return this;
 
 		Object.keys(this).forEach(key => {
 			if(key !== "$loki")
@@ -61,7 +54,9 @@ class Plugin extends require("../EventEmitter") {
 		Object.assign(this, preset);
 
 		// Uninstall plugin if it was removed from fs, update otherwise:
-		integrityCheck(this).then(() => this.update(), () => this.uninstall());
+		manage.integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
+
+		return this;
 	}
 
 	get id() {
@@ -103,21 +98,25 @@ class Plugin extends require("../EventEmitter") {
 		return Promise.all(this.dependents.runners.map(runner => runner.deactivate()));
 	}
 
-	update() {
-		return updatePlugin(this);
-	}
-
 	uninstall() {
-		return uninstallPlugin(this).then(() => {
+		return manage.uninstall(this).then(() => {
 			this.emit("uninstall");
 		});
 	}
 
+	update() {
+		return manage.update(this);
+	}
+
 	static install(plugin) {
-		return installPlugin(plugin, manifest => new Plugin(manifest));
+		return manage.install(plugin);
 	}
 }
 
+// Necessary to enable persist calls on Plugin instances:
 Plugin.store = require("./store");
 
 module.exports = Plugin;
+
+// Import managers after export because of cyclic references between them and Plugin:
+const manage = require("./manage");

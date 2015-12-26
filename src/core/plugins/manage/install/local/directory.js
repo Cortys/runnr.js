@@ -8,7 +8,7 @@ const owe = require("owe.js");
 const config = require("../../../../config");
 const helpers = require("../helpers");
 
-function localDirectory(plugin, delayer) {
+function localDirectory(plugin, validator) {
 	return new Promise((resolve, reject) => {
 		readPackage(path.join(plugin.path, "package.json"), true, (err, data) => {
 			if(err)
@@ -18,7 +18,7 @@ function localDirectory(plugin, delayer) {
 		});
 	}).then(helpers.validateManifest, () => {
 		throw new owe.exposed.Error("Plugin declaration was not accepted.");
-	}).then(delayer).then(manifest => {
+	}).then(validator).then(manifest => {
 		if(+plugin.copy) {
 			const location = config.fromPlugins(manifest.name);
 

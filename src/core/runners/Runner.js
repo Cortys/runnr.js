@@ -49,12 +49,14 @@ class Runner extends require("../EventEmitter") {
 
 	assign(preset) {
 		if(!preset)
-			return;
+			return this;
 
 		Object.assign(this, preset);
 
 		if(!(graph in this))
 			this.graph = new Graph({}, this);
+
+		return this;
 	}
 
 	[update](type, value) {
@@ -151,6 +153,7 @@ class Runner extends require("../EventEmitter") {
 	}
 }
 
+// Necessary to enable persist calls on Runner instances:
 Runner.store = require("./store");
 
 module.exports = Runner;

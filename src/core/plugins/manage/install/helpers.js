@@ -1,10 +1,10 @@
 "use strict";
 
 const childProcess = require("child_process");
-const semver = require("semver");
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
+const Plugin = require("../../Plugin");
 const config = require("../../../config");
 const store = require("../../store");
 
@@ -21,10 +21,8 @@ module.exports = {
 			throw owe.expose(err);
 		}
 
-		const dbPlugin = store.collection.by("name", manifest.name);
-
-		if(dbPlugin && semver.gte(dbPlugin.version, manifest.version))
-			throw new owe.exposed.Error(`Plugin with name '${manifest.name}' already installed.`);
+		if("$loki" in manifest || "meta" in manifest)
+			throw new owe.exposed.Error("'$loki' and 'meta' are forbidden in runnr plugin manifests.");
 
 		if(!manifest.displayName || typeof manifest.displayName !== "string")
 			manifest.displayName = manifest.name;
@@ -38,13 +36,13 @@ module.exports = {
 		return manifest;
 	},
 
+	getTarget(manifest) {
+		return store.collection.by("name", manifest.name) || new Plugin();
+	},
+
 	installManifest(manifest) {
-		const dbPlugin = store.collection.by("name", manifest.name);
-
-		if(dbPlugin)
-			store.remove(dbPlugin);
-
-		store.collection.insert(manifest);
+		if(!("$loki" in manifest || "meta" in manifest))
+			store.collection.insert(manifest);
 
 		return manifest;
 	},
