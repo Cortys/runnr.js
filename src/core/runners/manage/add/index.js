@@ -2,10 +2,11 @@
 
 const owe = require("owe.js");
 
+const Runner = require("../../Runner");
 const manager = require("../manager");
 const helpers = require("./helpers");
 
-function add(runner, map) {
+function add(runner) {
 	if(typeof runner !== "object" || !runner)
 		return Promise.reject(new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`));
 
@@ -19,7 +20,7 @@ function add(runner, map) {
 		};
 
 		const promise = additionTypes[runner.type](runner, delayer)
-			.then(runner => helpers.insertRunner(map(runner)));
+			.then(runner => helpers.insertRunner(new Runner().assign(runner)));
 
 		return promise;
 	}

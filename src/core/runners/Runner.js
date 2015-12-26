@@ -8,10 +8,6 @@ const persist = require("../helpers/persist");
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 
-const addRunner = require("./manage/add");
-const deleteRunner = require("./manage/delete");
-const helpers = require("./manage/helpers");
-
 const name = Symbol("name");
 const active = Symbol("active");
 const graph = Symbol("graph");
@@ -19,7 +15,7 @@ const update = Symbol("update");
 const persistRunner = Symbol("persistRunner");
 
 class Runner extends require("../EventEmitter") {
-	constructor(preset) {
+	constructor() {
 		super();
 		internalize(this, ["name", "active", "graph"]);
 
@@ -27,8 +23,6 @@ class Runner extends require("../EventEmitter") {
 			[active]: false,
 			[persistRunner]: () => persist(this)
 		});
-
-		this.assign(preset);
 
 		/* owe binding: */
 
@@ -73,7 +67,7 @@ class Runner extends require("../EventEmitter") {
 		return this[name];
 	}
 	set name(val) {
-		this[name] = helpers.validateName(val, this.name);
+		this[name] = manage.helpers.validateName(val, this.name);
 		this[update]("name", val);
 	}
 
@@ -140,7 +134,7 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	delete() {
-		return deleteRunner(this).then(() => {
+		return manage.delete(this).then(() => {
 			if(this[graph])
 				this[graph].removeListener("update", this[persistRunner]);
 
@@ -149,7 +143,7 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	static add(runner) {
-		return addRunner(runner, runner => new Runner(runner));
+		return manage.add(runner);
 	}
 }
 
@@ -157,3 +151,6 @@ class Runner extends require("../EventEmitter") {
 Runner.store = require("./store");
 
 module.exports = Runner;
+
+// Import managers after export because of cyclic references between them and Runner:
+const manage = require("./manage");
