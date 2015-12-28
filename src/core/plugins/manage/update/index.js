@@ -9,7 +9,8 @@ function update(plugin) {
 		return Promise.reject(new owe.exposed.Error("This plugin has no update source."));
 
 	if(plugin.source === "localFile" || plugin.source === "localDirectory")
-		return sources.local(plugin);
+		return plugin.deactivateDependents()
+			.then(() => sources.local(plugin));
 
 	return Promise.reject(new owe.exposed.Error("Invalid update source."));
 }
