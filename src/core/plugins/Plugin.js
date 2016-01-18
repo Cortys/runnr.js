@@ -33,7 +33,8 @@ class Plugin extends require("../EventEmitter") {
 						return this.value.hasOwnProperty(route);
 					}
 				}),
-				deep: true
+				deep: true,
+				traversePrototype: true // Allow access to Plugin.prototype getters
 			},
 			closer: {
 				filter: true
