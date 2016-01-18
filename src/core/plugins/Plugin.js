@@ -75,8 +75,9 @@ class Plugin extends require("../EventEmitter") {
 		};
 
 		this[dependentNodes].forEach(node => {
-			return result[node.graph.container instanceof Plugin ? "plugins" : "runners"]
-				.add(node.graph.container);
+			result[node.graph.container instanceof Plugin
+				? "plugins"
+				: "runners"].add(node.graph.container);
 		});
 
 		return {
