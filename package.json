@@ -37,7 +37,7 @@
 		"owe-events": "^0.10",
 
 		"lokijs": "techfort/LokiJS",
-		"npm": "3.5.2",
+		"npm": "3.5.3",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.4",
 		"read-package-json": "2.0.2",
