@@ -7,20 +7,20 @@ const generating = require("./generatingMaps");
 function createManager() {
 	const tasksMap = new generating.Map(() => ({}));
 
-	function addTask(plugin, task, intent) {
-		const tasks = tasksMap.forceGet(plugin);
+	function addTask(id, task, intent) {
+		const tasks = tasksMap.forceGet(id);
 
 		if(!tasks.current) {
 			const done = () => {
 				tasks.current = undefined;
 
 				if(tasks.next) {
-					addTask(plugin, tasks.next.task, tasks.next.intent)
+					addTask(id, tasks.next.task, tasks.next.intent)
 						.then(tasks.next.promise.resolve, tasks.next.promise.reject);
 					tasks.next = undefined;
 				}
 				else
-					tasksMap.delete(plugin);
+					tasksMap.delete(id);
 			};
 
 			tasks.current = {
@@ -53,13 +53,13 @@ function createManager() {
 			map = x => x;
 
 		return function() {
-			return addTask(map(...arguments), () => task(...arguments), intent);
+			return addTask(map.apply(this, arguments), () => task.apply(this, arguments), intent);
 		};
 	}
 
-	function delay(plugin, promise, intent) {
+	function delay(id, promise, intent) {
 		return new Promise((resolve, reject) => {
-			addTask(plugin, () => {
+			addTask(id, () => {
 				resolve();
 
 				return promise;
