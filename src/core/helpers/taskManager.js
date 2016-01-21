@@ -6,6 +6,9 @@ const generating = require("./generatingMaps");
 
 /**
  * Creates a task manager with its own id scope.
+ * Task managers are used to synchronize actions across various structural entities of runnr.
+ * E. g. the task manager prevents the user from updating a Plugin while it is being uninstalled or the other way around.
+ * It basically takes tasks that were requested at the same time and executes them one-by-one in order instead.
  * @return {{ addTask: function, taskify: function, delay: function }} The task manager and its helper functions.
  */
 function createManager() {
@@ -20,7 +23,7 @@ function createManager() {
 	 * If there simply is no follow up task but only a currently running one, the requested task will simply be scheduled as the new follow up task for id.
 	 * Note: Whenever a follow up task is set for an id, the running task will be canceled IF it offers a "cancel" method.
 	 * @param {any} id The id is used to identify objects/entities that have tasks attached to them.
-	 * @param {function} task A function that will be called if the tasks is executed. It has to return a Promise.
+	 * @param {function} task A function that will be called if the task is executed. It has to return a Promise.
 	 * @param {any} intent An indentifier that is common for all tasks that do the same thing. This is used to reject tasks whose purpose is already fullfilled by another running or scheduled task.
 	 * @return {Promise} A Promise that will be fullfilled/rejected like the resulting Promise of task(). It can additionally be rejected if the task was immediately rejected because of its intent or replaced by another task later on.
 	 */
