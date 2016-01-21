@@ -74,7 +74,7 @@ function createManager() {
 
 	/**
 	 * Returns a function that behaves like task regarding the output but for each call actually adds a task to the id returned by idMap with the given static intent.
-	 * If task did not already return a Promise (which is unlikely since synchronous functions should be taskified), the taskified result will of course always return a Promise to abstract away the possible delay that might occur due to tasking.
+	 * If task did not already return a Promise (which is unlikely since synchronous functions should not be taskified), the taskified result will of course always return a Promise to abstract away the possible delay that might occur due to tasking.
 	 * @param {function} task The function that should be "taskified" as explained above.
 	 * @param {function} idMap Called when the returned function is called. It returns the id this task should be added to. It gets context and arguments of the called returned function.
 	 * @param {any} intent The intent to be used for each task that is added.
