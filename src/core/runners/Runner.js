@@ -155,3 +155,7 @@ module.exports = Runner;
 
 // Import managers after export because of cyclic references between them and Runner:
 const manage = require("./manage");
+
+Runner.prototype.activate = manage.manager.taskify(Runner.prototype.activate, function() {
+	return this.name;
+}, "activate");

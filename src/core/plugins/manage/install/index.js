@@ -19,6 +19,9 @@ function install(plugin, getTarget, dontManage) {
 		if(typeof getTarget !== "function")
 			getTarget = helpers.getTarget;
 
+		/**
+		 * @type Plugin
+		 */
 		let target;
 
 		const validator = manifest => delayer(manifest).then(() => {
