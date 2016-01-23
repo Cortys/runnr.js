@@ -8,4 +8,4 @@ function deleteRunner(runner) {
 	return runner.deactivate().then(() => store.collection.remove(runner));
 }
 
-module.exports = manager.taskify(deleteRunner, runner => runner.name, "delete");
+module.exports = manager.taskify(deleteRunner, runner => runner, "delete");

@@ -158,5 +158,5 @@ module.exports = Runner;
 const manage = require("./manage");
 
 Runner.prototype.activate = manage.manager.taskify(Runner.prototype.activate, function() {
-	return this.name;
+	return this;
 }, "activate");

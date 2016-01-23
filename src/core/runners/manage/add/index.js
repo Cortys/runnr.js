@@ -11,16 +11,17 @@ function add(runner) {
 		return Promise.reject(new owe.exposed.TypeError(`Given runner '${runner}' cannot be added.`));
 
 	if(runner.type in additionTypes) {
+		let runnerInstance;
 		const delayer = runner => {
 			return manager.delay(
-				runner.name,
+				runnerInstance = new Runner(),
 				new Promise(resolve => setImmediate(() => resolve(promise))),
 				"add"
 			).then(() => runner);
 		};
 
 		const promise = additionTypes[runner.type](runner, delayer)
-			.then(runner => helpers.insertRunner(new Runner().assign(runner)));
+			.then(runner => helpers.insertRunner(runnerInstance.assign(runner)));
 
 		return promise;
 	}
