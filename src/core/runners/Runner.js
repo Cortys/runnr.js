@@ -7,6 +7,7 @@ const persist = require("../helpers/persist");
 
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
+const manager = require("../taskManager");
 const helpers = require("./helpers");
 
 const name = Symbol("name");
@@ -149,6 +150,10 @@ class Runner extends require("../EventEmitter") {
 	}
 }
 
+Runner.prototype.activate = manager.taskify(Runner.prototype.activate, function() {
+	return this;
+}, "activate");
+
 // Necessary to enable persist calls on Runner instances:
 Runner.store = require("./store");
 
@@ -156,7 +161,3 @@ module.exports = Runner;
 
 // Import managers after export because of cyclic references between them and Runner:
 const manage = require("./manage");
-
-Runner.prototype.activate = manage.manager.taskify(Runner.prototype.activate, function() {
-	return this;
-}, "activate");

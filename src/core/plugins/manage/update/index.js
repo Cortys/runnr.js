@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 
 const validateEdge = require("../../../graph/helpers/validateEdge");
-const manager = require("../manager");
+const manager = require("../../../taskManager");
 
 function update(plugin) {
 	if(plugin.source == null)

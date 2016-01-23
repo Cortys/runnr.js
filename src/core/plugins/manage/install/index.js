@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const manager = require("../manager");
+const manager = require("../../../taskManager");
 const helpers = require("./helpers");
 
 function install(plugin, getTarget, dontManage) {

@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 
 const Runner = require("../../Runner");
-const manager = require("../manager");
+const manager = require("../../../taskManager");
 const helpers = require("./helpers");
 
 function add(runner) {

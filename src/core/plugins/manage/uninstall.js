@@ -7,7 +7,7 @@ const fs = require("fs-extra-promise");
 const config = require("../../config");
 const store = require("../store");
 
-const manager = require("./manager");
+const manager = require("../../taskManager");
 
 function uninstall(plugin) {
 	return plugin.deactivateDependents().then(() => {

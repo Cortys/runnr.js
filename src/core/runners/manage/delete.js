@@ -1,6 +1,6 @@
 "use strict";
 
-const manager = require("./manager");
+const manager = require("../../taskManager");
 
 const store = require("../store");
 

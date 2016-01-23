@@ -2,6 +2,5 @@
 
 module.exports = {
 	add: require("./add"),
-	delete: require("./delete"),
-	manager: require("./manager")
+	delete: require("./delete")
 };
