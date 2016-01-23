@@ -4,6 +4,8 @@ const owe = require("owe.js");
 
 const config = require("../config");
 
+const integrityCheck = require("./integrityCheck");
+
 const dependentNodes = Symbol("dependentNodes");
 
 class Plugin extends require("../EventEmitter") {
@@ -56,7 +58,7 @@ class Plugin extends require("../EventEmitter") {
 
 		// Uninstall plugin if it was removed from fs, update otherwise:
 		if(!dontCheck)
-			manage.integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
+			integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
 
 		return this;
 	}

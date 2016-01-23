@@ -7,6 +7,7 @@ const persist = require("../helpers/persist");
 
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
+const helpers = require("./helpers");
 
 const name = Symbol("name");
 const active = Symbol("active");
@@ -68,7 +69,7 @@ class Runner extends require("../EventEmitter") {
 		return this[name];
 	}
 	set name(val) {
-		this[name] = manage.helpers.validateName(val, this.name);
+		this[name] = helpers.validateName(val, this.name);
 		this[update]("name", val);
 	}
 

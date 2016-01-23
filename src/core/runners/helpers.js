@@ -1,7 +1,7 @@
 "use strict";
 
 const owe = require("owe.js");
-const store = require("../store");
+const store = require("./store");
 
 module.exports = {
 	exists(name) {
