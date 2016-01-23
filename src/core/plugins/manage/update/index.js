@@ -40,4 +40,4 @@ const sources = {
 	local: require("./local")
 };
 
-module.exports = manager.taskify(update, plugin => plugin.name, "update");
+module.exports = manager.taskify(update, plugin => plugin, "update");

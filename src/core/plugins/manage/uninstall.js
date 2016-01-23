@@ -24,4 +24,4 @@ function uninstall(plugin) {
 	});
 }
 
-module.exports = manager.taskify(uninstall, plugin => plugin.name, "uninstall");
+module.exports = manager.taskify(uninstall, plugin => plugin, "uninstall");

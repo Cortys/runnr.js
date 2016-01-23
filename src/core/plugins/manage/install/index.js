@@ -10,12 +10,6 @@ function install(plugin, getTarget, dontManage) {
 		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`));
 
 	if(plugin.type in installationTypes) {
-		const delayer = dontManage ? manifest => Promise.resolve(manifest) : manifest => manager.delay(
-			manifest.name,
-			new Promise(resolve => setImmediate(() => resolve(promise))),
-			"install"
-		);
-
 		if(typeof getTarget !== "function")
 			getTarget = helpers.getTarget;
 
@@ -24,13 +18,13 @@ function install(plugin, getTarget, dontManage) {
 		 */
 		let target;
 
-		const validator = manifest => delayer(manifest).then(() => {
-			target = getTarget(manifest);
+		const delayer = dontManage ? manifest => Promise.resolve(manifest) : manifest => manager.delay(
+			target = getTarget(manifest),
+			new Promise(resolve => setImmediate(() => resolve(promise))),
+			"install"
+		);
 
-			return manifest;
-		});
-
-		const promise = installationTypes[plugin.type](plugin, validator)
+		const promise = installationTypes[plugin.type](plugin, delayer)
 			.then(manifest => helpers.installManifest(target.assign(manifest, true)));
 
 		return promise;
