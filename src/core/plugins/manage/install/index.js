@@ -22,7 +22,7 @@ function install(plugin, getTarget, dontManage) {
 			target = getTarget(manifest),
 			new Promise(resolve => setImmediate(() => resolve(promise))),
 			"install"
-		);
+		).then(() => manifest);
 
 		const promise = installationTypes[plugin.type](plugin, delayer)
 			.then(manifest => helpers.installManifest(target.assign(manifest, true)));

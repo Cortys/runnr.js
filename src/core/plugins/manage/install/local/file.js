@@ -7,10 +7,10 @@ const owe = require("owe.js");
 const config = require("../../../../config");
 const helpers = require("../helpers");
 
-function localFile(plugin, validator) {
+function localFile(plugin, delayer) {
 	return fs.readFileAsync(plugin.path).catch(() => {
 		throw new owe.exposed.Error("Plugin file could not be read.");
-	}).then(file => parsePluginFile(file.toString())).then(validator).then(manifest => {
+	}).then(file => parsePluginFile(file.toString())).then(delayer).then(manifest => {
 		if(+plugin.copy) {
 			const location = config.fromPlugins(manifest.name);
 
