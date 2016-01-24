@@ -24,3 +24,5 @@ api.server(process, owe.api(connector, owe.serve({
 		eventsApi: master.route("eventController")
 	}
 });
+
+console.log("[STARTED]");
