@@ -16,28 +16,44 @@ function update(plugin) {
 	else
 		return Promise.reject(new owe.exposed.Error("Invalid update source."));
 
-	const promise = plugin.disableDependentRunners(new Promise(resolve => setImmediate(() => resolve(promise))))
-		.then(() => updater(plugin))
-		.then(() => {
-			for(const node of plugin.dependentNodes) {
-				const edges = node.edges;
-				const validate = edge => {
-					try {
-						validateEdge(edge);
-					}
-					catch(err) {
-						edge.delete();
-					}
-				};
+	const activeRunners = new Set();
 
-				edges.in.forEach(validate);
-				edges.out.forEach(validate);
-			}
+	const promise = plugin.performOnDependentRunners(runner => {
+		if(runner.active)
+			activeRunners.add(runner);
 
-			return plugin;
+		return runner.disableAsLongAs(new Promise(resolve => setImmediate(() => resolve(promise))));
+	}).then(() => updater(plugin)).then(() => {
+		for(const node of plugin.dependentNodes) {
+			let modified = false;
+
+			const edges = node.edges;
+			const validate = edge => {
+				try {
+					validateEdge(edge);
+				}
+				catch(err) {
+					edge.delete();
+					modified = true;
+				}
+			};
+
+			edges.in.forEach(validate);
+			edges.out.forEach(validate);
+
+			if(modified && activeRunners.has(node.graph.container))
+				activeRunners.delete(node.graph.container);
+		}
+	});
+
+	return promise.then(() => {
+		// Async because this promise.then is executed before the "then" of the dependents disableQueue.
+		setImmediate(() => {
+			activeRunners.forEach(runner => runner.activate());
 		});
 
-	return promise;
+		return plugin;
+	});
 }
 
 const sources = {
