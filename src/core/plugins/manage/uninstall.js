@@ -10,18 +10,25 @@ const store = require("../store");
 const manager = require("../../taskManager");
 
 function uninstall(plugin) {
-	return plugin.disableDependentRunners().then(() => {
-		if(!path.isAbsolute(plugin.location))
-			return fs.removeAsync(config.fromPlugins(plugin.location));
-	}).then(() => store.collection.remove(plugin), err => {
-		if(err && err.code === "ENOENT")
-			return store.collection.remove(plugin);
+	const promise = plugin.disableDependentRunners(new Promise(resolve => setImmediate(() => resolve(promise))))
+		.then(() => {
+			if(!path.isAbsolute(plugin.location))
+				return fs.removeAsync(config.fromPlugins(plugin.location));
+		})
+		.then(() => store.collection.remove(plugin), err => {
+			if(err && err.code === "ENOENT")
+				return store.collection.remove(plugin);
 
-		throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
-	}).then(() => {
-		for(const node of plugin.dependentNodes)
-			node.delete();
-	}).then(() => plugin.enableDependentRunners()).then(() => true);
+			throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
+		})
+		.then(() => {
+			for(const node of plugin.dependentNodes)
+				node.delete();
+
+			return true;
+		});
+
+	return promise;
 }
 
 module.exports = manager.taskify(uninstall, plugin => plugin, "uninstall");

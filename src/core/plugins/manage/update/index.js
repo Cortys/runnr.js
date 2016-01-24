@@ -16,7 +16,7 @@ function update(plugin) {
 	else
 		return Promise.reject(new owe.exposed.Error("Invalid update source."));
 
-	return plugin.disableDependentRunners()
+	const promise = plugin.disableDependentRunners(new Promise(resolve => setImmediate(() => resolve(promise))))
 		.then(() => updater(plugin))
 		.then(() => {
 			for(const node of plugin.dependentNodes) {
@@ -33,7 +33,11 @@ function update(plugin) {
 				edges.in.forEach(validate);
 				edges.out.forEach(validate);
 			}
-		}).then(() => plugin.enableDependentRunners()).then(() => plugin);
+
+			return plugin;
+		});
+
+	return promise;
 }
 
 const sources = {

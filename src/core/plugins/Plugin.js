@@ -58,7 +58,7 @@ class Plugin extends require("../EventEmitter") {
 
 		// Uninstall plugin if it was removed from fs, update otherwise:
 		if(!dontCheck)
-			integrityCheck(this).then(() => this.update().catch(() => {}), () => this.uninstall());
+			integrityCheck(this).then(() => this.update(), () => this.uninstall());
 
 		return this;
 	}
@@ -103,12 +103,8 @@ class Plugin extends require("../EventEmitter") {
 		return Promise.all(this.dependents.runners.map(method));
 	}
 
-	disableDependentRunners() {
-		return this.performOnDependentRunners(runner => runner.disable());
-	}
-
-	enableDependentRunners() {
-		return this.performOnDependentRunners(runner => runner.enable());
+	disableDependentRunners(promise) {
+		return this.performOnDependentRunners(runner => runner.disableAsLongAs(promise));
 	}
 
 	uninstall() {

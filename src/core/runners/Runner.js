@@ -5,13 +5,14 @@ const owe = require("owe.js");
 const internalize = require("../helpers/internalize");
 const persist = require("../helpers/persist");
 
+const PromiseQueue = require("../helpers/PromiseQueue");
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 const manager = require("../taskManager");
 const helpers = require("./helpers");
 
 const name = Symbol("name");
-const enabled = Symbol("enabled");
+const disableQueue = Symbol("enabled");
 const active = Symbol("active");
 const graph = Symbol("graph");
 const update = Symbol("update");
@@ -23,7 +24,7 @@ class Runner extends require("../EventEmitter") {
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
-			[enabled]: true,
+			[disableQueue]: new PromiseQueue(),
 			[active]: false,
 			[persistRunner]: () => persist(this)
 		});
@@ -84,7 +85,7 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	get enabled() {
-		return this[enabled];
+		return this[disableQueue].size === 0;
 	}
 
 	get graph() {
@@ -114,20 +115,14 @@ class Runner extends require("../EventEmitter") {
 			});
 	}
 
-	enable() {
-		this[update]("enabled", this[enabled] = true);
+	disableAsLongAs(promise) {
+		this[disableQueue].add(promise);
 
-		return Promise.resolve(true);
-	}
-
-	disable() {
-		this[update]("enabled", this[enabled] = false);
-
-		return this.deactivate().then(() => true);
+		return this.deactivate();
 	}
 
 	activate() {
-		if(!this[enabled])
+		if(!this.enabled)
 			return Promise.reject("This runner is disabled. It cannot be activated.");
 
 		if(this[active])
