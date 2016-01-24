@@ -11,6 +11,7 @@ const manager = require("../taskManager");
 const helpers = require("./helpers");
 
 const name = Symbol("name");
+const enabled = Symbol("enabled");
 const active = Symbol("active");
 const graph = Symbol("graph");
 const update = Symbol("update");
@@ -19,16 +20,17 @@ const persistRunner = Symbol("persistRunner");
 class Runner extends require("../EventEmitter") {
 	constructor() {
 		super();
-		internalize(this, ["name", "active", "graph"]);
+		internalize(this, ["name", "enabled", "active", "graph"]);
 
 		Object.assign(this, {
+			[enabled]: true,
 			[active]: false,
 			[persistRunner]: () => persist(this)
 		});
 
 		/* owe binding: */
 
-		const exposed = ["id", "name", "active"];
+		const exposed = ["id", "name", "enabled", "active"];
 
 		owe(this, owe.serve({
 			router: {
@@ -81,6 +83,13 @@ class Runner extends require("../EventEmitter") {
 		this[val ? "activate" : "deactivate"]();
 	}
 
+	get enabled() {
+		return this[enabled];
+	}
+	set enabled(val) {
+		this[val ? "enable" : "disable"]();
+	}
+
 	get graph() {
 		return this[graph];
 	}
@@ -108,7 +117,22 @@ class Runner extends require("../EventEmitter") {
 			});
 	}
 
+	enable() {
+		this[update]("enabled", this[enabled] = true);
+
+		return Promise.resolve(true);
+	}
+
+	disable() {
+		this[update]("enabled", this[enabled] = false);
+
+		return this.deactivate().then(() => true);
+	}
+
 	activate() {
+		if(!this[enabled])
+			return Promise.reject("This runner is disabled. It cannot be activated.");
+
 		if(this[active])
 			return Promise.resolve(true);
 
