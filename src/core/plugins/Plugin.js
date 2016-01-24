@@ -56,9 +56,13 @@ class Plugin extends require("../EventEmitter") {
 
 		Object.assign(this, preset);
 
-		// Uninstall plugin if it was removed from fs, update otherwise:
 		if(!dontCheck)
-			integrityCheck(this).then(() => this.update(), () => this.uninstall());
+			// Uninstall plugin if it was removed from fs, update otherwise:
+			// Performed async to ensure, that all Plugins and Runners were initialized.
+			// Runners can then be safely disabled during plugin update or uninstall.
+			setImmediate(() => {
+				integrityCheck(this).then(() => this.update(), () => this.uninstall());
+			});
 
 		return this;
 	}
