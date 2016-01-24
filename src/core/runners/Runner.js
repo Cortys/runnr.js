@@ -20,7 +20,7 @@ const persistRunner = Symbol("persistRunner");
 class Runner extends require("../EventEmitter") {
 	constructor() {
 		super();
-		internalize(this, ["name", "enabled", "active", "graph"]);
+		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
 			[enabled]: true,
@@ -85,9 +85,6 @@ class Runner extends require("../EventEmitter") {
 
 	get enabled() {
 		return this[enabled];
-	}
-	set enabled(val) {
-		this[val ? "enable" : "disable"]();
 	}
 
 	get graph() {
