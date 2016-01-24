@@ -3,6 +3,7 @@
 const owe = require("owe.js");
 
 const config = require("../config");
+const persist = require("../helpers/persist");
 
 const integrityCheck = require("./integrityCheck");
 
@@ -50,7 +51,7 @@ class Plugin extends require("../EventEmitter") {
 			return this;
 
 		Object.keys(this).forEach(key => {
-			if(key !== "$loki")
+			if(key !== "$loki" && key !== "meta")
 				delete this[key];
 		});
 
@@ -61,8 +62,10 @@ class Plugin extends require("../EventEmitter") {
 			// Performed async to ensure, that all Plugins and Runners were initialized.
 			// Runners can then be safely disabled during plugin update or uninstall.
 			setImmediate(() => {
-				integrityCheck(this).then(() => this.update(), () => this.uninstall());
+				integrityCheck(this).then(() => this.source && this.update(), () => this.uninstall());
 			});
+
+		persist(this);
 
 		return this;
 	}
