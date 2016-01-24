@@ -18,7 +18,11 @@ function install(plugin, getTarget, dontManage) {
 		 */
 		let target;
 
-		const delayer = dontManage ? manifest => Promise.resolve(manifest) : manifest => manager.delay(
+		const delayer = dontManage ? manifest => {
+			target = getTarget(manifest);
+
+			return Promise.resolve(manifest);
+		} : manifest => manager.delay(
 			target = getTarget(manifest),
 			new Promise(resolve => setImmediate(() => resolve(promise))),
 			"install"

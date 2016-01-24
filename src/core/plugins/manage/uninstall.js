@@ -10,7 +10,7 @@ const store = require("../store");
 const manager = require("../../taskManager");
 
 function uninstall(plugin) {
-	return plugin.deactivateDependents().then(() => {
+	return plugin.disableDependentRunners().then(() => {
 		if(!path.isAbsolute(plugin.location))
 			return fs.removeAsync(config.fromPlugins(plugin.location));
 	}).then(() => store.collection.remove(plugin), err => {
@@ -21,7 +21,7 @@ function uninstall(plugin) {
 	}).then(() => {
 		for(const node of plugin.dependentNodes)
 			node.delete();
-	});
+	}).then(() => plugin.enableDependentRunners()).then(() => true);
 }
 
 module.exports = manager.taskify(uninstall, plugin => plugin, "uninstall");
