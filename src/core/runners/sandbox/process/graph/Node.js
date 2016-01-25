@@ -25,11 +25,11 @@ class Node {
 
 		this.loaded = this.api.route("ports").then(ports => {
 			Object.keys(ports.in).forEach(portName => {
-				this.ports.in[portName] = new Port();
+				this.ports.in[portName] = new Port(ports.in[portName]);
 			});
 
 			Object.keys(ports.out).forEach(portName => {
-				this.ports.out[portName] = new Port();
+				this.ports.out[portName] = new Port(ports.out[portName]);
 			});
 		});
 	}

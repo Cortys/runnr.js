@@ -2,17 +2,25 @@
 
 const stream = require("stream");
 
+const constraints = require("../../../../graph/constraints");
+
 class Port {
-	constructor() {
+	constructor(constraint) {
 		const readable = this.readable = new stream.Readable({
-			read() {}
+			read() {},
+			objectMode: !constraint.binary
 		});
 
 		this.writable = new stream.Writable({
-			write(chunk, encoding, callback) {
-				readable.push(chunk);
+			write(data, encoding, callback) {
+				try {
+					readable.push(constraints.match(data, constraint));
+				}
+				catch(error) {}
+
 				callback();
-			}
+			},
+			objectMode: !constraint.binary
 		});
 
 		this.writable.setDefaultEncoding("utf8");
