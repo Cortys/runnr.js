@@ -16,7 +16,7 @@ class Port {
 				try {
 					readable.push(constraints.match(data, constraint));
 				}
-				catch(error) {}
+				catch(err) {}
 
 				callback();
 			},
