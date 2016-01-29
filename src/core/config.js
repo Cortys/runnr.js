@@ -6,7 +6,7 @@ const home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
 
 module.exports = {
 	home,
-	userData: path.join(home, ".runnr.js"),
+	userData: path.join(home, ".runnr"),
 
 	fromUserData() {
 		return path.resolve(this.userData, ...arguments);
