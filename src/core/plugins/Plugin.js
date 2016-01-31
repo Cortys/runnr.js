@@ -78,6 +78,8 @@ class Plugin extends require("../EventEmitter") {
 
 		persist(this);
 
+		console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
+
 		return this;
 	}
 

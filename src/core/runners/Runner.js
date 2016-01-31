@@ -26,16 +26,12 @@ class Runner extends require("../EventEmitter") {
 
 		Object.assign(this, {
 			[disableQueue]: new PromiseQueue(),
-			[active]: false,
+			[active]: undefined,
 			[persistRunner]: () => persist(this)
 		});
 
 		this[graphLoaded] = {};
-		this[graphLoaded].promise = new Promise((resolve, reject) => Object.assign(this[graphLoaded], {
-			resolve, reject
-		}));
-
-		this.disableUntil(this[graphLoaded].promise);
+		this[graphLoaded].promise = new Promise(resolve => this[graphLoaded].resolve = resolve);
 
 		/* owe binding: */
 
@@ -63,6 +59,11 @@ class Runner extends require("../EventEmitter") {
 
 		if(!("graph" in preset))
 			this.graph = new Graph({}, this);
+
+		if(!("active" in preset))
+			this.active = false;
+
+		console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
 
 		return this;
 	}
@@ -111,7 +112,7 @@ class Runner extends require("../EventEmitter") {
 		const set = () => {
 			this[graph] = val;
 			this[graph].on("update", this[persistRunner]);
-			this[graph].loaded.then(this[graphLoaded].resolve, this[graphLoaded].reject);
+			this[graph].loaded.then(this[graphLoaded].resolve, this[graphLoaded].resolve);
 
 			this[update]("graph", val);
 		};
@@ -133,20 +134,42 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	activate() {
+		if(!this.enabled)
+			return Promise.reject("This runner is disabled. It cannot be activated.");
 
-		return this[disableQueue].onEmpty.then(() => {
-			if(!this[active]) {
-				if(!this.sandbox)
+		if(this[active])
+			return Promise.resolve(true);
+
+		// Initial activation sets [active] = true immediately.
+		// After this runners graph was loaded and meanwhile no deactivate occured, it is actually activated:
+		if(this[active] === undefined) {
+			this[active] = true;
+
+			return this[graphLoaded].promise.then(() => {
+				if(this[active] && !this.sandbox)
 					this.sandbox = new Sandbox(this);
 
-				this[update]("active", this[active] = true);
-			}
+				return true;
+			});
+		}
 
-			return true;
-		});
+		if(!this[active]) {
+			if(!this.sandbox)
+				this.sandbox = new Sandbox(this);
+
+			this[update]("active", this[active] = true);
+		}
+
+		return Promise.resolve(true);
 	}
 
 	deactivate() {
+		if(this[active] === undefined) {
+			this[active] = false;
+
+			return Promise.resolve(true);
+		}
+
 		if(!this[active] || !this.sandbox) {
 			if(this[active])
 				this[update]("active", this[active] = false);
