@@ -15,6 +15,7 @@ const name = Symbol("name");
 const disableQueue = Symbol("enabled");
 const active = Symbol("active");
 const graph = Symbol("graph");
+const graphLoaded = Symbol("graphLoaded");
 const update = Symbol("update");
 const persistRunner = Symbol("persistRunner");
 
@@ -28,6 +29,13 @@ class Runner extends require("../EventEmitter") {
 			[active]: false,
 			[persistRunner]: () => persist(this)
 		});
+
+		this[graphLoaded] = {};
+		this[graphLoaded].promise = new Promise((resolve, reject) => Object.assign(this[graphLoaded], {
+			resolve, reject
+		}));
+
+		this.disableUntil(this[graphLoaded].promise);
 
 		/* owe binding: */
 
@@ -53,7 +61,7 @@ class Runner extends require("../EventEmitter") {
 
 		Object.assign(this, preset);
 
-		if(!(graph in this))
+		if(!("graph" in preset))
 			this.graph = new Graph({}, this);
 
 		return this;
@@ -85,7 +93,7 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	get enabled() {
-		return this[disableQueue].size === 0;
+		return this[disableQueue].isEmpty;
 	}
 
 	get graph() {
@@ -95,12 +103,15 @@ class Runner extends require("../EventEmitter") {
 		if(this[graph] === val)
 			return;
 
+		// console.log("assigned graph", this.name, val);
+
 		if(this[graph])
 			this[graph].removeListener("update", this[persistRunner]);
 
 		const set = () => {
 			this[graph] = val;
 			this[graph].on("update", this[persistRunner]);
+			this[graph].loaded.then(this[graphLoaded].resolve, this[graphLoaded].reject);
 
 			this[update]("graph", val);
 		};
@@ -115,25 +126,24 @@ class Runner extends require("../EventEmitter") {
 			});
 	}
 
-	disableAsLongAs(promise) {
+	disableUntil(promise) {
 		this[disableQueue].add(promise);
 
 		return this.deactivate();
 	}
 
 	activate() {
-		if(!this.enabled)
-			return Promise.reject("This runner is disabled. It cannot be activated.");
 
-		if(this[active])
-			return Promise.resolve(true);
+		return this[disableQueue].onEmpty.then(() => {
+			if(!this[active]) {
+				if(!this.sandbox)
+					this.sandbox = new Sandbox(this);
 
-		if(!this.sandbox)
-			this.sandbox = new Sandbox(this);
+				this[update]("active", this[active] = true);
+			}
 
-		this[update]("active", this[active] = true);
-
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 
 	deactivate() {
@@ -154,6 +164,8 @@ class Runner extends require("../EventEmitter") {
 
 	delete() {
 		return manage.delete(this).then(result => {
+			this.disableUntil(new Promise());
+
 			if(this[graph])
 				this[graph].removeListener("update", this[persistRunner]);
 

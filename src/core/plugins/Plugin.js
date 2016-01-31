@@ -8,11 +8,18 @@ const persist = require("../helpers/persist");
 const integrityCheck = require("./integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
+const loaded = Symbol("loaded");
 
 class Plugin extends require("../EventEmitter") {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
+		this[loaded] = {};
+		this[loaded].promise = new Promise((resolve, reject) => Object.assign(this[loaded], {
+			resolve, reject
+		}));
+
+		this[loaded].promise.then(() => console.log(`Loaded plugin '${this.name}'.`));
 
 		/* owe binding: */
 
@@ -62,12 +69,20 @@ class Plugin extends require("../EventEmitter") {
 			// Performed async to ensure, that all Plugins and Runners were initialized.
 			// Runners can then be safely disabled during plugin update or uninstall.
 			setImmediate(() => {
-				integrityCheck(this).then(() => this.source && this.update(), () => this.uninstall());
+				integrityCheck(this)
+					.then(() => this.source && this.update(), () => this.uninstall())
+					.then(() => true).then(this[loaded].resolve, this[loaded].reject);
 			});
+		else
+			this[loaded].resolve(true);
 
 		persist(this);
 
 		return this;
+	}
+
+	get loaded() {
+		return this[loaded].promise;
 	}
 
 	get id() {
@@ -111,7 +126,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	disableDependentRunners(promise) {
-		return this.performOnDependentRunners(runner => runner.disableAsLongAs(promise));
+		return this.performOnDependentRunners(runner => runner.disableUntil(promise));
 	}
 
 	uninstall() {

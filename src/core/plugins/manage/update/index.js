@@ -22,7 +22,7 @@ function update(plugin) {
 		if(runner.active)
 			activeRunners.add(runner);
 
-		return runner.disableAsLongAs(new Promise(resolve => setImmediate(() => resolve(promise))));
+		return runner.disableUntil(new Promise(resolve => setImmediate(() => resolve(promise))));
 	}).then(() => updater(plugin)).then(() => {
 		for(const node of plugin.dependentNodes) {
 			let modified = false;
