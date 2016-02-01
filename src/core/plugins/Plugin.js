@@ -23,9 +23,9 @@ class Plugin extends require("../EventEmitter") {
 
 		/* owe binding: */
 
-		const exposed = ["id", "name", "displayName", "version", "author", "source"];
+		const exposed = ["id", "type", "name", "displayName", "version", "author", "source"];
 		const publicRoutes = new Set([...exposed, "ports", "dependents", "update", "uninstall"]);
-		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation"]);
+		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation", "graph"]);
 
 		const that = this;
 
@@ -61,6 +61,9 @@ class Plugin extends require("../EventEmitter") {
 			if(key !== "$loki" && key !== "meta")
 				delete this[key];
 		});
+
+		if(preset.type !== "js" && preset.type !== "graph")
+			preset.type = "js";
 
 		Object.assign(this, preset);
 
