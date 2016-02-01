@@ -37,14 +37,26 @@ module.exports = {
 	},
 
 	getTarget(manifest) {
-		return store.collection.by("name", manifest.name) || new Plugin();
+		let stored = store.collection.by("name", manifest.name);
+
+		if(!stored) {
+			stored = new Plugin();
+			stored.name = manifest.name;
+			store.collection.insert(stored);
+		}
+
+		return stored;
 	},
 
-	installManifest(manifest) {
-		if(!("$loki" in manifest || "meta" in manifest))
-			store.collection.insert(manifest);
+	insertPlugin(plugin) {
+		if(!("$loki" in plugin || "meta" in plugin))
+			store.collection.insert(plugin);
 
-		return manifest;
+		return plugin;
+	},
+
+	removePlugin(plugin) {
+		return store.collection.remove(plugin);
 	},
 
 	installDependencies(manifest) {

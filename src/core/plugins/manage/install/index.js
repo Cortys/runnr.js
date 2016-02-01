@@ -29,7 +29,14 @@ function install(plugin, getTarget, dontManage) {
 		).then(() => manifest);
 
 		const promise = installationTypes[plugin.type](plugin, delayer)
-			.then(manifest => helpers.installManifest(target.assign(manifest, true)));
+			.then(manifest => helpers.insertPlugin(target.assign(manifest, true)))
+			.catch(err => {
+				// If target was newly created by getTarget, destroy it if installation failed:
+				if(!target.type)
+					helpers.removePlugin(target);
+
+				throw err;
+			});
 
 		return promise;
 	}

@@ -9,6 +9,10 @@ let listView;
 
 store.loaded.then(() => listView = store.collection.getDynamicView("list") || store.collection.addDynamicView("list", {
 	persistent: false
+}).applyFind({
+	type: {
+		$in: ["js", "graph"]
+	}
 }).applySimpleSort("displayName"));
 
 const plugins = {
