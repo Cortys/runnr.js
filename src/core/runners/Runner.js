@@ -26,7 +26,6 @@ class Runner extends require("../EventEmitter") {
 
 		Object.assign(this, {
 			[disableQueue]: new PromiseQueue(),
-			[active]: undefined,
 			[persistRunner]: () => persist(this)
 		});
 

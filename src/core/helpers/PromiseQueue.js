@@ -28,7 +28,7 @@ class PromiseQueue extends Set {
 				this[onEmpty].resolve = () => {
 					this[onEmpty].resolve = undefined;
 					resolve(true);
-				}
+				};
 			});
 		}
 
