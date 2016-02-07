@@ -47,7 +47,8 @@ function install(plugin, getTarget, dontManage) {
 const installationTypes = {
 	__proto__: null,
 
-	local: require("./local")
+	local: require("./local"),
+	custom: require("./custom")
 };
 
 module.exports = install;
