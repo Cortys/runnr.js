@@ -37,14 +37,15 @@
 		"owe-events": "^0.10",
 
 		"lokijs": "techfort/LokiJS",
-		"npm": "3.5.3",
+		"npm": "3.6.0",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.4",
 		"read-package-json": "2.0.2",
+		"resolve": "1.1.7",
 		"fs-extra-promise": "0.3.1",
 		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {
-		"eslint": "1.8.0"
+		"eslint": "2.0.0"
 	}
 }
