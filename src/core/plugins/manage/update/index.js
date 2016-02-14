@@ -11,8 +11,8 @@ function update(plugin) {
 
 	let updater;
 
-	if(plugin.source in sources)
-		updater = sources[plugin.source];
+	if(plugin.source === "local")
+		updater = sources.local;
 	else
 		return Promise.reject(new owe.exposed.Error("Invalid update source."));
 
@@ -57,8 +57,6 @@ function update(plugin) {
 }
 
 const sources = {
-	__proto__: null,
-
 	local: require("./local")
 };
 
