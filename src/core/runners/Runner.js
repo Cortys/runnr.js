@@ -12,7 +12,8 @@ const manager = require("../taskManager");
 const helpers = require("./helpers");
 
 const name = Symbol("name");
-const disableQueue = Symbol("enabled");
+const disableQueue = Symbol("disableQueue");
+const assigned = Symbol("assigned");
 const active = Symbol("active");
 const graph = Symbol("graph");
 const graphLoaded = Symbol("graphLoaded");
@@ -25,9 +26,13 @@ class Runner extends require("../EventEmitter") {
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
+			[assigned]: new Promise(() => {}),
 			[disableQueue]: new PromiseQueue(),
 			[persistRunner]: () => persist(this)
 		});
+
+		// Disable activation as long as assign() has not been called on this runner:
+		this[disableQueue].add(this[assigned]);
 
 		this[graphLoaded] = {};
 		this[graphLoaded].promise = new Promise(resolve => this[graphLoaded].resolve = resolve);
@@ -54,13 +59,24 @@ class Runner extends require("../EventEmitter") {
 		if(!preset)
 			return this;
 
-		Object.assign(this, preset);
+		this[disableQueue].delete(this[assigned]);
 
-		if(!("graph" in preset))
-			this.graph = new Graph({}, this);
+		try {
+			Object.assign(this, preset);
 
-		if(!("active" in preset))
-			this.active = false;
+			if(!("graph" in preset))
+				this.graph = new Graph({}, this);
+
+			if(!("active" in preset))
+				this.active = false;
+		}
+		catch(err) {
+			this[disableQueue].add(this[assigned]);
+
+			throw err;
+		}
+
+		this[assigned] = undefined;
 
 		console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
 
