@@ -24,20 +24,16 @@ core.then(core => {
 		})
 	})).listen(3912);
 
-	function addExitListeners() {
-		process.once("SIGINT", exit);
-		process.once("SIGTERM", exit);
-		process.once("SIGUSR2", restart);
-	}
+	process.once("SIGINT", () => exit("SIGINT"));
+	process.once("SIGTERM", () => exit("SIGTERM"));
+	process.once("SIGUSR2", restart);
 
-	addExitListeners();
-
-	function exit() {
-		core.onExit().then(() => process.exit(), addExitListeners);
+	function exit(sig) {
+		core.onExit().then(() => process.exit(), () => process.once(sig, () => exit(sig)));
 	}
 
 	function restart() {
-		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"), addExitListeners);
+		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"), () => process.once("SIGUSR2", restart));
 	}
 }).catch(err => console.error(err));
 
