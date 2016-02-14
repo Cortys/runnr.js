@@ -73,7 +73,11 @@ class Plugin extends require("../EventEmitter") {
 			// Runners can then be safely disabled during plugin update or uninstall.
 			setImmediate(() => {
 				integrityCheck(this)
-					.then(() => this.source && this.update(), () => this.uninstall())
+					.then(() => this.source && this.update(), err => {
+						console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
+
+						return this.uninstall();
+					})
 					.then(() => true).then(this[loaded].resolve, this[loaded].reject);
 			});
 		else
@@ -95,7 +99,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	get mainLocation() {
-		return config.fromPlugins(this.location, this.main);
+		return config.fromPlugins(this.location);
 	}
 
 	get dependents() {

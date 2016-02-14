@@ -2,9 +2,8 @@
 
 const owe = require("owe.js");
 const path = require("path");
-const fs = require("fs-extra-promise");
 
-const config = require("../../config");
+const npm = require("../../npm");
 const store = require("../store");
 
 const manager = require("../../taskManager");
@@ -12,13 +11,10 @@ const manager = require("../../taskManager");
 function uninstall(plugin) {
 	const promise = plugin.disableDependentRunners(new Promise(resolve => setImmediate(() => resolve(promise))))
 		.then(() => {
-			if(!path.isAbsolute(plugin.location))
-				return fs.removeAsync(config.fromPlugins(plugin.location));
+			if(typeof plugin.location === "string" && !path.isAbsolute(plugin.location))
+				return npm.uninstall(plugin.name);
 		})
-		.then(() => store.collection.remove(plugin), err => {
-			if(err && err.code === "ENOENT")
-				return store.collection.remove(plugin);
-
+		.then(() => store.collection.remove(plugin), () => {
 			throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 		})
 		.then(() => {

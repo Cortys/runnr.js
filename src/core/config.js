@@ -22,7 +22,7 @@ module.exports = {
 	},
 
 	fromPlugins() {
-		return new Promise((accept, reject) => resolve(path.resolve(...arguments), {
+		return new Promise((accept, reject) => resolve(path.join(...arguments), {
 			basedir: pluginData
 		}, (err, result) => {
 			if(err)
