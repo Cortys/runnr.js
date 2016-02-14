@@ -2,6 +2,7 @@
 
 const owe = require("owe.js");
 
+const validateEdge = require("../../../graph/helpers/validateEdge");
 const manager = require("../../../taskManager");
 const helpers = require("./helpers");
 
@@ -14,19 +15,33 @@ function install(plugin, getTarget, dontManage) {
 			getTarget = helpers.getTarget;
 
 		/**
+		 * The plugin instance affected/created by this installation.
 		 * @type Plugin
 		 */
 		let target;
 
-		const delayer = dontManage ? manifest => {
+		const activeRunners = new Set();
+
+		const delayer = manifest => {
 			target = getTarget(manifest);
 
-			return Promise.resolve(manifest);
-		} : manifest => manager.delay(
-			target = getTarget(manifest),
-			new Promise(resolve => setImmediate(() => resolve(promise))),
-			"install"
-		).then(() => manifest);
+			if(dontManage)
+				return Promise.resolve(manifest);
+
+			return (dontManage ? Promise.resolve() : manager.delay(
+				target,
+				new Promise(resolve => setImmediate(() => resolve(promise))),
+				"install"
+			)).then(() => {
+				// After target Plugin was found: Disable all its dependent runners.
+				return target.performOnDependentRunners(runner => {
+					if(runner.active)
+						activeRunners.add(runner);
+
+					return runner.disableUntil(new Promise(resolve => setImmediate(() => resolve(promise))));
+				});
+			}).then(() => manifest);
+		};
 
 		const promise = installationTypes[plugin.type](plugin, delayer)
 			.then(manifest => helpers.insertPlugin(target.assign(manifest, true)))
@@ -36,9 +51,40 @@ function install(plugin, getTarget, dontManage) {
 					helpers.removePlugin(target);
 
 				throw err;
+			})
+			.then(() => {
+				// Remove all graph edges of dependent nodes that are invalid after the installation:
+				for(const node of target.dependentNodes) {
+					let modified = false;
+
+					const edges = node.edges;
+					const validate = edge => {
+						try {
+							validateEdge(edge);
+						}
+						catch(err) {
+							edge.delete();
+							modified = true;
+						}
+					};
+
+					edges.in.forEach(validate);
+					edges.out.forEach(validate);
+
+					if(modified && activeRunners.has(node.graph.container))
+						activeRunners.delete(node.graph.container);
+				}
 			});
 
-		return promise;
+		return promise.then(() => {
+			// Reactivate all runners that were not affected by this installation:
+			// Async because this promise.then is executed before the "then" of the dependents disableQueue.
+			setImmediate(() => {
+				activeRunners.forEach(runner => runner.activate());
+			});
+
+			return target;
+		});
 	}
 	else
 		return Promise.reject(new owe.exposed.Error("Plugins cannot be installed with the given installation method."));
