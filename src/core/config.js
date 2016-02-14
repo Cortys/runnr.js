@@ -10,7 +10,7 @@ const pluginData = path.join(userData, "plugins");
 
 // Synchronously ensure that  ~/.runnr/plugins/node_modules exist,
 // since config is loaded during init this is acceptable:
-fs.mkdirsSync(path.join(pluginData, "node_modules"));
+fs.ensureDirSync(path.join(pluginData, "node_modules"));
 
 module.exports = {
 	home,
