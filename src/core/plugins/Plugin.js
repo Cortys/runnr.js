@@ -4,6 +4,7 @@ const owe = require("owe.js");
 
 const config = require("../config");
 const persist = require("../helpers/persist");
+const filterObject = require("../helpers/filterObject");
 
 const integrityCheck = require("./integrityCheck");
 
@@ -25,7 +26,7 @@ class Plugin extends require("../EventEmitter") {
 
 		const exposed = ["id", "type", "name", "displayName", "version", "author", "source"];
 		const publicRoutes = new Set([...exposed, "ports", "dependents", "update", "uninstall"]);
-		const privateRoutes = new Set([...publicRoutes, "location", "main", "mainLocation", "graph"]);
+		const privateRoutes = new Set([...publicRoutes, "location", "mainLocation", "graph"]);
 
 		const that = this;
 
@@ -65,7 +66,10 @@ class Plugin extends require("../EventEmitter") {
 		if(preset.type !== "js" && preset.type !== "graph")
 			preset.type = "js";
 
-		Object.assign(this, preset);
+		Object.assign(this, filterObject(preset, [
+			"$loki", "meta",
+			"type", "name", "displayName", "version", "author", "source", "location", "ports", "graph"
+		]));
 
 		if(!dontCheck)
 			// Uninstall plugin if it was removed from fs, update otherwise:
