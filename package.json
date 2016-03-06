@@ -46,6 +46,6 @@
 		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {
-		"eslint": "2.0.0"
+		"eslint": "2.3.0"
 	}
 }
