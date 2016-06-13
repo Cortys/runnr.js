@@ -1,0 +1,8 @@
+{
+	"globals": {
+		"runnr": false
+	},
+	"rules": {
+		"spaced-comment": "off"
+	}
+}
