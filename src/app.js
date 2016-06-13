@@ -1,10 +1,10 @@
 "use strict";
 
-const core = require("./core/index.js");
-
 const owe = require("owe.js");
 const http = require("http");
 const oweHttp = require("owe-http");
+
+const core = require("./core/index.js");
 
 core.then(core => {
 	const coreApi = owe.api(core);

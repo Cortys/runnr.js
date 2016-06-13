@@ -33,7 +33,7 @@ const runnersApi = Object.assign(() => runners.list, {
 owe(runnersApi, owe.chain([
 	owe.serve({
 		router: {
-			filter: new Set(["add"])
+			filter: owe.filter(new Set(["add"]))
 		}
 	}), {
 		router: runners.getById

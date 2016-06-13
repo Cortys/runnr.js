@@ -21,7 +21,7 @@ module.exports = store.loaded.then(() => {
 		}
 	}, owe.serve({
 		router: {
-			filter: new Set(["plugins", "runners"])
+			filter: owe.filter(new Set(["plugins", "runners"]))
 		}
 	}));
 }, err => {

@@ -42,7 +42,7 @@ const pluginsApi = Object.assign(() => plugins.list, {
 owe(pluginsApi, owe.chain([
 	owe.serve({
 		router: {
-			filter: new Set(["install", "byName"])
+			filter: owe.filter(new Set(["install", "byName"]))
 		}
 	}), {
 		router: plugins.getById

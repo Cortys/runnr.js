@@ -28,20 +28,18 @@ class Plugin extends require("../EventEmitter") {
 		const publicRoutes = new Set([...exposed, "ports", "dependents", "update", "uninstall"]);
 		const privateRoutes = new Set([...publicRoutes, "location", "mainLocation", "graph"]);
 
-		const that = this;
-
 		owe(this, owe.serve({
 			router: {
-				filter: owe.switch(function() {
-					if(this.value !== that)
+				filter: owe.switch((destination, state) => {
+					if(state.value !== this)
 						return "deep";
 
-					return this.origin.sandbox ? "private" : "public";
+					return state.origin.sandbox ? "private" : "public";
 				}, {
-					public: publicRoutes,
-					private: privateRoutes,
-					deep(route) {
-						return this.value.hasOwnProperty(route);
+					public: owe.filter(publicRoutes),
+					private: owe.filter(privateRoutes),
+					deep(destination, state) {
+						return state.value.hasOwnProperty(destination);
 					}
 				}),
 				deep: true,
