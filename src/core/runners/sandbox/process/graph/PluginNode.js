@@ -11,9 +11,7 @@ class PluginNode extends Node {
 
 		this.plugin = this.api.route("plugin");
 
-		Promise.all([this.plugin.route("mainLocation"), this.loaded]).then(result => {
-			const mainLocation = result[0];
-
+		Promise.all([this.plugin.route("mainLocation"), this.loaded]).then(([mainLocation]) => {
 			this.sandbox = sandboxedModule.load(mainLocation, {
 				globals: {
 					runnr: new SandboxHandle(this)

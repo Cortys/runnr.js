@@ -6,9 +6,7 @@ class DataNode extends Node {
 	constructor(preset, parentGraph) {
 		super(preset, parentGraph);
 
-		Promise.all([this.api.route("data"), this.graph.connected]).then(result => {
-			const data = result[0];
-
+		Promise.all([this.api.route("data"), this.graph.connected]).then(([data]) => {
 			this.ports.out.data.writable.write(data);
 		});
 	}

@@ -8,8 +8,8 @@ const home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
 const userData = path.join(home, ".runnr");
 const pluginData = path.join(userData, "plugins");
 
-// Synchronously ensure that  ~/.runnr/plugins/node_modules exist,
-// since config is loaded during init this is acceptable:
+// Synchronously ensure that  ~/.runnr/plugins/node_modules exist.
+// Since config is loaded during init this is acceptable.
 fs.ensureDirSync(path.join(pluginData, "node_modules"));
 
 module.exports = {

@@ -7,9 +7,9 @@ const npmCli = require.resolve("npm/bin/npm-cli");
 
 const config = require("./config");
 
-function npm() {
+function npm(...args) {
 	return new Promise((resolve, reject) => {
-		childProcess.fork(npmCli, Array.from(arguments), {
+		childProcess.fork(npmCli, args, {
 			cwd: config.pluginData,
 			silent: true,
 			execArgv: []
