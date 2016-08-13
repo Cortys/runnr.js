@@ -29,11 +29,11 @@ core.then(core => {
 	process.once("SIGUSR2", restart);
 
 	function exit(sig) {
-		core.onExit().then(() => process.exit(), () => process.once(sig, () => exit(sig)));
+		core.exit().then(() => process.exit(), () => process.once(sig, () => exit(sig)));
 	}
 
 	function restart() {
-		core.onExit().then(() => process.kill(process.pid, "SIGUSR2"), () => process.once("SIGUSR2", restart));
+		core.exit().then(() => process.kill(process.pid, "SIGUSR2"), () => process.once("SIGUSR2", restart));
 	}
 }).catch(err => console.error(err));
 

@@ -10,7 +10,7 @@ module.exports = store.loaded.then(() => {
 		plugins: require("./plugins"),
 		runners: require("./runners"),
 
-		onExit() {
+		exit() {
 			return store.exit().then(() => {
 				console.log("DB saved.");
 				console.log("Exiting runnr core.");

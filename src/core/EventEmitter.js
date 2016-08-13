@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * An EventEmitter that does not enumerate its internal properties.
+ * Needed to prevent LokiJS from storing EventEmitter state data.
+ */
 class EventEmitter extends require("events") {
 	constructor() {
 		super();
