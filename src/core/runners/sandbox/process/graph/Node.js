@@ -16,14 +16,14 @@ class Node {
 		this.id = preset.id;
 		this.type = preset.type;
 		this.graph = parentGraph;
-		this.api = parentGraph.api.route("nodes", preset.id);
+		this.api = parentGraph.api.nodes[preset.id];
 
 		this.ports = {
 			in: {},
 			out: {}
 		};
 
-		this.loaded = this.api.route("ports").then(ports => {
+		this.loaded = this.api.ports.then(ports => {
 			Object.keys(ports.in).forEach(portName => {
 				this.ports.in[portName] = new Port(ports.in[portName]);
 			});

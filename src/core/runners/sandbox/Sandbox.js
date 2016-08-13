@@ -33,7 +33,7 @@ class Sandbox {
 		this[sandbox].stderr.on("data", data => console.error(this[log](data)));
 
 		// Start an owe client to request data from the sandbox's API:
-		this.api = api.client(this[sandbox]);
+		this.api = api.client(this[sandbox]).proxified;
 
 		// Start an owe server for this sandbox's runner listening for requests from the sandbox:
 		api.server(this[sandbox], owe.api({
@@ -41,7 +41,7 @@ class Sandbox {
 			eventController: oweEvents.controller
 		}, owe.serve.router()), {
 			origin: {
-				eventsApi: this.api.route("eventController")
+				eventsApi: this.api.eventController
 			}
 		});
 	}

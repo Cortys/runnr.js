@@ -7,11 +7,11 @@ const api = require("../api");
 const Graph = require("./graph/Graph");
 
 // Get a ClientApi of the runner for this process:
-const master = api.client(process);
+const master = api.client(process).proxified;
 
 const connector = {
 	eventController: oweEvents.controller,
-	graph: new Graph(master.route("runner", "graph"))
+	graph: new Graph(master.runner.graph)
 };
 
 // Expose the connector to master:
@@ -21,7 +21,7 @@ api.server(process, owe.api(connector, owe.serve({
 	}
 })), {
 	origin: {
-		eventsApi: master.route("eventController")
+		eventsApi: master.eventController
 	}
 });
 

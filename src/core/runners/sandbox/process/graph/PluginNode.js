@@ -9,9 +9,9 @@ class PluginNode extends Node {
 	constructor(preset, parentGraph) {
 		super(preset, parentGraph);
 
-		this.plugin = this.api.route("plugin");
+		this.plugin = this.api.plugin;
 
-		Promise.all([this.plugin.route("mainLocation"), this.loaded]).then(([mainLocation]) => {
+		Promise.all([this.plugin.mainLocation, this.loaded]).then(([mainLocation]) => {
 			this.sandbox = sandboxedModule.load(mainLocation, {
 				globals: {
 					runnr: new SandboxHandle(this)
