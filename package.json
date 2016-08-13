@@ -36,8 +36,8 @@
 		"owe-fs": "0.11.x",
 		"owe-events": "0.11.x",
 
-		"lokijs": "1.3.19",
-		"npm": "3.9.5",
+		"lokijs": "1.4.1",
+		"npm": "3.10.6",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.5",
 		"read-package-json": "2.0.4",
@@ -46,7 +46,7 @@
 		"sandboxed-module": "2.0.3"
 	},
 	"devDependencies": {
-		"eslint": "2.12.0",
+		"eslint": "3.3.0",
 		"eslint-config-cortys": "1.x"
 	}
 }

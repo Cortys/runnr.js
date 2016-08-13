@@ -15,7 +15,7 @@ module.exports = {
 		name = name.trim();
 
 		if(name === "")
-			throw new owe.exposed.TypeError("Runner name must not conist of whitespace.");
+			throw new owe.exposed.TypeError("Runner name must not consist of whitespace.");
 
 		if(ignore != null && name === ignore)
 			return name;

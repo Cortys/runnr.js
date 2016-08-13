@@ -119,8 +119,6 @@ class Runner extends require("../EventEmitter") {
 		if(this[graph] === val)
 			return;
 
-		// console.log("assigned graph", this.name, val);
-
 		if(this[graph])
 			this[graph].removeListener("update", this[persistRunner]);
 
