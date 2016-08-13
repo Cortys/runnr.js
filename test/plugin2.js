@@ -15,4 +15,11 @@
 }
 **/
 
-runnr.ports.in.input.pipe(process.stdout);
+const stream = require("stream");
+
+runnr.ports.in.input.pipe(new stream.Transform({
+	transform(chunk, encoding, callback) {
+		callback(null, String(chunk));
+	},
+	objectMode: true
+})).pipe(process.stdout);

@@ -26,4 +26,4 @@
 
 runnr.ports.in.name.pipe(runnr.ports.out.name);
 
-setInterval(() => runnr.ports.out.timestamp.write(`${Date.now()}`), 1000);
+setInterval(() => runnr.ports.out.timestamp.write(Date.now()), 1000);
