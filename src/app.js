@@ -4,9 +4,9 @@ const owe = require("owe.js");
 const http = require("http");
 const oweHttp = require("owe-http");
 
-const core = require("./core/index.js");
+const core = require("./core");
 
-core.then(core => {
+core.start().then(() => {
 	const coreApi = owe.api(core);
 
 	http.createServer(oweHttp(coreApi, {
@@ -24,16 +24,18 @@ core.then(core => {
 		})
 	})).listen(3912);
 
-	process.once("SIGINT", () => exit("SIGINT"));
-	process.once("SIGTERM", () => exit("SIGTERM"));
+	process.once("SIGINT", () => stop("SIGINT"));
+	process.once("SIGTERM", () => stop("SIGTERM"));
 	process.once("SIGUSR2", restart);
 
-	function exit(sig) {
-		core.exit().then(() => process.exit(), () => process.once(sig, () => exit(sig)));
+	function stop(sig) {
+		core.stop().then(() => process.exit(), () => process.once(sig, () => stop(sig)));
 	}
 
 	function restart() {
-		core.exit().then(() => process.kill(process.pid, "SIGUSR2"), () => process.once("SIGUSR2", restart));
+		console.log("Restarting...");
+
+		core.stop().then(() => process.kill(process.pid, "SIGUSR2"), () => process.once("SIGUSR2", restart));
 	}
 }).catch(err => console.error(err));
 
