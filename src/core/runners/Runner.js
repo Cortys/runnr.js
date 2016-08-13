@@ -43,7 +43,7 @@ class Runner extends require("../EventEmitter") {
 
 		owe(this, owe.serve({
 			router: {
-				filter: owe.filter(new Set([...exposed, "graph", "activate", "deactivate", "delete"])),
+				filter: owe.filter(new Set([...exposed, "graph", "activate", "deactivate", "restart", "delete"])),
 				writable: owe.filter(new Set(["name"])),
 				traversePrototype: true // Allow access to Runner.prototype getters
 			},
@@ -196,6 +196,10 @@ class Runner extends require("../EventEmitter") {
 
 			return true;
 		});
+	}
+
+	restart() {
+		return this.deactivate().then(() => this.activate());
 	}
 
 	delete() {
