@@ -6,6 +6,7 @@ const internalize = require("../helpers/internalize");
 const persist = require("../helpers/persist");
 
 const PromiseQueue = require("../helpers/PromiseQueue");
+const generateLock = require("../helpers/generateLock");
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 const manager = require("../taskManager");
@@ -34,8 +35,7 @@ class Runner extends require("../EventEmitter") {
 		// Disable activation as long as assign() has not been called on this runner:
 		this[disableQueue].add(this[assigned]);
 
-		this[graphLoaded] = {};
-		this[graphLoaded].promise = new Promise(resolve => this[graphLoaded].resolve = resolve);
+		this[graphLoaded] = generateLock();
 
 		/* owe binding: */
 
@@ -125,7 +125,7 @@ class Runner extends require("../EventEmitter") {
 		const set = () => {
 			this[graph] = val;
 			this[graph].on("update", this[persistRunner]);
-			this[graph].loaded.then(this[graphLoaded].resolve, this[graphLoaded].resolve);
+			this[graphLoaded].unlock(this[graph].loaded);
 
 			this[update]("graph", val);
 		};
@@ -158,7 +158,7 @@ class Runner extends require("../EventEmitter") {
 		if(this[active] === undefined) {
 			this[active] = true;
 
-			return this[graphLoaded].promise.then(() => {
+			return this[graphLoaded].then(() => {
 				if(this[active] && !this.sandbox)
 					this.sandbox = new Sandbox(this);
 
