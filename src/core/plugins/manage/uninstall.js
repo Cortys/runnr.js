@@ -11,7 +11,7 @@ const manager = require("../../taskManager");
 
 function uninstall(plugin) {
 	const lock = generateLock();
-	const promise = lock.unlock(plugin.disableDependentRunners(lock)
+	const promise = lock.unlock(plugin.disableDependentRunnersUntil(lock)
 		.then(() => {
 			if(typeof plugin.location === "string" && !path.isAbsolute(plugin.location))
 				return npm.uninstall(plugin.name);

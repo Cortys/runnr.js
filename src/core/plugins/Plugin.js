@@ -136,7 +136,7 @@ class Plugin extends require("../EventEmitter") {
 		return Promise.all(this.dependents.runners.map(method));
 	}
 
-	disableDependentRunners(promise) {
+	disableDependentRunnersUntil(promise) {
 		return this.performOnDependentRunners(runner => runner.disableUntil(promise));
 	}
 
