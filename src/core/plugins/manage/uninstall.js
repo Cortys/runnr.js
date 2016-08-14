@@ -6,10 +6,12 @@ const path = require("path");
 const npm = require("../../npm");
 const store = require("../store");
 
+const generateLock = require("../../helpers/generateLock");
 const manager = require("../../taskManager");
 
 function uninstall(plugin) {
-	const promise = plugin.disableDependentRunners(new Promise(resolve => setImmediate(() => resolve(promise))))
+	const lock = generateLock();
+	const promise = lock.unlock(plugin.disableDependentRunners(lock)
 		.then(() => {
 			if(typeof plugin.location === "string" && !path.isAbsolute(plugin.location))
 				return npm.uninstall(plugin.name);
@@ -22,7 +24,7 @@ function uninstall(plugin) {
 				node.delete();
 
 			return true;
-		});
+		}));
 
 	return promise;
 }

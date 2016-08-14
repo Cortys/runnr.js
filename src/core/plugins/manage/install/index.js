@@ -2,6 +2,7 @@
 
 const owe = require("owe.js");
 
+const generateLock = require("../../../helpers/generateLock");
 const validateEdge = require("../../../graph/helpers/validateEdge");
 const manager = require("../../../taskManager");
 const helpers = require("./helpers");
@@ -22,6 +23,7 @@ function install(plugin, getTarget, dontManage) {
 
 		const activeRunners = new Set();
 
+		const lock = generateLock();
 		const delayer = manifest => {
 			target = getTarget(manifest);
 
@@ -30,7 +32,7 @@ function install(plugin, getTarget, dontManage) {
 
 			return (dontManage ? Promise.resolve() : manager.delay(
 				target,
-				new Promise(resolve => setImmediate(() => resolve(promise))),
+				lock,
 				"install"
 			)).then(() => {
 				// After target Plugin was found: Disable all its dependent runners.
@@ -38,12 +40,12 @@ function install(plugin, getTarget, dontManage) {
 					if(runner.active)
 						activeRunners.add(runner);
 
-					return runner.disableUntil(new Promise(resolve => setImmediate(() => resolve(promise))));
+					return runner.disableUntil(lock);
 				});
 			}).then(() => manifest);
 		};
 
-		const promise = installationTypes[plugin.type](plugin, delayer)
+		return lock.unlock(installationTypes[plugin.type](plugin, delayer)
 			.then(manifest => helpers.insertPlugin(target.assign(manifest, true)))
 			.catch(err => {
 				// If target was newly created by getTarget, destroy it if installation failed:
@@ -74,17 +76,16 @@ function install(plugin, getTarget, dontManage) {
 					if(modified && activeRunners.has(node.graph.container))
 						activeRunners.delete(node.graph.container);
 				}
-			});
+			}))
+			.then(() => {
+				// Reactivate all runners that were not affected by this installation:
+				// Async because this "then" is executed before the "then" of the dependents disableQueue.
+				setImmediate(() => {
+					activeRunners.forEach(runner => runner.activate());
+				});
 
-		return promise.then(() => {
-			// Reactivate all runners that were not affected by this installation:
-			// Async because this promise.then is executed before the "then" of the dependents disableQueue.
-			setImmediate(() => {
-				activeRunners.forEach(runner => runner.activate());
+				return target;
 			});
-
-			return target;
-		});
 	}
 	else
 		return Promise.reject(new owe.exposed.Error("Plugins cannot be installed with the given installation method."));
