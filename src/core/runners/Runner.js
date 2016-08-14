@@ -204,8 +204,6 @@ class Runner extends require("../EventEmitter") {
 
 	delete() {
 		return manage.delete(this).then(result => {
-			this.disableUntil(new Promise());
-
 			if(this[graph])
 				this[graph].removeListener("update", this[persistRunner]);
 
