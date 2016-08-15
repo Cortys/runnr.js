@@ -1,16 +1,12 @@
 "use strict";
 
-const childProcess = require("child_process");
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
 const Plugin = require("../../Plugin");
-const config = require("../../../config");
 const store = require("../../store");
 
 const ports = require("../../../graph/helpers/ports");
-
-const npmCli = require.resolve("npm/bin/npm-cli");
 
 module.exports = {
 	validateManifest(manifest) {
@@ -57,17 +53,5 @@ module.exports = {
 
 	removePlugin(plugin) {
 		return store.collection.remove(plugin);
-	},
-
-	installDependencies(manifest) {
-		return new Promise((resolve, reject) => {
-			childProcess.fork(npmCli, ["install", "--production"], {
-				cwd: config.fromPlugins(manifest.location),
-				silent: true,
-				execArgv: []
-			}).once("exit", code => (code ? reject : resolve)(code));
-		}).catch(() => {
-			throw new owe.exposed.Error("Plugin dependencies could not be installed.");
-		});
 	}
 };
