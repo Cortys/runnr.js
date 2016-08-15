@@ -4,6 +4,7 @@ const owe = require("owe.js");
 
 const config = require("../config");
 const persist = require("../helpers/persist");
+const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
 const integrityCheck = require("./integrityCheck");
@@ -15,12 +16,10 @@ class Plugin extends require("../EventEmitter") {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
-		this[loaded] = {};
-		this[loaded].promise = new Promise((resolve, reject) => Object.assign(this[loaded], {
-			resolve, reject
-		}));
+		this[loaded] = generateLock();
 
-		this[loaded].promise.then(() => console.log(`Loaded plugin '${this.name}'.`));
+		this[loaded].then(() => console.log(`Loaded plugin '${this.name}'.`));
+
 
 		/* owe binding: */
 
@@ -74,16 +73,16 @@ class Plugin extends require("../EventEmitter") {
 			// Performed async to ensure, that all Plugins and Runners were initialized.
 			// Runners can then be safely disabled during plugin update or uninstall.
 			setImmediate(() => {
-				integrityCheck(this)
+				this[loaded].unlock(integrityCheck(this)
 					.then(() => this.source && this.update(), err => {
 						console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
 
 						return this.uninstall();
 					})
-					.then(() => true).then(this[loaded].resolve, this[loaded].reject);
+					.then(() => true));
 			});
 		else
-			this[loaded].resolve(true);
+			this[loaded].unlock(true);
 
 		persist(this);
 
@@ -93,7 +92,7 @@ class Plugin extends require("../EventEmitter") {
 	}
 
 	get loaded() {
-		return this[loaded].promise;
+		return Promise.resolve(this[loaded]);
 	}
 
 	get id() {
