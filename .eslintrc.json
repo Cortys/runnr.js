@@ -1,4 +1,10 @@
 {
 	"root": true,
-	"extends": "cortys"
+	"extends": "cortys",
+	"rules": {
+		"new-cap": ["warn", {
+			"capIsNewExceptions": ["Mixin", "Persistable"],
+			"newIsCapExceptions": ["events"]
+		}]
+	}
 }

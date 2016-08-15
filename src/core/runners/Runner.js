@@ -1,12 +1,14 @@
 "use strict";
 
 const owe = require("owe.js");
+const { mixins } = require("mixwith");
 
-const internalize = require("../helpers/internalize");
-const persist = require("../helpers/persist");
-
+const Persistable = require("../helpers/Persistable");
+const EventEmitter = require("../helpers/EventEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
+const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");
+
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
 const manager = require("../taskManager");
@@ -19,17 +21,15 @@ const active = Symbol("active");
 const graph = Symbol("graph");
 const graphLoaded = Symbol("graphLoaded");
 const update = Symbol("update");
-const persistRunner = Symbol("persistRunner");
 
-class Runner extends require("../EventEmitter") {
+class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 	constructor() {
 		super();
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
 			[assigned]: new Promise(() => {}),
-			[disableQueue]: new PromiseQueue(),
-			[persistRunner]: () => persist(this)
+			[disableQueue]: new PromiseQueue()
 		});
 
 		// Disable activation as long as assign() has not been called on this runner:
@@ -84,7 +84,7 @@ class Runner extends require("../EventEmitter") {
 	}
 
 	[update](type, value) {
-		this[persistRunner]();
+		this.persist();
 		this.emit("update");
 		this.emit(type, value);
 	}
@@ -120,11 +120,11 @@ class Runner extends require("../EventEmitter") {
 			return;
 
 		if(this[graph])
-			this[graph].removeListener("update", this[persistRunner]);
+			this[graph].removeListener("update", this.persist);
 
 		const set = () => {
 			this[graph] = val;
-			this[graph].on("update", this[persistRunner]);
+			this[graph].on("update", this.persist);
 			this[graphLoaded].unlock(this[graph].loaded);
 
 			this[update]("graph", val);
@@ -205,7 +205,7 @@ class Runner extends require("../EventEmitter") {
 	delete() {
 		return manage.delete(this).then(result => {
 			if(this[graph])
-				this[graph].removeListener("update", this[persistRunner]);
+				this[graph].removeListener("update", this.persist);
 
 			this.emit("delete");
 
@@ -221,9 +221,6 @@ class Runner extends require("../EventEmitter") {
 Runner.prototype.activate = manager.taskify(Runner.prototype.activate, function() {
 	return this;
 }, "activate");
-
-// Necessary to enable persist calls on Runner instances:
-Runner.store = require("./store");
 
 module.exports = Runner;
 

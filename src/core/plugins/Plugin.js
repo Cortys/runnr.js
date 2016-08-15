@@ -1,9 +1,11 @@
 "use strict";
 
 const owe = require("owe.js");
+const { mixins } = require("mixwith");
 
 const config = require("../config");
-const persist = require("../helpers/persist");
+const Persistable = require("../helpers/Persistable");
+const EventEmitter = require("../helpers/EventEmitter");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
@@ -12,14 +14,13 @@ const integrityCheck = require("./integrityCheck");
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 
-class Plugin extends require("../EventEmitter") {
+class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
 		this[loaded] = generateLock();
 
 		this[loaded].then(() => console.log(`Loaded plugin '${this.name}'.`));
-
 
 		/* owe binding: */
 
@@ -56,7 +57,7 @@ class Plugin extends require("../EventEmitter") {
 			return this;
 
 		Object.keys(this).forEach(key => {
-			if(key !== "$loki" && key !== "meta")
+			if(key !== "$loki" && key !== "meta" && key !== "persist")
 				delete this[key];
 		});
 
@@ -67,6 +68,14 @@ class Plugin extends require("../EventEmitter") {
 			"$loki", "meta",
 			"type", "name", "displayName", "version", "author", "source", "location", "ports", "graph"
 		]));
+
+		if(this.type === "graph" && !("graph" in this)) {
+			if(this.source === "custom")
+				this.graph = new Graph({}, this);
+			this.mainLocation.then(mainLocation => fs.readJsonAsync(mainLocation)).then(graph => {
+				this.graph = new Graph(graph, this);
+			});
+		}
 
 		if(!dontCheck)
 			// Uninstall plugin if it was removed from fs, update otherwise:
@@ -84,7 +93,7 @@ class Plugin extends require("../EventEmitter") {
 		else
 			this[loaded].unlock(true);
 
-		persist(this);
+		this.persist();
 
 		console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
 
@@ -155,9 +164,6 @@ class Plugin extends require("../EventEmitter") {
 		return manage.install(plugin);
 	}
 }
-
-// Necessary to enable persist calls on Plugin instances:
-Plugin.store = require("./store");
 
 module.exports = Plugin;
 

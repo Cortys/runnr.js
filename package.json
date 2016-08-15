@@ -43,7 +43,8 @@
 		"read-package-json": "2.0.4",
 		"resolve": "1.1.7",
 		"fs-extra-promise": "0.4.0",
-		"sandboxed-module": "2.0.3"
+		"sandboxed-module": "2.0.3",
+		"mixwith": "runnr/mixwith.js"
 	},
 	"devDependencies": {
 		"eslint": "3.3.0",
