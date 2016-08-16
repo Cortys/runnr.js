@@ -27,9 +27,6 @@ function install(plugin, getTarget, dontManage) {
 		const delayer = manifest => {
 			target = getTarget(manifest);
 
-			if(dontManage)
-				return Promise.resolve(manifest);
-
 			return (dontManage ? Promise.resolve() : manager.delay(
 				target,
 				lock,
