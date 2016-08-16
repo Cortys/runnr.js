@@ -61,7 +61,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 			Object.assign(this, preset);
 
 			if(!("graph" in preset))
-				this.graph = new Graph({}, this);
+				this.graph = new Graph(this);
 
 			if(!("active" in preset))
 				this.active = false;
@@ -130,7 +130,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 		else
 			// Graphs with data are initialized async because they require a loaded Loki DB:
 			setImmediate(() => {
-				val = new Graph(val, this);
+				val = new Graph(this).assign(val);
 				set();
 			});
 	}
