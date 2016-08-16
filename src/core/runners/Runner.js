@@ -7,7 +7,6 @@ const Persistable = require("../helpers/Persistable");
 const EventEmitter = require("../helpers/EventEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
-const generateLock = require("../helpers/generateLock");
 
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
@@ -19,7 +18,6 @@ const disableQueue = Symbol("disableQueue");
 const assigned = Symbol("assigned");
 const active = Symbol("active");
 const graph = Symbol("graph");
-const graphLoaded = Symbol("graphLoaded");
 const update = Symbol("update");
 
 class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
@@ -34,8 +32,6 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 
 		// Disable activation as long as assign() has not been called on this runner:
 		this[disableQueue].add(this[assigned]);
-
-		this[graphLoaded] = generateLock();
 
 		/* owe binding: */
 
@@ -125,7 +121,6 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 		const set = () => {
 			this[graph] = val;
 			this[graph].on("update", this.persist);
-			this[graphLoaded].unlock(this[graph].loaded);
 
 			this[update]("graph", val);
 		};
@@ -158,7 +153,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 		if(this[active] === undefined) {
 			this[active] = true;
 
-			return this[graphLoaded].then(() => {
+			return this.graph.loaded.then(() => {
 				if(this[active] && !this.sandbox)
 					this.sandbox = new Sandbox(this);
 
