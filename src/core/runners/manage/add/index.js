@@ -23,7 +23,11 @@ function add(runner) {
 		};
 
 		return lock.unlock(additionTypes[runner.type](runner, delayer)
-			.then(runner => helpers.insertRunner(runnerInstance.assign(runner))));
+			.then(runner => {
+				runnerInstance.assign(runner);
+
+				return helpers.insertRunner(runnerInstance);
+			}));
 	}
 	else
 		return Promise.reject(new owe.exposed.Error("Runners cannot be added with the given method."));

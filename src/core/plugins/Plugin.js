@@ -1,18 +1,22 @@
 "use strict";
 
+const fs = require("fs-extra-promise");
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const config = require("../config");
 const Persistable = require("../helpers/Persistable");
 const EventEmitter = require("../helpers/EventEmitter");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
+const config = require("../config");
+const { stageManager } = require("../managers");
+
 const integrityCheck = require("./integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
+const graph = Symbol("graph");
 
 class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 	constructor() {
@@ -56,48 +60,55 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 		if(!preset)
 			return this;
 
-		Object.keys(this).forEach(key => {
-			if(key !== "$loki" && key !== "meta" && key !== "persist")
-				delete this[key];
-		});
+		return stageManager({
+			setMetadata: () => {
+				Object.keys(this).forEach(key => {
+					if(key !== "$loki" && key !== "meta" && key !== "persist")
+						delete this[key];
+				});
 
-		if(preset.type !== "js" && preset.type !== "graph")
-			preset.type = "js";
+				if(preset.type !== "js" && preset.type !== "graph")
+					preset.type = "js";
 
-		Object.assign(this, filterObject(preset, [
-			"$loki", "meta",
-			"type", "name", "displayName", "version", "author", "source", "location", "ports", "graph"
-		]));
+				Object.assign(this, filterObject(preset, [
+					"$loki", "meta",
+					"type", "name", "displayName", "version", "author", "source", "location", "ports"
+				]));
 
-		if(this.type === "graph" && !("graph" in this)) {
-			if(this.source === "custom")
-				this.graph = new Graph({}, this);
-			this.mainLocation.then(mainLocation => fs.readJsonAsync(mainLocation)).then(graph => {
-				this.graph = new Graph(graph, this);
-			});
-		}
+				this.persist();
+			},
+			assignGraph: () => {
+				if(this.type !== "graph")
+					return;
 
-		if(!dontCheck)
+				this.graph = new Graph(this);
+
+				if(this.source === "custom")
+					return this.graph.assign(preset.graph);
+
+				return this.mainLocation
+					.then(mainLocation => fs.readJsonAsync(mainLocation))
+					.then(graph => this.graph.assign(graph));
+			}
+		}).then(() => {
+			console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
+
+			if(dontCheck)
+				return;
+
 			// Uninstall plugin if it was removed from fs, update otherwise:
-			// Performed async to ensure, that all Plugins and Runners were initialized.
-			// Runners can then be safely disabled during plugin update or uninstall.
-			setImmediate(() => {
-				this[loaded].unlock(integrityCheck(this)
-					.then(() => this.source && this.update(), err => {
-						console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
+			return integrityCheck(this).then(() => this.source && this.update(), err => {
+				console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
 
-						return this.uninstall();
-					})
-					.then(() => true));
+				return this.uninstall();
 			});
-		else
+		}).then(() => {
 			this[loaded].unlock(true);
 
-		this.persist();
-
-		console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
-
-		return this;
+			return this;
+		}, err => {
+			throw err;
+		});
 	}
 
 	get loaded() {
@@ -110,6 +121,21 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 
 	get mainLocation() {
 		return config.fromPlugins(this.location);
+	}
+
+	get graph() {
+		return this[graph];
+	}
+
+	set graph(val) {
+		if(this[graph] === val)
+			return;
+
+		if(this[graph])
+			this[graph].removeListener("update", this.persist);
+
+		this[graph] = val;
+		this[graph].on("update", this.persist);
 	}
 
 	get dependents() {
@@ -169,3 +195,4 @@ module.exports = Plugin;
 
 // Import managers after export because of cyclic references between them and Plugin:
 const manage = require("./manage");
+const Graph = require("../graph/Graph");

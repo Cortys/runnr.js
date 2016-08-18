@@ -8,6 +8,7 @@ const EventEmitter = require("../helpers/EventEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");
+const filterObject = require("../helpers/filterObject");
 
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
@@ -58,26 +59,28 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 
 		this[disableQueue].delete(this[assigned]);
 
-		try {
-			Object.assign(this, preset);
-
-			if(!("graph" in preset))
+		return stageManager({
+			setMetadata: () => {
+				Object.assign(this, filterObject(preset, ["$loki", "meta", "name"]));
+			},
+			assignGraph: () => {
 				this.graph = new Graph(this);
 
-			if(!("active" in preset))
-				this.active = false;
-		}
-		catch(err) {
+				if(preset.graph)
+					return this.graph.assign(preset.graph);
+			},
+			activateRunner: () => {
+				this.active = preset.active || false;
+			}
+		}).then(() => {
+			console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
+
+			return this;
+		}, err => {
 			this[disableQueue].add(this[assigned]);
 
 			throw err;
-		}
-
-		this[assigned].unlock();
-
-		console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
-
-		return this;
+		});
 	}
 
 	[update](type, value) {
@@ -116,24 +119,14 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 		if(this[graph] === val)
 			return;
 
+		if(!(val instanceof Graph))
+			throw new TypeError("Runner#graph has to be an instance of Graph.");
+
 		if(this[graph])
 			this[graph].removeListener("update", this.persist);
 
-		const set = () => {
-			this[graph] = val;
-			this[graph].on("update", this.persist);
-
-			this[update]("graph", val);
-		};
-
-		if(val instanceof Graph)
-			set();
-		else
-			// Graphs with data are initialized async because they require a loaded Loki DB:
-			setImmediate(() => {
-				val = new Graph(this).assign(val);
-				set();
-			});
+		this[update]("graph", this[graph] = val);
+		this[graph].on("update", this.persist);
 	}
 
 	disableUntil(promise) {

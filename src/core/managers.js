@@ -2,5 +2,5 @@
 
 module.exports = {
 	taskManager: require("./helpers/taskManager")(),
-	stageManager: require("./helpers/stageManager")(["setMetadata", "setDependencies"])
+	stageManager: require("./helpers/stageManager")(["setMetadata", "assignGraph", "validatePlugin", "activateRunner"])
 };

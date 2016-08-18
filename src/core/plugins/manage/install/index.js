@@ -43,7 +43,13 @@ function install(plugin, getTarget, dontManage) {
 		};
 
 		return lock.unlock(installationTypes[plugin.type](plugin, delayer)
-			.then(manifest => helpers.insertPlugin(target.assign(manifest, true)))
+			.then(manifest => {
+				const res = target.assign(manifest, true);
+
+				helpers.insertPlugin(target);
+
+				return res;
+			})
 			.catch(err => {
 				// If target was newly created by getTarget, destroy it if installation failed:
 				if(!target.type)
