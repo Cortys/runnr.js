@@ -16,17 +16,14 @@ function createManager(stages) {
 			return Promise.resolve(input);
 
 		if(index > stageIndex)
-			return nextStage.then(
-				() => runStageHandlers(stageHandlers, index, input),
-				err => {
-					err.stageReached = stages[index - 1];
+			return nextStage.then(() => runStageHandlers(stageHandlers, index, input), err => {
+				err.stageReached = stages[index - 1];
 
-					throw err;
-				});
+				throw err;
+			});
 
 		const stage = stages[index];
 		const handler = stageHandlers[stage] || (x => x);
-
 		const result = new Promise(resolve => resolve(handler(input)));
 		const isStartOfStage = runningHandlers.isEmpty;
 
@@ -45,13 +42,11 @@ function createManager(stages) {
 				throw new StageError("A different job failed to arrive at its next stage.");
 			});
 
-		return result.then(
-			nextInput => runStageHandlers(stageHandlers, index + 1, nextInput),
-			err => {
-				stageError = true;
+		return result.then(nextInput => runStageHandlers(stageHandlers, index + 1, nextInput), err => {
+			stageError = true;
 
-				throw err;
-			});
+			throw err;
+		});
 	}
 
 	return Object.assign(stageHandlers => runStageHandlers(stageHandlers, 0), { StageError });
