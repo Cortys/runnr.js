@@ -4,7 +4,7 @@ const owe = require("owe.js");
 
 const generateLock = require("../../../helpers/generateLock");
 const validateEdge = require("../../../graph/helpers/validateEdge");
-const manager = require("../../../taskManager");
+const manager = require("../../../managers").taskManager;
 const helpers = require("./helpers");
 
 function install(plugin, getTarget, dontManage) {

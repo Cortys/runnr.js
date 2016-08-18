@@ -1,7 +1,7 @@
 "use strict";
 
 const generateLock = require("../../helpers/generateLock");
-const manager = require("../../taskManager");
+const manager = require("../../managers").taskManager;
 
 const store = require("../store");
 

@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const manager = require("../../../taskManager");
+const manager = require("../../../managers").taskManager;
 
 function update(plugin) {
 	if(plugin.source == null)

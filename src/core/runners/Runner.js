@@ -7,10 +7,11 @@ const Persistable = require("../helpers/Persistable");
 const EventEmitter = require("../helpers/EventEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
+const generateLock = require("../helpers/generateLock");
 
 const Graph = require("../graph/Graph");
 const Sandbox = require("./sandbox/Sandbox");
-const manager = require("../taskManager");
+const { taskManager, stageManager } = require("../managers");
 const helpers = require("./helpers");
 
 const name = Symbol("name");
@@ -26,7 +27,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 		internalize(this, ["name", "active", "graph"]);
 
 		Object.assign(this, {
-			[assigned]: new Promise(() => {}),
+			[assigned]: generateLock(),
 			[disableQueue]: new PromiseQueue()
 		});
 
@@ -72,7 +73,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 			throw err;
 		}
 
-		this[assigned] = undefined;
+		this[assigned].unlock();
 
 		console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
 
@@ -213,7 +214,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 	}
 }
 
-Runner.prototype.activate = manager.taskify(Runner.prototype.activate, function() {
+Runner.prototype.activate = taskManager.taskify(Runner.prototype.activate, function() {
 	return this;
 }, "activate");
 

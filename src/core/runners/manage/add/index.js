@@ -4,7 +4,7 @@ const owe = require("owe.js");
 
 const Runner = require("../../Runner");
 const generateLock = require("../../../helpers/generateLock");
-const manager = require("../../../taskManager");
+const manager = require("../../../managers").taskManager;
 const helpers = require("./helpers");
 
 function add(runner) {
