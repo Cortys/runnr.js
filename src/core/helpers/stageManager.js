@@ -2,8 +2,9 @@
 
 const PromiseQueue = require("./PromiseQueue");
 
-function createManager(stages) {
+function createManager({ stages, nonCriticalStages = [] }) {
 	stages = Array.from(stages);
+	nonCriticalStages = new Set(nonCriticalStages);
 
 	let stageIndex = 0;
 	let stageError = false;
@@ -43,7 +44,8 @@ function createManager(stages) {
 			});
 
 		return result.then(nextInput => runStageHandlers(stageHandlers, index + 1, nextInput), err => {
-			stageError = true;
+			if(!nonCriticalStages.has(stage))
+				stageError = true;
 
 			throw err;
 		});
