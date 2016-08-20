@@ -12,14 +12,7 @@ class PromiseQueue extends Set {
 	}
 
 	add(promise) {
-		promise = Promise.resolve(promise);
-
-		const remove = () => {
-			this.delete(promise);
-
-			if(this.isEmpty && this[onEmpty].resolve)
-				this[onEmpty].resolve();
-		};
+		const remove = () => this.delete(promise);
 
 		promise.then(remove, remove);
 
@@ -33,6 +26,15 @@ class PromiseQueue extends Set {
 		}
 
 		return super.add(promise);
+	}
+
+	delete(promise) {
+		const res = super.delete(promise);
+
+		if(this.isEmpty && this[onEmpty].resolve)
+			this[onEmpty].resolve();
+
+		return res;
 	}
 
 	get isEmpty() {
