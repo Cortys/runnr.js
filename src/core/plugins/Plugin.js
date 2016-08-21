@@ -66,7 +66,6 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 
 		const res = stageManager({
 			setMetadata: () => {
-
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "persist")
 						delete this[key];
