@@ -69,9 +69,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 				if(preset.graph)
 					return this.graph.assign(preset.graph);
 			},
-			activateRunner: () => {
-				this.active = preset.active || false;
-			}
+			activateRunner: () => this[preset.active ? "activate" : "deactivate"]()
 		}).then(() => {
 			console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
 
@@ -104,9 +102,6 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 	get active() {
 		return this[active];
 	}
-	set active(val) {
-		this[val ? "activate" : "deactivate"]();
-	}
 
 	get enabled() {
 		return this[disableQueue].isEmpty;
@@ -137,7 +132,7 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 
 	activate() {
 		if(!this.enabled)
-			return Promise.reject("This runner is disabled. It cannot be activated.");
+			return Promise.reject(new Error("This runner is disabled. It cannot be activated."));
 
 		if(this[active])
 			return Promise.resolve(true);

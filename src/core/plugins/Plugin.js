@@ -6,6 +6,7 @@ const { mixins } = require("mixwith");
 
 const Persistable = require("../helpers/Persistable");
 const EventEmitter = require("../helpers/EventEmitter");
+const PromiseQueue = require("../helpers/PromiseQueue");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
@@ -17,14 +18,17 @@ const integrityCheck = require("./integrityCheck");
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const graph = Symbol("graph");
+const assignLock = Symbol("assignLock");
 
 class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
-		this[loaded] = generateLock();
+		this[loaded] = new PromiseQueue();
+		this[assignLock] = generateLock();
 
-		this[loaded].then(() => console.log(`Loaded plugin '${this.name}'.`));
+		this[loaded].add(this[assignLock]);
+		this.loaded.then(() => console.log(`Loaded plugin '${this.name}'.`));
 
 		/* owe binding: */
 
@@ -60,8 +64,9 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 		if(!preset)
 			return this;
 
-		return stageManager({
+		const res = stageManager({
 			setMetadata: () => {
+
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "persist")
 						delete this[key];
@@ -89,30 +94,40 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 				return this.mainLocation
 					.then(mainLocation => fs.readJsonAsync(mainLocation))
 					.then(graph => this.graph.assign(graph));
+			},
+			validatePlugin: () => {
+				console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
+
+				if(dontCheck)
+					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {
+						noValidation: true
+					});
+
+				// Uninstall plugin if it was removed from fs, update otherwise:
+				return integrityCheck(this).then(() => {
+					if(this.source)
+						return this.update();
+				}, err => {
+					console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
+
+					return this.uninstall();
+				});
 			}
-		}).then(() => {
-			console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
-
-			if(dontCheck)
-				return;
-
-			// Uninstall plugin if it was removed from fs, update otherwise:
-			return integrityCheck(this).then(() => this.source && this.update(), err => {
-				console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
-
-				return this.uninstall();
-			});
-		}).then(() => {
-			this[loaded].unlock(true);
+		}).then(() => this, err => {
+			if(!err.noValidation)
+				throw err;
 
 			return this;
-		}, err => {
-			throw err;
 		});
+
+		this[loaded].add(res);
+		this[assignLock].unlock();
+
+		return res;
 	}
 
 	get loaded() {
-		return Promise.resolve(this[loaded]);
+		return this[loaded].onEmpty;
 	}
 
 	get id() {
