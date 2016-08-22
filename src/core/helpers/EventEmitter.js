@@ -8,7 +8,7 @@ const events = require("events");
  * Needed to prevent LokiJS from storing EventEmitter state data.
  */
 const EventEmitter = Mixin(superclass => {
-	const cls = class EventEmitter extends superclass {
+	class EventEmitter extends superclass {
 		constructor() {
 			super(...arguments);
 			events.call(this);
@@ -40,11 +40,11 @@ const EventEmitter = Mixin(superclass => {
 				}
 			});
 		}
-	};
+	}
 
-	Object.assign(cls.prototype, events.prototype);
+	Object.assign(EventEmitter.prototype, events.prototype);
 
-	return cls;
+	return EventEmitter;
 });
 
 module.exports = EventEmitter;
