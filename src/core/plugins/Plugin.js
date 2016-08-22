@@ -10,6 +10,7 @@ const PromiseQueue = require("../helpers/PromiseQueue");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
+const GraphContainer = require("../graph/GraphContainer");
 const config = require("../config");
 const { stageManager } = require("../managers");
 
@@ -17,10 +18,9 @@ const integrityCheck = require("./integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
-const graph = Symbol("graph");
 const assignLock = Symbol("assignLock");
 
-class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
+class Plugin extends mixins(Persistable(require("./store")), GraphContainer, EventEmitter) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
@@ -138,18 +138,18 @@ class Plugin extends mixins(Persistable(require("./store")), EventEmitter) {
 	}
 
 	get graph() {
-		return this[graph];
+		return super.graph;
 	}
 
-	set graph(val) {
-		if(this[graph] === val)
-			return;
+	set graph(newGraph) {
+		const oldGraph = this.graph;
 
-		if(this[graph])
-			this[graph].removeListener("update", this.persist);
+		super.graph = newGraph;
 
-		this[graph] = val;
-		this[graph].on("update", this.persist);
+		if(oldGraph)
+			oldGraph.removeListener("update", this.persist);
+
+		newGraph.on("update", this.persist);
 	}
 
 	get dependents() {

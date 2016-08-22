@@ -11,6 +11,7 @@ const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
 const Graph = require("../graph/Graph");
+const GraphContainer = require("../graph/GraphContainer");
 const Sandbox = require("./sandbox/Sandbox");
 const { taskManager, stageManager } = require("../managers");
 const helpers = require("./helpers");
@@ -19,10 +20,9 @@ const name = Symbol("name");
 const disableQueue = Symbol("disableQueue");
 const assigned = Symbol("assigned");
 const active = Symbol("active");
-const graph = Symbol("graph");
 const update = Symbol("update");
 
-class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
+class Runner extends mixins(Persistable(require("./store")), GraphContainer, EventEmitter) {
 	constructor() {
 		super();
 		internalize(this, ["name", "active", "graph"]);
@@ -108,20 +108,19 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 	}
 
 	get graph() {
-		return this[graph];
+		return super.graph;
 	}
-	set graph(val) {
-		if(this[graph] === val)
-			return;
 
-		if(!(val instanceof Graph))
-			throw new TypeError("Runner#graph has to be an instance of Graph.");
+	set graph(newGraph) {
+		const oldGraph = this.graph;
 
-		if(this[graph])
-			this[graph].removeListener("update", this.persist);
+		super.graph = newGraph;
 
-		this[update]("graph", this[graph] = val);
-		this[graph].on("update", this.persist);
+		if(oldGraph)
+			oldGraph.removeListener("update", this.persist);
+
+		newGraph.on("update", this.persist);
+		this[update]("graph", oldGraph);
 	}
 
 	disableUntil(promise) {
@@ -188,8 +187,8 @@ class Runner extends mixins(Persistable(require("./store")), EventEmitter) {
 
 	delete() {
 		return manage.delete(this).then(result => {
-			if(this[graph])
-				this[graph].removeListener("update", this.persist);
+			if(this.graph)
+				this.graph.removeListener("update", this.persist);
 
 			this.emit("delete");
 
