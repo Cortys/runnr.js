@@ -137,21 +137,6 @@ class Plugin extends mixins(Persistable(require("./store")), GraphContainer, Eve
 		return config.fromPlugins(this.location);
 	}
 
-	get graph() {
-		return super.graph;
-	}
-
-	set graph(newGraph) {
-		const oldGraph = this.graph;
-
-		super.graph = newGraph;
-
-		if(oldGraph)
-			oldGraph.removeListener("update", this.persist);
-
-		newGraph.on("update", this.persist);
-	}
-
 	get dependents() {
 		const result = {
 			plugins: new Set(),
