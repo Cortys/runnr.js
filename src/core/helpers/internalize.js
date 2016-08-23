@@ -5,7 +5,11 @@ module.exports = function internalize(object, keys) {
 		if(object.hasOwnProperty(key))
 			return;
 
-		const desc = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(object), key);
+		let proto = object;
+		let desc;
+
+		while(!desc && (proto = Object.getPrototypeOf(proto)))
+			desc = Object.getOwnPropertyDescriptor(proto, key);
 
 		if(desc) {
 			desc.enumerable = true;
