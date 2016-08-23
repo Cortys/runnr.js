@@ -4,7 +4,7 @@ const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
 const Persistable = require("../helpers/Persistable");
-const EventEmitter = require("../helpers/EventEmitter");
+const UpdateEmitter = require("../helpers/UpdateEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");
@@ -16,13 +16,10 @@ const Sandbox = require("./sandbox/Sandbox");
 const { taskManager, stageManager } = require("../managers");
 const helpers = require("./helpers");
 
-const name = Symbol("name");
 const disableQueue = Symbol("disableQueue");
 const assigned = Symbol("assigned");
-const active = Symbol("active");
-const update = Symbol("update");
 
-class Runner extends mixins(Persistable(require("./store")), GraphContainer, EventEmitter) {
+class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["name", "active"]), GraphContainer) {
 	constructor() {
 		super();
 		internalize(this, ["name", "active", "graph"]);
@@ -34,6 +31,8 @@ class Runner extends mixins(Persistable(require("./store")), GraphContainer, Eve
 
 		// Disable activation as long as assign() has not been called on this runner:
 		this[disableQueue].add(this[assigned]);
+
+		this.on("update", this.persist);
 
 		/* owe binding: */
 
@@ -81,46 +80,23 @@ class Runner extends mixins(Persistable(require("./store")), GraphContainer, Eve
 		});
 	}
 
-	[update](type, value) {
-		this.persist();
-		this.emit("update");
-		this.emit(type, value);
-	}
-
 	get id() {
 		return this.$loki;
 	}
 
 	get name() {
-		return this[name];
+		return super.name;
 	}
 	set name(val) {
-		this[name] = helpers.validateName(val, this.name);
-		this[update]("name", val);
+		super.name = helpers.validateName(val, super.name);
 	}
 
 	get active() {
-		return this[active];
+		return super.active;
 	}
 
 	get enabled() {
 		return this[disableQueue].isEmpty;
-	}
-
-	get graph() {
-		return super.graph;
-	}
-
-	set graph(newGraph) {
-		const oldGraph = this.graph;
-
-		super.graph = newGraph;
-
-		if(oldGraph)
-			oldGraph.removeListener("update", this.persist);
-
-		newGraph.on("update", this.persist);
-		this[update]("graph", oldGraph);
 	}
 
 	disableUntil(promise) {
@@ -133,49 +109,31 @@ class Runner extends mixins(Persistable(require("./store")), GraphContainer, Eve
 		if(!this.enabled)
 			return Promise.reject(new Error("This runner is disabled. It cannot be activated."));
 
-		if(this[active])
+		if(this.active)
 			return Promise.resolve(true);
 
-		// Initial activation sets [active] = true immediately.
-		// After this runners graph was loaded and meanwhile no deactivate occured, it is actually activated:
-		if(this[active] === undefined) {
-			this[active] = true;
+		super.active = true;
 
-			return this.graph.loaded.then(() => {
-				if(this[active] && !this.sandbox)
-					this.sandbox = new Sandbox(this);
+		return this.graph.loaded.then(() => {
+			if(!this.active)
+				throw new owe.exposed.Error("The runner was unexpectedly deactivated before it was started.");
 
-				return true;
-			});
-		}
+			this.sandbox = new Sandbox(this);
 
-		if(!this[active]) {
-			if(!this.sandbox)
-				this.sandbox = new Sandbox(this);
-
-			this[update]("active", this[active] = true);
-		}
-
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 
 	deactivate() {
-		if(this[active] === undefined) {
-			this[active] = false;
-
-			return Promise.resolve(true);
-		}
-
-		if(!this[active] || !this.sandbox) {
-			if(this[active])
-				this[update]("active", this[active] = false);
+		if(!this.active || !this.sandbox) {
+			super.active = false;
 
 			return Promise.resolve(true);
 		}
 
 		return this.sandbox.kill().then(() => {
 			this.sandbox = null;
-			this[update]("active", this[active] = false);
+			super.active = false;
 
 			return true;
 		});
