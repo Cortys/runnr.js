@@ -5,14 +5,15 @@ const { Mixin, mix } = require("mixwith");
 const EventEmitter = require("./EventEmitter");
 
 const update = Symbol("update");
+const del = Symbol("delete");
 
 const type = {
 	change: prop => `${prop}Changed`,
 	add: prop => `${prop}Added`,
-	delete: prop => prop === "" ? "delete" : `${prop}Deleted`
+	delete: prop => `${prop}Deleted`
 };
 
-module.exports = Object.assign(properties => {
+module.exports = Object.assign((properties = []) => {
 	const definitions = {};
 
 	for(const property of properties) {
@@ -43,10 +44,17 @@ module.exports = Object.assign(properties => {
 				this.emit("update", type, value);
 				this.emit(type, value);
 			}
+
+			[del]() {
+				this.emit("delete");
+			}
 		}
 
 		Object.defineProperties(UpdateEmitter.prototype, definitions);
 
 		return UpdateEmitter;
 	});
-}, { update, type });
+}, {
+	update, type,
+	delete: del
+});

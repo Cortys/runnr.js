@@ -148,7 +148,7 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 			if(this.graph)
 				this.graph.removeListener("update", this.persist);
 
-			this.emit("delete");
+			this[UpdateEmitter.delete]();
 
 			return result;
 		});
