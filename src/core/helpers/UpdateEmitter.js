@@ -32,7 +32,7 @@ module.exports = Object.assign(properties => {
 				this[symbol] = val;
 
 				if(emitUpdate)
-					this[update](`${propertyString}Changed`, val);
+					this[update](type.change(propertyString), val);
 			}
 		};
 	}
