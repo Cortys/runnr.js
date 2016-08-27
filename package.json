@@ -47,7 +47,7 @@
 		"mixwith": "runnr/mixwith.js"
 	},
 	"devDependencies": {
-		"eslint": "3.3.0",
+		"eslint": "3.4.0",
 		"eslint-config-cortys": "1.x"
 	}
 }
