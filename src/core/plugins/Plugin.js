@@ -4,8 +4,8 @@ const fs = require("fs-extra-promise");
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const Persistable = require("../helpers/Persistable");
-const EventEmitter = require("../helpers/EventEmitter");
+const Persistable = require("../store/Persistable");
+const EventEmitter = require("../events/EventEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");

@@ -3,8 +3,8 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const Persistable = require("../helpers/Persistable");
-const UpdateEmitter = require("../helpers/UpdateEmitter");
+const Persistable = require("../store/Persistable");
+const UpdateEmitter = require("../events/UpdateEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");

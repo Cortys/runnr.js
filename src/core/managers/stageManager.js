@@ -1,6 +1,6 @@
 "use strict";
 
-const PromiseQueue = require("./PromiseQueue");
+const PromiseQueue = require("../helpers/PromiseQueue");
 
 function createManager({ stages, nonCriticalStages = [] }) {
 	stages = Array.from(stages);

@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-	taskManager: require("./helpers/taskManager")(),
-	stageManager: require("./helpers/stageManager")({
+	taskManager: require("./taskManager")(),
+	stageManager: require("./stageManager")({
 		stages: ["setMetadata", "assignGraph", "validatePlugin", "activateRunner"],
 		nonCriticalStages: ["validatePlugin", "activateRunner"]
 	})
