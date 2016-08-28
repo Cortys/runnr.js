@@ -3,7 +3,7 @@
 	"extends": "cortys",
 	"rules": {
 		"new-cap": ["warn", {
-			"capIsNewExceptions": ["Mixin", "Persistable", "UpdateEmitter"],
+			"capIsNewExceptions": ["Mixin", "Persistable", "UpdateEmitter", "Dedupe"],
 			"newIsCapExceptions": ["events"]
 		}]
 	}
