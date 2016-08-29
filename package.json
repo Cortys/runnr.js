@@ -19,7 +19,7 @@
 		"url": "https://github.com/runnr/runnr.js.git"
 	},
 	"engines": {
-		"node": "^6.0"
+		"node": "^6.5"
 	},
 	"preferGlobal": true,
 	"main": "src/app.js",
