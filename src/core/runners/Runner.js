@@ -56,8 +56,6 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 		if(!preset)
 			return this;
 
-		this[disableQueue].delete(this[assigned]);
-
 		return stageManager({
 			setMetadata: () => {
 				Object.assign(this, filterObject(preset, ["$loki", "meta", "name"]));
@@ -68,7 +66,11 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 				if(preset.graph)
 					return this.graph.assign(preset.graph);
 			},
-			activateRunner: () => this[preset.active ? "activate" : "deactivate"]()
+			activateRunner: () => {
+				this[disableQueue].delete(this[assigned]);
+
+				return this[preset.active ? "activate" : "deactivate"]();
+			}
 		}).then(() => {
 			console.log(`Assigned runner '${this.name}'. Autostart: ${!!preset.active}.`);
 
