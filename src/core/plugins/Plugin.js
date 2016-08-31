@@ -85,7 +85,7 @@ class Plugin extends mixins(Persistable(require("./store")), GraphContainer, Eve
 				if(this.type !== "graph")
 					return;
 
-				this.graph = new Graph(this);
+				this.graph = new Graph(this, this.source !== "custom");
 
 				if(this.source === "custom")
 					return this.graph.assign(preset.graph);
