@@ -1,9 +1,11 @@
 "use strict";
 
 const owe = require("owe.js");
-const store = require("./store");
 
-const Plugin = require("./Plugin");
+const store = require("./store");
+const { getByName, getById } = require("./get");
+
+const plugin = require("./plugin");
 
 let listView;
 
@@ -20,16 +22,11 @@ const plugins = {
 		return listView.data();
 	},
 
-	getByName(pluginName) {
-		return store.collection && store.collection.by("name", pluginName);
-	},
+	getByName,
+	getById,
 
-	getById(pluginId) {
-		return store.collection && store.collection.get(pluginId);
-	},
-
-	install(plugin) {
-		return Plugin.install(plugin);
+	install(pluginDescription) {
+		return plugin.install(pluginDescription);
 	}
 };
 

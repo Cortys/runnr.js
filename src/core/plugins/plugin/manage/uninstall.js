@@ -3,11 +3,11 @@
 const owe = require("owe.js");
 const path = require("path");
 
-const npm = require("../../npm");
-const store = require("../store");
+const npm = require("../../../npm");
+const store = require("../../store");
 
-const generateLock = require("../../helpers/generateLock");
-const manager = require("../../managers").taskManager;
+const generateLock = require("../../../helpers/generateLock");
+const manager = require("../../../managers").taskManager;
 
 function uninstall(plugin) {
 	const lock = generateLock();

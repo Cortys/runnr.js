@@ -10,7 +10,7 @@ const store = module.exports = new Loki(config.fromUserData("store.json"), {
 Object.assign(store, {
 	loaded: new Promise(resolve => {
 		setImmediate(() => {
-			const Plugin = require("../plugins/Plugin");
+			const { Plugin } = require("../plugins/plugin");
 			const Runner = require("../runners/Runner");
 
 			store.loadDatabase({

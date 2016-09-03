@@ -3,7 +3,7 @@
 const owe = require("owe.js");
 const semver = require("semver");
 
-const store = require("../../store");
+const store = require("../../../store");
 
 module.exports = {
 	validateTarget(manifest, target, allowDowngrade) {

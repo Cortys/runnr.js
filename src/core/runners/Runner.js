@@ -10,8 +10,7 @@ const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
-const Graph = require("../graph/Graph");
-const GraphContainer = require("../graph/GraphContainer");
+const { Graph, GraphContainer } = require("../graph");
 const Sandbox = require("./sandbox/Sandbox");
 const { taskManager, stageManager } = require("../managers");
 const helpers = require("./helpers");

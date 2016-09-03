@@ -4,9 +4,9 @@ const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
 const Plugin = require("../../Plugin");
-const store = require("../../store");
+const store = require("../../../store");
 
-const ports = require("../../../graph/helpers/ports");
+const ports = require("../../../../graph/helpers/ports");
 
 module.exports = {
 	validateManifest(manifest) {

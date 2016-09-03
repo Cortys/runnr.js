@@ -3,9 +3,11 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const plugins = require("../plugins");
+const { getById } = require("../get");
 
-const Node = require("./Node")({
+const { node } = require("../../graph");
+
+const Node = node.Node({
 	pluginId: {
 		exposed: true
 	},
@@ -21,7 +23,7 @@ class PluginNode extends mixins(Node) {
 		Object.defineProperty(this, "plugin", {
 			enumerable: false,
 			configurable: true,
-			value: plugins.getById(this.pluginId)
+			value: getById(this.pluginId)
 		});
 
 		if(!this.plugin)
@@ -38,5 +40,7 @@ class PluginNode extends mixins(Node) {
 		return this.plugin.ports;
 	}
 }
+
+node.registerNodeType("plugin", PluginNode);
 
 module.exports = PluginNode;
