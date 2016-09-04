@@ -52,9 +52,6 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 	}
 
 	assign(preset) {
-		if(!preset)
-			return this;
-
 		return stageManager({
 			setMetadata: () => {
 				Object.assign(this, filterObject(preset, ["$loki", "meta", "name"]));

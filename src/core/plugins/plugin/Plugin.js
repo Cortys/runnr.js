@@ -61,9 +61,6 @@ class Plugin extends mixins(Persistable(require("../store")), GraphContainer, Ev
 	}
 
 	assign(preset, dontCheck) {
-		if(!preset)
-			return this;
-
 		const res = stageManager({
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
