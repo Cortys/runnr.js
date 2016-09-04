@@ -7,15 +7,12 @@ const validateEdge = require("../../../../graph/helpers/validateEdge");
 const manager = require("../../../../managers").taskManager;
 const helpers = require("./helpers");
 
-function install(plugin, getTarget, dontManage) {
+function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
 	if(typeof plugin !== "object" || !plugin)
 		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`));
 
 	if(!(plugin.type in installationTypes))
 		return Promise.reject(new owe.exposed.Error("Plugins cannot be installed with the given installation method."));
-
-	if(typeof getTarget !== "function")
-		getTarget = helpers.getTarget;
 
 	/**
 	 * The plugin instance affected/created by this installation.

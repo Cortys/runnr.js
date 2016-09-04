@@ -5,7 +5,7 @@ const owe = require("owe.js");
 const store = require("./store");
 const { getByName, getById } = require("./get");
 
-const plugin = require("./plugin");
+const { install } = require("./plugin");
 
 let listView;
 
@@ -24,10 +24,7 @@ const plugins = {
 
 	getByName,
 	getById,
-
-	install(pluginDescription) {
-		return plugin.install(pluginDescription);
-	}
+	install
 };
 
 /* Api: */

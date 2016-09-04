@@ -1,12 +1,11 @@
 "use strict";
 
+const Plugin = require("./Plugin");
+const PluginNode = require("./PluginNode");
+const { install } = require("./manage");
+
 module.exports = {
-	Plugin: require("./Plugin"),
-	PluginNode: require("./PluginNode"),
-
-	install(plugin) {
-		return manage.install(plugin);
-	}
+	Plugin,
+	PluginNode,
+	install
 };
-
-const manage = require("./manage");
