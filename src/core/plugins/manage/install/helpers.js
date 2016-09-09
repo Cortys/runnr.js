@@ -3,10 +3,10 @@
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
-const Plugin = require("../../Plugin");
+const plugin = require("../../plugin");
 const store = require("../../../store");
 
-const ports = require("../../../../graph/helpers/ports");
+const ports = require("../../../graph/helpers/ports");
 
 module.exports = {
 	validateManifest(manifest) {
@@ -36,7 +36,7 @@ module.exports = {
 		let stored = store.collection.by("name", manifest.name);
 
 		if(!stored) {
-			stored = new Plugin();
+			stored = plugin.instanciate(manifest);
 			stored.name = manifest.name;
 			store.collection.insert(stored);
 		}

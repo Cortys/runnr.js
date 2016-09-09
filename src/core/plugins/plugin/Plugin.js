@@ -2,7 +2,7 @@
 
 const fs = require("fs-extra-promise");
 const owe = require("owe.js");
-const { mixins } = require("mixwith");
+const { mix, Mixin } = require("mixwith");
 
 const Persistable = require("../../store/Persistable");
 const EventEmitter = require("../../events/EventEmitter");
@@ -14,13 +14,13 @@ const { GraphContainer, Graph } = require("../../graph");
 const config = require("../../config");
 const { stageManager } = require("../../managers");
 
-const integrityCheck = require("./integrityCheck");
+const integrityCheck = require("../integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
 
-class Plugin extends mixins(Persistable(require("../store")), GraphContainer, EventEmitter) {
+const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), GraphContainer, EventEmitter) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
@@ -68,12 +68,9 @@ class Plugin extends mixins(Persistable(require("../store")), GraphContainer, Ev
 						delete this[key];
 				});
 
-				if(preset.type !== "js" && preset.type !== "graph")
-					preset.type = "js";
-
 				Object.assign(this, filterObject(preset, [
 					"$loki", "meta",
-					"type", "name", "displayName", "version", "author", "source", "location", "ports"
+					"name", "displayName", "version", "author", "source", "location", "ports"
 				]));
 
 				this.persist();
@@ -181,9 +178,9 @@ class Plugin extends mixins(Persistable(require("../store")), GraphContainer, Ev
 	update() {
 		return manage.update(this);
 	}
-}
+});
 
 module.exports = Plugin;
 
 // Import managers after export because of cyclic references between them and Plugin:
-const manage = require("./manage");
+const manage = require("../manage");

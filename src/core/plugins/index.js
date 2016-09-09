@@ -3,9 +3,11 @@
 const owe = require("owe.js");
 
 const store = require("./store");
-const { getByName, getById } = require("./get");
 
-const { install } = require("./plugin");
+const { getByName, getById } = require("./get");
+const { install } = require("./manage");
+
+require("./PluginNode").register();
 
 let listView;
 

@@ -10,13 +10,18 @@ const store = module.exports = new Loki(config.fromUserData("store.json"), {
 Object.assign(store, {
 	loaded: new Promise(resolve => {
 		setImmediate(() => {
-			const { Plugin } = require("../plugins/plugin");
+			const plugin = require("../plugins/plugin");
 			const Runner = require("../runners/Runner");
 
 			store.loadDatabase({
 				plugins: {
-					proto: Plugin,
-					inflate: (src, dst) => dst.assign(src)
+					inflate: src => {
+						const instance = plugin.instanciate(src);
+
+						instance.assign(src);
+
+						return instance;
+					}
 				},
 				runners: {
 					proto: Runner,

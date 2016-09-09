@@ -4,7 +4,7 @@ const fs = require("fs-extra-promise");
 const path = require("path");
 const owe = require("owe.js");
 
-const npm = require("../../../../../npm");
+const npm = require("../../../../npm");
 const helpers = require("../helpers");
 
 const localFile = require("./file");
