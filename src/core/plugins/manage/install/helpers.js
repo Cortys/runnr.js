@@ -4,7 +4,7 @@ const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
 const plugin = require("../../plugin");
-const store = require("../../../store");
+const store = require("../../store");
 
 const ports = require("../../../graph/helpers/ports");
 

@@ -14,6 +14,7 @@ const { GraphContainer, Graph } = require("../../graph");
 const config = require("../../config");
 const { stageManager } = require("../../managers");
 
+const manage = require("../manage");
 const integrityCheck = require("../integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
@@ -181,6 +182,3 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 });
 
 module.exports = Plugin;
-
-// Import managers after export because of cyclic references between them and Plugin:
-const manage = require("../manage");
