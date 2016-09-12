@@ -37,12 +37,12 @@
 		"owe-events": "0.11.x",
 
 		"lokijs": "runnr/LokiJS",
-		"npm": "3.10.6",
+		"npm": "3.10.7",
 		"semver": "^5.0",
 		"normalize-package-data": "2.3.5",
 		"read-package-json": "2.0.4",
 		"resolve": "1.1.7",
-		"fs-extra-promise": "0.4.0",
+		"fs-extra-promise": "0.4.1",
 		"sandboxed-module": "2.0.3",
 		"mixwith": "runnr/mixwith.js"
 	},
