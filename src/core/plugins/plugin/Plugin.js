@@ -65,7 +65,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 		const res = stageManager({
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
-					if(key !== "$loki" && key !== "meta" && key !== "persist")
+					if(key !== "$loki" && key !== "meta" && key !== "persist" && key !== "type")
 						delete this[key];
 				});
 
@@ -90,7 +90,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 					.then(graph => this.graph.assign(graph));
 			},
 			validatePlugin: () => {
-				console.log(`Assigned plugin '${this.name}'. Autoupdate: ${!dontCheck}.`);
+				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Autoupdate: ${!dontCheck}.`);
 
 				if(dontCheck)
 					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {

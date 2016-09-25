@@ -9,7 +9,7 @@ module.exports = {
 		if(!(type in pluginTypes))
 			throw new owe.exposed.Error(`Unknown plugin type '${type}'.`);
 
-		return new pluginTypes[type]();
+		return Object.assign(new pluginTypes[type](), { type });
 	},
 
 	create(preset) {
