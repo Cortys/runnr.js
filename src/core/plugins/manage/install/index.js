@@ -23,7 +23,7 @@ function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
 	const activeRunners = new Set();
 	const lock = generateLock();
 	const delayer = manifest => {
-		target = getTarget(manifest);
+		target = getTarget(helpers.validateManifest(manifest));
 
 		return (dontManage ? Promise.resolve() : manager.delay(
 			target,

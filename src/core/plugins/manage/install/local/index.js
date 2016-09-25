@@ -5,7 +5,6 @@ const path = require("path");
 const owe = require("owe.js");
 
 const npm = require("../../../../npm");
-const helpers = require("../helpers");
 
 const localFile = require("./file");
 const localDirectory = require("./directory");
@@ -16,9 +15,9 @@ function local(plugin, delayer) {
 
 	return fs.isDirectoryAsync(plugin.path)
 		.then(dir => {
-			return (dir ? localDirectory : localFile)(plugin, delayer);
+			return (dir ? localDirectory : localFile)(plugin);
 		}, () => new owe.exposed.Error("Invalid local installation path."))
-		.then(helpers.validateManifest).then(delayer)
+		.then(delayer)
 		.then(manifest => {
 			if(+plugin.copy) {
 				manifest.location = manifest.name;
