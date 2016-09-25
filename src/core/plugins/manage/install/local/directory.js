@@ -13,7 +13,7 @@ function localDirectory(installRequest) {
 				resolve(data);
 		});
 	}).catch(() => {
-		throw new owe.exposed.Error("Plugin declaration was not accepted.");
+		throw new owe.exposed.Error("Plugin declaration was either not found or invalid.");
 	});
 }
 
