@@ -3,8 +3,8 @@
 const fs = require("fs-extra-promise");
 const owe = require("owe.js");
 
-function localFile(plugin) {
-	return fs.readFileAsync(plugin.path).catch(() => {
+function localFile(installRequest) {
+	return fs.readFileAsync(installRequest.path).catch(() => {
 		throw new owe.exposed.Error("Plugin file could not be read.");
 	}).then(file => parsePluginFile(file.toString()));
 }

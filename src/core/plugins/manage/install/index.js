@@ -7,11 +7,11 @@ const validateEdge = require("../../../graph/helpers/validateEdge");
 const manager = require("../../../managers").taskManager;
 const helpers = require("./helpers");
 
-function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
-	if(typeof plugin !== "object" || !plugin)
-		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${plugin}' cannot be installed.`));
+function install(installRequest, getTarget = helpers.getTarget, dontManage = false) {
+	if(typeof installRequest !== "object" || !installRequest)
+		return Promise.reject(new owe.exposed.TypeError(`Given plugin '${installRequest}' cannot be installed.`));
 
-	if(!(plugin.type in installationTypes))
+	if(!(installRequest.mode in installationModes))
 		return Promise.reject(new owe.exposed.Error("Plugins cannot be installed with the given installation method."));
 
 	/**
@@ -40,7 +40,7 @@ function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
 		}).then(() => manifest);
 	};
 
-	return lock.unlock(installationTypes[plugin.type](plugin, delayer)
+	return lock.unlock(installationModes[installRequest.mode](installRequest, delayer)
 		.then(manifest => {
 			const res = target.assign(manifest, true);
 
@@ -50,7 +50,7 @@ function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
 		})
 		.catch(err => {
 			// If target was newly created by getTarget, destroy it if installation failed:
-			if(!target.type)
+			if(target && !target.type)
 				helpers.removePlugin(target);
 
 			throw err;
@@ -89,7 +89,7 @@ function install(plugin, getTarget = helpers.getTarget, dontManage = false) {
 		});
 }
 
-const installationTypes = {
+const installationModes = {
 	__proto__: null,
 
 	local: require("./local"),

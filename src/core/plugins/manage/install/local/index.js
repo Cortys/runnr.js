@@ -9,23 +9,23 @@ const npm = require("../../../../npm");
 const localFile = require("./file");
 const localDirectory = require("./directory");
 
-function local(plugin, delayer) {
-	if(typeof plugin.path === "string")
-		plugin.path = path.normalize(plugin.path);
+function local(installRequest, validateManifest) {
+	if(typeof installRequest.path === "string")
+		installRequest.path = path.normalize(installRequest.path);
 
-	return fs.isDirectoryAsync(plugin.path)
+	return fs.isDirectoryAsync(installRequest.path)
 		.then(dir => {
-			return (dir ? localDirectory : localFile)(plugin);
+			return (dir ? localDirectory : localFile)(installRequest);
 		}, () => new owe.exposed.Error("Invalid local installation path."))
-		.then(delayer)
+		.then(validateManifest)
 		.then(manifest => {
-			if(+plugin.copy) {
+			if(+installRequest.copy) {
 				manifest.location = manifest.name;
 
-				return npm.install(plugin.path).then(() => manifest);
+				return npm.install(installRequest.path).then(() => manifest);
 			}
 
-			manifest.location = plugin.path;
+			manifest.location = installRequest.path;
 			manifest.source = "local";
 
 			return manifest;
