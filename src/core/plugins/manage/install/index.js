@@ -50,7 +50,7 @@ function install(installRequest, getTarget = helpers.getTarget, dontManage = fal
 		})
 		.catch(err => {
 			// If target was newly created by getTarget, destroy it if installation failed:
-			if(target && !target.type)
+			if(target && !target.loaded)
 				helpers.removePlugin(target);
 
 			throw err;
