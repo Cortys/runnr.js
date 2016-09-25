@@ -8,7 +8,7 @@ const install = require("../install");
 function updateLocal(plugin) {
 	return path.isAbsolute(plugin.location)
 		? install({
-			type: "local",
+			mode: "local",
 			path: plugin.location,
 			copy: false
 		}, manifest => helpers.validateTarget(manifest, plugin, true), true)
