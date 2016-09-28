@@ -42,7 +42,7 @@ function install(installRequest, getTarget = helpers.getTarget, dontManage = fal
 
 	return lock.unlock(installationModes[installRequest.mode](installRequest, delayer)
 		.then(manifest => {
-			const res = target.assign(manifest, true);
+			const res = target.assign(manifest, false);
 
 			helpers.insertPlugin(target);
 

@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs-extra-promise");
 const owe = require("owe.js");
 const { mix, Mixin } = require("mixwith");
 
@@ -10,7 +9,6 @@ const PromiseQueue = require("../../helpers/PromiseQueue");
 const generateLock = require("../../helpers/generateLock");
 const filterObject = require("../../helpers/filterObject");
 
-const { GraphContainer, Graph } = require("../../graph");
 const config = require("../../config");
 const { stageManager } = require("../../managers");
 
@@ -21,7 +19,7 @@ const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
 
-const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), GraphContainer, EventEmitter) {
+const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), EventEmitter) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
@@ -61,8 +59,8 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 		owe.expose.properties(this, exposed);
 	}
 
-	assign(preset, dontCheck) {
-		const res = stageManager({
+	assign(preset, { stages = {}, checkForUpdates = true } = {}) {
+		const res = stageManager(Object.assign({
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "persist" && key !== "type")
@@ -76,23 +74,10 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 
 				this.persist();
 			},
-			assignGraph: () => {
-				if(this.type !== "graph")
-					return;
-
-				this.graph = new Graph(this, this.source !== "custom");
-
-				if(this.source === "custom")
-					return this.graph.assign(preset.graph);
-
-				return this.mainLocation
-					.then(mainLocation => fs.readJsonAsync(mainLocation))
-					.then(graph => this.graph.assign(graph));
-			},
 			validatePlugin: () => {
-				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Autoupdate: ${!dontCheck}.`);
+				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Autoupdate: ${checkForUpdates}.`);
 
-				if(dontCheck)
+				if(!checkForUpdates)
 					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {
 						noValidation: true
 					});
@@ -107,7 +92,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 					return this.uninstall();
 				});
 			}
-		}).then(() => this, err => {
+		}, stages)).then(() => this, err => {
 			if(!err.noValidation)
 				throw err;
 
