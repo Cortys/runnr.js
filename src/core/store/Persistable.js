@@ -1,6 +1,6 @@
 "use strict";
 
-const { Mixin } = require("mixwith");
+const MixinFactory = require("../helpers/MixinFactory");
 
 function persist(object, store) {
 	if(!("$loki" in object && "meta" in object))
@@ -11,10 +11,14 @@ function persist(object, store) {
 		: store.loaded.then(() => persist(object, store));
 }
 
-module.exports = Object.assign(store => Mixin(superclass => class Persistable extends superclass {
+const Persistable = MixinFactory(store => superclass => class Persistable extends superclass {
 	constructor() {
 		super(...arguments);
 
 		this.persist = () => persist(this, store);
 	}
-}), { persist });
+});
+
+Object.assign(Persistable, { persist });
+
+module.exports = Persistable;
