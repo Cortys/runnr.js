@@ -13,9 +13,6 @@ class GraphPlugin extends mixins(Plugin, GraphContainer) {
 
 			stages: {
 				assignGraph: () => {
-					if(this.type !== "graph")
-						return;
-
 					this.graph = new Graph(this, this.source !== "custom");
 
 					if(this.source === "custom")
