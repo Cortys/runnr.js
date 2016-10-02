@@ -4,7 +4,7 @@ const owe = require("owe.js");
 const { mix, Mixin } = require("mixwith");
 
 const Persistable = require("../../store/Persistable");
-const EventEmitter = require("../../events/EventEmitter");
+const UpdateEmitter = require("../../events/UpdateEmitter");
 const PromiseQueue = require("../../helpers/PromiseQueue");
 const generateLock = require("../../helpers/generateLock");
 const filterObject = require("../../helpers/filterObject");
@@ -17,7 +17,7 @@ const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
 
-const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), EventEmitter) {
+const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
 	constructor() {
 		super();
 		this[dependentNodes] = new Set();
@@ -145,7 +145,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 
 	uninstall() {
 		return manage.uninstall(this).then(result => {
-			this.emit("uninstall");
+			this[UpdateEmitter.delete]();
 
 			return result;
 		});
