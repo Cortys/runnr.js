@@ -20,6 +20,11 @@ const Persistable = MixinFactory(store => superclass => class Persistable extend
 		this.persist = this.persist.bind(this);
 		this[insert] = this[insert].bind(this);
 		this[del] = this[del].bind(this);
+
+		if(this instanceof UpdateEmitter) {
+			this.on("update", this.persist);
+			this.on("delete", this[del]);
+		}
 	}
 
 	persist() {

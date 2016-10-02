@@ -31,8 +31,6 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 		// Disable activation as long as assign() has not been called on this runner:
 		this[disableQueue].add(this[assigned]);
 
-		this.on("update", this.persist);
-
 		/* owe binding: */
 
 		const exposed = ["id", "name", "enabled", "active"];
@@ -143,9 +141,6 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 
 	delete() {
 		return manage.delete(this).then(result => {
-			if(this.graph)
-				this.graph.removeListener("update", this.persist);
-
 			this[UpdateEmitter.delete]();
 
 			return result;
