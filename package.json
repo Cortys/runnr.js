@@ -16,7 +16,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/runnr/runnr.js.git"
+		"url": "https://github.com/runnr/runnr.git"
 	},
 	"engines": {
 		"node": "^6.5"
@@ -36,15 +36,16 @@
 		"owe-fs": "0.11.x",
 		"owe-events": "0.11.x",
 
+		"fs-extra-promise": "0.4.1",
 		"lokijs": "runnr/LokiJS",
-		"npm": "3.10.7",
-		"semver": "^5.0",
+		"mixwith": "runnr/mixwith.js",
 		"normalize-package-data": "2.3.5",
+		"npm": "3.10.7",
 		"read-package-json": "2.0.4",
 		"resolve": "1.1.7",
-		"fs-extra-promise": "0.4.1",
 		"sandboxed-module": "2.0.3",
-		"mixwith": "runnr/mixwith.js"
+		"semver": "^5.0",
+		"uuid": "2.0.3"
 	},
 	"devDependencies": {
 		"eslint": "3.5.0",
