@@ -4,6 +4,7 @@ const owe = require("owe.js");
 
 const generateLock = require("../../../helpers/generateLock");
 const validateEdge = require("../../../graph/helpers/validateEdge");
+const Persistable = require("../../../store/Persistable");
 const manager = require("../../../managers").taskManager;
 const helpers = require("./helpers");
 
@@ -41,17 +42,11 @@ function install(installRequest, getTarget = helpers.getTarget, dontManage = fal
 	};
 
 	return lock.unlock(installationModes[installRequest.mode](installRequest, delayer)
-		.then(manifest => {
-			const res = target.assign(manifest, false);
-
-			helpers.insertPlugin(target);
-
-			return res;
-		})
+		.then(manifest => target.assign(manifest, false))
 		.catch(err => {
 			// If target was newly created by getTarget, destroy it if installation failed:
 			if(target && !target.loaded)
-				helpers.removePlugin(target);
+				target[Persistable.delete]();
 
 			throw err;
 		})

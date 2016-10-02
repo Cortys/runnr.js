@@ -1,6 +1,6 @@
 "use strict";
 
-const helpers = require("./helpers");
+const helpers = require("../../helpers");
 
 function empty(runner, delayer) {
 	return new Promise(resolve => resolve({

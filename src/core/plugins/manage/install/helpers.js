@@ -3,10 +3,11 @@
 const normalizePackage = require("normalize-package-data");
 const owe = require("owe.js");
 
+const Persistable = require("../../../store/Persistable");
+const ports = require("../../../graph/helpers/ports");
+
 const plugin = require("../../plugin");
 const store = require("../../store");
-
-const ports = require("../../../graph/helpers/ports");
 
 module.exports = {
 	validateManifest(manifest) {
@@ -33,25 +34,16 @@ module.exports = {
 	},
 
 	getTarget(manifest) {
-		let stored = store.collection.by("name", manifest.name);
+		const stored = store.collection.by("name", manifest.name);
 
-		if(!stored) {
-			stored = plugin.instanciate(manifest);
-			stored.name = manifest.name;
-			store.collection.insert(stored);
-		}
+		if(stored)
+			return stored;
 
-		return stored;
-	},
+		const instance = plugin.instanciate(manifest);
 
-	insertPlugin(plugin) {
-		if(!("$loki" in plugin || "meta" in plugin))
-			store.collection.insert(plugin);
+		instance.name = manifest.name;
+		instance[Persistable.insert]();
 
-		return plugin;
-	},
-
-	removePlugin(plugin) {
-		return store.collection.remove(plugin);
+		return instance;
 	}
 };

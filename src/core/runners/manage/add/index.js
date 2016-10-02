@@ -3,9 +3,9 @@
 const owe = require("owe.js");
 
 const Runner = require("../../Runner");
+const Persistable = require("../../../store/Persistable");
 const generateLock = require("../../../helpers/generateLock");
 const manager = require("../../../managers").taskManager;
-const helpers = require("./helpers");
 
 function add(runner) {
 	if(typeof runner !== "object" || !runner)
@@ -26,7 +26,7 @@ function add(runner) {
 			.then(runner => {
 				runnerInstance.assign(runner);
 
-				return helpers.insertRunner(runnerInstance);
+				return runnerInstance[Persistable.insert]();
 			}));
 	}
 	else

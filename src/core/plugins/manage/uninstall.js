@@ -4,7 +4,7 @@ const owe = require("owe.js");
 const path = require("path");
 
 const npm = require("../../npm");
-const store = require("../store");
+const Persistable = require("../../store/Persistable");
 
 const generateLock = require("../../helpers/generateLock");
 const manager = require("../../managers").taskManager;
@@ -16,7 +16,7 @@ function uninstall(plugin) {
 			if(typeof plugin.location === "string" && !path.isAbsolute(plugin.location))
 				return npm.uninstall(plugin.name);
 		})
-		.then(() => store.collection.remove(plugin), () => {
+		.then(() => plugin[Persistable.delete](), () => {
 			throw new owe.exposed.Error("Plugin could not be removed from the plugins directory.");
 		})
 		.then(() => {

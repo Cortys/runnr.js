@@ -2,23 +2,48 @@
 
 const MixinFactory = require("../helpers/MixinFactory");
 
-function persist(object, store) {
-	if(!("$loki" in object && "meta" in object))
-		return Promise.resolve();
+const UpdateEmitter = require("../events/UpdateEmitter");
 
+const insert = Symbol("insert");
+const del = Symbol("delete");
+
+function afterStoreLoaded(exec, store) {
 	return store.collection
-		? Promise.resolve(store.collection.update(object))
-		: store.loaded.then(() => persist(object, store));
+		? Promise.resolve(exec(store.collection))
+		: store.loaded.then(() => afterStoreLoaded(exec, store));
 }
 
 const Persistable = MixinFactory(store => superclass => class Persistable extends superclass {
 	constructor() {
 		super(...arguments);
 
-		this.persist = () => persist(this, store);
+		this.persist = this.persist.bind(this);
+		this[insert] = this[insert].bind(this);
+		this[del] = this[del].bind(this);
+	}
+
+	persist() {
+		if(!("$loki" in this && "meta" in this))
+			return Promise.resolve();
+
+		return afterStoreLoaded(collection => collection.update(this), store);
+	}
+
+	[insert]() {
+		return afterStoreLoaded(collection => collection.insert(this), store);
+	}
+
+	[del]() {
+		if(!("$loki" in this && "meta" in this))
+			return Promise.resolve();
+
+		return afterStoreLoaded(collection => collection.remove(this), store);
 	}
 });
 
-Object.assign(Persistable, { persist });
+Object.assign(Persistable, {
+	insert,
+	delete: del
+});
 
 module.exports = Persistable;
