@@ -2,12 +2,8 @@
 
 const { mixins } = require("mixwith");
 
-const Plugin = require("./Plugin");
+const FsPlugin = require("./FsPlugin");
 
-class JsPlugin extends mixins(Plugin) {
-	assign(preset, checkForUpdates) {
-		return super.assign(preset, { checkForUpdates });
-	}
-}
+class JsPlugin extends mixins(FsPlugin) {}
 
 module.exports = JsPlugin;

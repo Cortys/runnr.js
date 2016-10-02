@@ -7,10 +7,8 @@ const Plugin = require("./Plugin");
 const { Graph, GraphContainer } = require("../../graph");
 
 class GraphPlugin extends mixins(Plugin, GraphContainer) {
-	assign(preset, checkForUpdates) {
+	assign(preset) {
 		return super.assign(preset, {
-			checkForUpdates,
-
 			stages: {
 				assignGraph: () => {
 					this.graph = new Graph(this, this.source !== "custom");

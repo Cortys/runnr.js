@@ -11,9 +11,7 @@ const filterObject = require("../../helpers/filterObject");
 
 const config = require("../../config");
 const { stageManager } = require("../../managers");
-
 const manage = require("../manage");
-const integrityCheck = require("../integrityCheck");
 
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
@@ -59,7 +57,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 		owe.expose.properties(this, exposed);
 	}
 
-	assign(preset, { stages = {}, checkForUpdates = true } = {}) {
+	assign(preset, { stages = {}, validate } = {}) {
 		const res = stageManager(Object.assign({
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
@@ -75,22 +73,14 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 				this.persist();
 			},
 			validatePlugin: () => {
-				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Autoupdate: ${checkForUpdates}.`);
+				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${!!validate}`);
 
-				if(!checkForUpdates)
+				if(!validate)
 					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {
 						noValidation: true
 					});
 
-				// Uninstall plugin if it was removed from fs, update otherwise:
-				return integrityCheck(this).then(() => {
-					if(this.source)
-						return this.update();
-				}, err => {
-					console.error(`Plugin '${this.name}' is faulty and will be uninstalled.`, err);
-
-					return this.uninstall();
-				});
+				return validate();
 			}
 		}, stages)).then(() => this, err => {
 			if(!err.noValidation)
