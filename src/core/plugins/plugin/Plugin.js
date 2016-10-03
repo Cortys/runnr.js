@@ -19,7 +19,7 @@ const assignLock = Symbol("assignLock");
 
 const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
 	constructor() {
-		super();
+		super(...arguments);
 		this[dependentNodes] = new Set();
 		this[loaded] = new PromiseQueue();
 		this[assignLock] = generateLock();
@@ -131,8 +131,10 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 
 	addDependentNode(node) {
 		this[dependentNodes].add(node);
+	}
 
-		node.once("delete", () => this[dependentNodes].delete(node));
+	deleteDependentNode(node) {
+		this[dependentNodes].delete(node);
 	}
 
 	performOnDependentRunners(method) {

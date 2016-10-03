@@ -3,6 +3,8 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
+const UpdateEmitter = require("../events/UpdateEmitter");
+
 const { getById } = require("./get");
 
 const { node } = require("../graph");
@@ -30,6 +32,8 @@ class PluginNode extends mixins(Node) {
 			throw new owe.exposed.Error(`There is no plugin with the name '${this.name}'.`);
 
 		this.plugin.addDependentNode(this);
+
+		this.on("delete", () => this.plugin.deleteDependentNode(this));
 
 		this.loaded = this.plugin.loaded;
 
