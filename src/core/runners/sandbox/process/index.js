@@ -4,14 +4,14 @@ const owe = require("owe.js");
 const oweEvents = require("owe-events");
 const api = require("../api");
 
-const Graph = require("./graph/Graph");
+const { GraphExecutor } = require("../../../graph");
 
 // Get a ClientApi of the runner for this process:
 const master = api.client(process).proxified;
 
 const connector = {
 	eventController: oweEvents.controller,
-	graph: new Graph(master.runner.graph)
+	graph: new GraphExecutor(master.runner.graph)
 };
 
 // Expose the connector to master:
