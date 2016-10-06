@@ -3,14 +3,13 @@
 const { mixins } = require("mixwith");
 const sandboxedModule = require("sandboxed-module");
 
-const Node = require("./Node");
+const { NodeExecutor } = require("../../graph").node;
+
 const SandboxHandle = require("./SandboxHandle");
 
-class PluginNode extends mixins(Node) {
-	constructor(preset, parentGraph) {
-		super();
-
-		this.assign(preset, parentGraph);
+class PluginNodeExecutor extends mixins(NodeExecutor) {
+	assign(preset, parentGraph) {
+		super.assign(preset, parentGraph);
 
 		this.plugin = this.api.plugin;
 
@@ -20,8 +19,10 @@ class PluginNode extends mixins(Node) {
 					runnr: new SandboxHandle(this)
 				}
 			});
-		}).catch(() => process.exit(1));
+		});
+
+		return this;
 	}
 }
 
-module.exports = PluginNode;
+module.exports = PluginNodeExecutor;

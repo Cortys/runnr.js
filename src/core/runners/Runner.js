@@ -10,7 +10,7 @@ const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");
 const filterObject = require("../helpers/filterObject");
 
-const { Graph, GraphContainer } = require("../graph");
+const { graph, GraphContainer } = require("../graph");
 const Sandbox = require("./sandbox/Sandbox");
 const { taskManager, stageManager } = require("../managers");
 const helpers = require("./helpers");
@@ -55,7 +55,7 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 				Object.assign(this, filterObject(preset, ["$loki", "meta", "name"]));
 			},
 			assignGraph: () => {
-				this.graph = new Graph(this, true);
+				this.graph = graph.create(this, true);
 
 				if(preset.graph)
 					return this.graph.assign(preset.graph);

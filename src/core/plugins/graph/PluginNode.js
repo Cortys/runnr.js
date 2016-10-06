@@ -3,11 +3,10 @@
 const owe = require("owe.js");
 const { mixins } = require("mixwith");
 
-const UpdateEmitter = require("../events/UpdateEmitter");
+const UpdateEmitter = require("../../events/UpdateEmitter");
+const { node } = require("../../graph");
 
-const { getById } = require("./get");
-
-const { node } = require("../graph");
+const { getById } = require("../get");
 
 const Node = node.Node({
 	pluginId: {
@@ -45,10 +44,6 @@ class PluginNode extends mixins(Node) {
 
 	get ports() {
 		return this.plugin.ports;
-	}
-
-	static register() {
-		node.registerNodeType("plugin", PluginNode);
 	}
 }
 

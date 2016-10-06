@@ -7,7 +7,7 @@ const store = require("./store");
 const { getByName, getById } = require("./get");
 const { install } = require("./manage");
 
-require("./PluginNode").register();
+require("./graph").register();
 
 let listView;
 
