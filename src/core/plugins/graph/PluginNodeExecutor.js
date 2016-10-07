@@ -1,11 +1,10 @@
 "use strict";
 
 const { mixins } = require("mixwith");
-const sandboxedModule = require("sandboxed-module");
 
 const { NodeExecutor } = require("../../graph").node;
 
-const SandboxHandle = require("./SandboxHandle");
+const { execute } = require("./executor");
 
 class PluginNodeExecutor extends mixins(NodeExecutor) {
 	assign(preset, parentGraph) {
@@ -13,13 +12,7 @@ class PluginNodeExecutor extends mixins(NodeExecutor) {
 
 		this.plugin = this.api.plugin;
 
-		Promise.all([this.plugin.mainLocation, this.loaded]).then(([mainLocation]) => {
-			this.sandbox = sandboxedModule.load(mainLocation, {
-				globals: {
-					runnr: new SandboxHandle(this)
-				}
-			});
-		});
+		Promise.all([this.plugin.type, this.loaded]).then(([type]) => execute(type, this));
 
 		return this;
 	}
