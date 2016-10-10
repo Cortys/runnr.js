@@ -18,7 +18,7 @@ const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
 const exposed = Symbol("exposed");
 
-const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
+const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
 	constructor() {
 		super(...arguments);
 		this[dependentNodes] = new Set();
