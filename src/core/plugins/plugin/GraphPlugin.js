@@ -13,8 +13,15 @@ class GraphPlugin extends mixins(Plugin, GraphContainer) {
 				assignGraph: () => {
 					this.graph = graph.create(this, this.source !== "custom");
 
-					if(this.source === "custom")
+					this[Plugin.exposed].privateRoutes.add("graph");
+
+					if(this.source === "custom") {
+						this[Plugin.exposed].publicRoutes.add("graph");
+
 						return this.graph.assign(preset.graph);
+					}
+
+					this[Plugin.exposed].publicRoutes.delete("graph");
 
 					return this.mainLocation
 						.then(mainLocation => fs.readJsonAsync(mainLocation))

@@ -16,6 +16,7 @@ const manage = require("../manage");
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
+const exposed = Symbol("exposed");
 
 const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
 	constructor() {
@@ -29,9 +30,11 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 
 		/* owe binding: */
 
-		const exposed = ["id", "type", "name", "displayName", "version", "author", "source"];
-		const publicRoutes = new Set([...exposed, "ports", "dependents", "update", "uninstall"]);
-		const privateRoutes = new Set([...publicRoutes, "location", "mainLocation", "graph"]);
+		const exposedRoutes = ["id", "type", "name", "displayName", "version", "author", "source"];
+		const publicRoutes = new Set([...exposedRoutes, "ports", "dependents", "update", "uninstall"]);
+		const privateRoutes = new Set([...publicRoutes, "location", "mainLocation"]);
+
+		this[exposed] = { exposedRoutes, publicRoutes, privateRoutes };
 
 		owe(this, owe.serve({
 			router: {
@@ -54,7 +57,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 				filter: true
 			}
 		}));
-		owe.expose.properties(this, exposed);
+		owe.expose.properties(this, exposedRoutes);
 	}
 
 	assign(preset, { stages = {}, validate } = {}) {
@@ -157,5 +160,7 @@ const Plugin = Mixin(superclass => class Plugin extends mix(superclass).with(Per
 		return manage.update(this);
 	}
 });
+
+Plugin.exposed = exposed;
 
 module.exports = Plugin;
