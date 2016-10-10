@@ -11,7 +11,7 @@ class GraphPlugin extends mixins(Plugin, GraphContainer) {
 		return super.assign(preset, {
 			stages: {
 				assignGraph: () => {
-					this.graph = graph.create(this, this.source !== "custom");
+					this.graph = graph.create(this, this.source === "custom");
 
 					this[Plugin.exposed].privateRoutes.add("graph");
 
