@@ -1,6 +1,6 @@
 "use strict";
 
-const { graph } = require("../../graph");
+const { graph } = require("../../../graph");
 
 function execute(node) {
 	const io = {
