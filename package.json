@@ -37,7 +37,7 @@
 		"owe-events": "0.11.x",
 
 		"fs-extra-promise": "0.4.1",
-		"lokijs": "runnr/LokiJS",
+		"lokijs": "runnr/LokiJS#v2.0.0",
 		"mixwith": "runnr/mixwith.js",
 		"normalize-package-data": "2.3.5",
 		"npm": "3.10.7",

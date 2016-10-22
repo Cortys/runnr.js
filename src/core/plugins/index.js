@@ -7,8 +7,6 @@ const store = require("./store");
 const { getByName, getById } = require("./get");
 const { install } = require("./manage");
 
-require("./graph").register();
-
 let listView;
 
 store.loaded.then(() => listView = store.collection.getDynamicView("list") || store.collection.addDynamicView("list", {

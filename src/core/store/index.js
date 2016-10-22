@@ -3,9 +3,7 @@
 const config = require("../config");
 const Loki = require("lokijs");
 
-const store = module.exports = new Loki(config.fromUserData("store.json"), {
-	autosave: true
-});
+const store = module.exports = new Loki(config.fromUserData("store.json"));
 
 Object.assign(store, {
 	loaded: new Promise(resolve => {
@@ -13,25 +11,27 @@ Object.assign(store, {
 			const plugin = require("../plugins/plugin");
 			const Runner = require("../runners/Runner");
 
-			store.loadDatabase({
-				plugins: {
-					inflate: src => {
-						const instance = plugin.instanciate(src);
+			resolve(store.initializePersistence({
+				autoload: true,
+				autosave: true,
+				inflate: {
+					plugins: {
+						inflate: src => {
+							const instance = plugin.instanciate(src);
 
-						instance.assign(src);
+							instance.assign(src);
 
-						return instance;
+							return instance;
+						}
+					},
+					runners: {
+						proto: Runner,
+						inflate: (src, dst) => dst.assign(src)
 					}
-				},
-				runners: {
-					proto: Runner,
-					inflate: (src, dst) => dst.assign(src)
 				}
-			}, resolve);
+			}));
 		});
 	}).then(() => store),
 
-	stop() {
-		return new Promise(resolve => store.close(resolve));
-	}
+	stop: () => store.close()
 });

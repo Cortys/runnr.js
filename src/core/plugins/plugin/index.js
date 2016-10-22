@@ -2,6 +2,8 @@
 
 const owe = require("owe.js");
 
+require("../graph").register();
+
 module.exports = {
 	instanciate(preset) {
 		const { type = "js" } = preset;
