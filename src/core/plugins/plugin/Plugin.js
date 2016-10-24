@@ -60,8 +60,8 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 		owe.expose.properties(this, exposedRoutes);
 	}
 
-	assign(preset, { stages = {}, validate } = {}) {
-		const res = stageManager(Object.assign({
+	assign(preset, stages = {}) {
+		const res = stageManager(Object.assign({}, stages, {
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "persist" && key !== "type")
@@ -76,16 +76,16 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 				this.persist();
 			},
 			validatePlugin: () => {
-				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${!!validate}`);
+				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${!!stages.validatePlugin}`);
 
-				if(!validate)
+				if(!stages.validatePlugin)
 					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {
 						noValidation: true
 					});
 
-				return validate();
+				return stages.validatePlugin();
 			}
-		}, stages)).then(() => this, err => {
+		})).then(() => this, err => {
 			if(!err.noValidation)
 				throw err;
 

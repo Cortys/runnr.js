@@ -9,7 +9,7 @@ const Plugin = require("./Plugin");
 const FsPlugin = Mixin(superclass => class FsPlugin extends mix(superclass).with(Plugin) {
 	assign(preset, checkForUpdates = true) {
 		return super.assign(preset, {
-			validate: checkForUpdates && (() => {
+			validatePlugin: checkForUpdates && (() => {
 				// Uninstall plugin if it was removed from fs, update otherwise:
 				return integrityCheck(this).then(() => {
 					if(this.source)
