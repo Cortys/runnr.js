@@ -29,6 +29,10 @@ class GraphPlugin extends mixins(Plugin, GraphContainer) {
 			}
 		});
 	}
+
+	get ports() {
+		return this.graph.ports;
+	}
 }
 
 module.exports = GraphPlugin;
