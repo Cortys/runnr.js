@@ -5,13 +5,13 @@ const { mixins } = require("mixwith");
 
 const internalize = require("../../helpers/internalize");
 
-const Plugin = require("./Plugin");
+const { Plugin } = require("./abstract");
 const { graph, GraphContainer } = require("../../graph");
 
 class GraphPlugin extends mixins(Plugin, GraphContainer) {
 	assign(preset) {
 		return super.assign(preset, {
-			assignGraph: () => {
+			setDerivedData: () => {
 				this.graph = graph.create(this, this.source === "custom");
 
 				this[Plugin.exposed].privateRoutes.add("graph");

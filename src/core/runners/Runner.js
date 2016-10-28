@@ -54,7 +54,7 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 			setMetadata: () => {
 				Object.assign(this, filterObject(preset, ["$loki", "meta", "name"]));
 			},
-			assignGraph: () => {
+			setDerivedData: () => {
 				this.graph = graph.create(this, true);
 
 				if(preset.graph)

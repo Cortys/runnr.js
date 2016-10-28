@@ -3,22 +3,21 @@
 const owe = require("owe.js");
 const { mix, Mixin } = require("mixwith");
 
-const Persistable = require("../../store/Persistable");
-const UpdateEmitter = require("../../events/UpdateEmitter");
-const PromiseQueue = require("../../helpers/PromiseQueue");
-const generateLock = require("../../helpers/generateLock");
-const filterObject = require("../../helpers/filterObject");
+const Persistable = require("../../../store/Persistable");
+const UpdateEmitter = require("../../../events/UpdateEmitter");
+const PromiseQueue = require("../../../helpers/PromiseQueue");
+const generateLock = require("../../../helpers/generateLock");
+const filterObject = require("../../../helpers/filterObject");
 
-const config = require("../../config");
-const { stageManager } = require("../../managers");
-const manage = require("../manage");
+const { stageManager } = require("../../../managers");
+const manage = require("../../manage");
 
 const dependentNodes = Symbol("dependentNodes");
 const loaded = Symbol("loaded");
 const assignLock = Symbol("assignLock");
 const exposed = Symbol("exposed");
 
-const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistable(require("../store")), UpdateEmitter()) {
+const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistable(require("../../store")), UpdateEmitter()) {
 	constructor() {
 		super(...arguments);
 		this[dependentNodes] = new Set();
@@ -32,7 +31,7 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 
 		const exposedRoutes = ["id", "type", "name", "displayName", "version", "author", "source"];
 		const publicRoutes = new Set([...exposedRoutes, "ports", "dependents", "update", "uninstall"]);
-		const privateRoutes = new Set([...publicRoutes, "location", "mainLocation"]);
+		const privateRoutes = new Set(publicRoutes);
 
 		this[exposed] = { exposedRoutes, publicRoutes, privateRoutes };
 
@@ -70,27 +69,26 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 
 				Object.assign(this, filterObject(preset, [
 					"$loki", "meta",
-					"name", "displayName", "version", "author", "source", "location", "ports"
+					"name", "displayName", "version", "author", "source"
 				]));
 
 				this.persist();
+
+				if(typeof stages.setMetadata === "function")
+					return Promise.resolve(stages.setMetadata())
+						.then(() => this.persist());
 			},
 			validatePlugin: () => {
-				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${!!stages.validatePlugin}`);
+				const doValidate = typeof stages.validatePlugin === "function";
 
-				if(!stages.validatePlugin)
-					throw Object.assign(new Error("Validation was disabled for this plugin assign."), {
-						noValidation: true
-					});
+				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${doValidate}.`);
+
+				if(!doValidate)
+					return stageManager.cancel;
 
 				return stages.validatePlugin();
 			}
-		})).then(() => this, err => {
-			if(!err.noValidation)
-				throw err;
-
-			return this;
-		});
+		})).then(() => this);
 
 		this[loaded].add(res);
 		this[assignLock].unlock();
@@ -104,10 +102,6 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 
 	get id() {
 		return this.$loki;
-	}
-
-	get mainLocation() {
-		return config.fromPlugins(this.location);
 	}
 
 	get dependents() {
