@@ -83,10 +83,9 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 
 				console.log(`Assigned plugin '${this.name}' of type '${this.type}'. Validate: ${doValidate}.`);
 
-				if(!doValidate)
-					return stageManager.cancel;
-
-				return stages.validatePlugin();
+				return doValidate
+					? stages.validatePlugin()
+					: stageManager.cancel;
 			}
 		})).then(() => this);
 

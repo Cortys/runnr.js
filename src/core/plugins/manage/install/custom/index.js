@@ -4,10 +4,11 @@ const uuid = require("uuid");
 
 function custom(installRequest, validateManifest) {
 	return Promise.resolve({
-		type: "graph",
+		type: "customGraph",
 		source: "custom",
 		name: `@custom/${uuid.v1()}`,
 		displayName: installRequest.name,
+		// Add empty ports object just to pass validatePlugin check:
 		ports: {
 			in: {},
 			out: {}

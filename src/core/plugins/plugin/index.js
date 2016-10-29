@@ -23,5 +23,6 @@ const pluginTypes = {
 	__proto__: null,
 
 	"js": require("./JsPlugin"),
-	"graph": require("./GraphPlugin")
+	"graph": require("./GraphPlugin"),
+	"customGraph": require("./CustomGraphPlugin")
 };

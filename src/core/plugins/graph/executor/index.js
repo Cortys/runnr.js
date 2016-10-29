@@ -4,7 +4,8 @@ const executors = {
 	__proto__: null,
 
 	"js": require("./js"),
-	"graph": require("./graph")
+	"graph": require("./graph"),
+	"customGraph": require("./graph")
 };
 
 module.exports = {

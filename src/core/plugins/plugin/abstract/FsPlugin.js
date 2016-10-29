@@ -13,8 +13,8 @@ const FsPlugin = Mixin(superclass => class FsPlugin extends mix(superclass).with
 		super(...arguments);
 
 		this[Plugin.exposed].publicRoutes.add("ports");
-		this[Plugin.exposed].privateRoutes.add("ports");
 
+		this[Plugin.exposed].privateRoutes.add("ports");
 		this[Plugin.exposed].privateRoutes.add("location");
 		this[Plugin.exposed].privateRoutes.add("mainLocation");
 	}
@@ -26,6 +26,9 @@ const FsPlugin = Mixin(superclass => class FsPlugin extends mix(superclass).with
 			setMetadata: () => {
 				this.ports = preset.ports;
 				this.location = preset.location;
+
+				if(typeof stages.setMetadata === "function")
+					return stages.setMetadata();
 			},
 
 			validatePlugin: validatePlugin && (() => {

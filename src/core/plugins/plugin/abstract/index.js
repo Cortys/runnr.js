@@ -2,5 +2,6 @@
 
 module.exports = {
 	Plugin: require("./Plugin"),
-	FsPlugin: require("./FsPlugin")
+	FsPlugin: require("./FsPlugin"),
+	GraphPlugin: require("./GraphPlugin")
 };
