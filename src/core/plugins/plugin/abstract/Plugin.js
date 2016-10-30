@@ -5,26 +5,21 @@ const { mix, Mixin } = require("mixwith");
 
 const Persistable = require("../../../store/Persistable");
 const UpdateEmitter = require("../../../events/UpdateEmitter");
-const PromiseQueue = require("../../../helpers/PromiseQueue");
-const generateLock = require("../../../helpers/generateLock");
+const Assignable = require("../../../helpers/Assignable");
+const Dedupe = require("../../../helpers/Dedupe");
 const filterObject = require("../../../helpers/filterObject");
 
 const { stageManager } = require("../../../managers");
 const manage = require("../../manage");
 
 const dependentNodes = Symbol("dependentNodes");
-const loaded = Symbol("loaded");
-const assignLock = Symbol("assignLock");
 const exposed = Symbol("exposed");
 
-const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistable(require("../../store")), UpdateEmitter()) {
+const Plugin = Dedupe(Mixin(superclass => class extends mix(superclass).with(Assignable, Persistable(require("../../store")), UpdateEmitter()) {
 	constructor() {
 		super(...arguments);
 		this[dependentNodes] = new Set();
-		this[loaded] = new PromiseQueue();
-		this[assignLock] = generateLock();
 
-		this[loaded].add(this[assignLock]);
 		this.loaded.then(() => console.log(`Loaded plugin '${this.name}'.`));
 
 		/* owe binding: */
@@ -60,7 +55,7 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 	}
 
 	assign(preset, stages = {}) {
-		const res = stageManager(Object.assign({}, stages, {
+		return super.assign(stageManager(Object.assign({}, stages, {
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "persist" && key !== "type")
@@ -87,16 +82,7 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 					? stages.validatePlugin()
 					: stageManager.cancel;
 			}
-		})).then(() => this);
-
-		this[loaded].add(res);
-		this[assignLock].unlock();
-
-		return res;
-	}
-
-	get loaded() {
-		return this[loaded].onEmpty;
+		})).then(() => this));
 	}
 
 	get id() {
@@ -152,7 +138,7 @@ const Plugin = Mixin(superclass => class extends mix(superclass).with(Persistabl
 	update() {
 		return manage.update(this);
 	}
-});
+}));
 
 Plugin.exposed = exposed;
 
