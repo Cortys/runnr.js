@@ -22,7 +22,7 @@ const Assignable = Mixin(superclass => class Assignable extends superclass {
 		this[loaded].add(promise);
 		promise.then(this[assignLock].unlock);
 
-		return promise;
+		return promise.then(() => this);
 	}
 
 	get loaded() {
