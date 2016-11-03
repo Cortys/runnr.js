@@ -40,7 +40,7 @@
 		"lokijs": "runnr/LokiJS#v2.0.0",
 		"mixwith": "runnr/mixwith.js",
 		"normalize-package-data": "2.3.5",
-		"npm": "3.10.7",
+		"npm": "3.10.9",
 		"read-package-json": "2.0.4",
 		"resolve": "1.1.7",
 		"sandboxed-module": "2.0.3",
@@ -48,7 +48,7 @@
 		"uuid": "2.0.3"
 	},
 	"devDependencies": {
-		"eslint": "3.5.0",
+		"eslint": "3.9.1",
 		"eslint-config-cortys": "1.x"
 	}
 }
