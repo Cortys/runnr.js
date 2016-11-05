@@ -8,11 +8,11 @@ const { execute } = require("./executor");
 
 class PluginNodeExecutor extends mixins(NodeExecutor) {
 	assign(preset, parentGraph) {
-		super.assign(preset, parentGraph);
-
-		this.plugin = this.api.plugin;
+		return super.assign(preset, parentGraph).then(() => {
+			this.plugin = this.api.plugin;
 
 			return execute(this);
+		});
 	}
 }
 
