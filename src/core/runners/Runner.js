@@ -105,19 +105,13 @@ class Runner extends mixins(Persistable(require("./store")), UpdateEmitter(["nam
 		if(!this.enabled)
 			return Promise.reject(new Error("This runner is disabled. It cannot be activated."));
 
-		if(this.active)
-			return Promise.resolve(true);
-
-		super.active = true;
-
-		return this.graph.loaded.then(() => {
-			if(!this.active)
-				throw new owe.exposed.Error("The runner was unexpectedly deactivated before it was started.");
+		if(!this.active) {
+			super.active = true;
 
 			this.sandbox = new Sandbox(this);
+		}
 
-			return true;
-		});
+		return Promise.resolve(true);
 	}
 
 	deactivate() {
