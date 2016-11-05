@@ -5,28 +5,42 @@ const { Mixin } = require("mixwith");
 const PromiseQueue = require("./PromiseQueue");
 const generateLock = require("./generateLock");
 
-const loaded = Symbol("loaded");
+const assigned = Symbol("assigned");
 const assignLock = Symbol("assignLock");
 
 const Assignable = Mixin(superclass => class Assignable extends superclass {
 	constructor() {
 		super(...arguments);
 
-		this[loaded] = new PromiseQueue();
+		const originalAssign = this.assign;
+
+		if(typeof originalAssign !== "function")
+			throw new Error("Assignables have to implement an assign method.");
+
+		Object.defineProperty(this, "assign", {
+			enumerable: false,
+			value() {
+				const promise = Promise.resolve(originalAssign.apply(this, arguments)).then(() => this);
+
+				this[assigned].add(promise);
+				promise.then(this[assignLock].unlock);
+
+				return promise;
+			}
+		});
+
+		this[assigned] = new PromiseQueue();
 		this[assignLock] = generateLock();
 
-		this[loaded].add(this[assignLock]);
+		this[assigned].add(this[assignLock]);
 	}
 
-	assign(promise) {
-		this[loaded].add(promise);
-		promise.then(this[assignLock].unlock);
-
-		return promise.then(() => this);
+	get assigned() {
+		return this[assigned].onEmpty;
 	}
 
-	get loaded() {
-		return this[loaded].onEmpty;
+	get isAssigned() {
+		return this[assigned].isEmpty;
 	}
 });
 

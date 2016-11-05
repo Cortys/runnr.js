@@ -45,7 +45,7 @@ function install(installRequest, getTarget = helpers.getTarget, dontManage = fal
 		.then(manifest => target.assign(manifest, false))
 		.catch(err => {
 			// If target was newly created by getTarget, destroy it if installation failed:
-			if(target && !target.loaded)
+			if(target && !target.isAssigned)
 				target[Persistable.delete]();
 
 			throw err;

@@ -37,7 +37,7 @@ class PluginNode extends mixins(Node) {
 		if(this.graph.container instanceof UpdateEmitter)
 			this.graph.container.on("delete", () => this.plugin.deleteDependentNode(this));
 
-		this.loaded = this.plugin.loaded;
+		this.ready = this.plugin.assigned;
 
 		return this;
 	}

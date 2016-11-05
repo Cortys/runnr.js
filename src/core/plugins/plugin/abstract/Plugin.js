@@ -20,7 +20,7 @@ const Plugin = Dedupe(Mixin(superclass => class extends mix(superclass).with(Ass
 		super(...arguments);
 		this[dependentNodes] = new Set();
 
-		this.loaded.then(() => console.log(`Loaded plugin '${this.name}'.`));
+		this.assigned.then(() => console.log(`Loaded plugin '${this.name}'.`));
 
 		/* owe binding: */
 
@@ -55,7 +55,7 @@ const Plugin = Dedupe(Mixin(superclass => class extends mix(superclass).with(Ass
 	}
 
 	assign(preset, stages = {}) {
-		return super.assign(stageManager(Object.assign({}, stages, {
+		return stageManager(Object.assign({}, stages, {
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
 					if(key !== "$loki" && key !== "meta" && key !== "type")
@@ -82,7 +82,7 @@ const Plugin = Dedupe(Mixin(superclass => class extends mix(superclass).with(Ass
 					? stages.validatePlugin()
 					: stageManager.cancel;
 			}
-		})).then(() => this));
+		}));
 	}
 
 	get id() {
