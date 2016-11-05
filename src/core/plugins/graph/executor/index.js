@@ -9,10 +9,12 @@ const executors = {
 };
 
 module.exports = {
-	execute(type, node) {
-		if(!(type in executors))
-			throw new Error(`Plugin type '${type}' is not executable.`);
+	execute(node) {
+		return node.plugin.type.then(type => {
+			if(!(type in executors))
+				throw new Error(`Plugin type '${type}' is not executable.`);
 
-		executors[type](node);
+			return executors[type](node);
+		});
 	}
 };

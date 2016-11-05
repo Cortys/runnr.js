@@ -12,9 +12,7 @@ class PluginNodeExecutor extends mixins(NodeExecutor) {
 
 		this.plugin = this.api.plugin;
 
-		Promise.all([this.plugin.type, this.loaded]).then(([type]) => execute(type, this));
-
-		return this;
+			return execute(this);
 	}
 }
 
