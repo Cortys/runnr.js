@@ -17,7 +17,11 @@ const Persistable = MixinFactory(store => superclass => class Persistable extend
 	constructor() {
 		super(...arguments);
 
-		this.persist = this.persist.bind(this);
+		Object.defineProperty(this, "persist", {
+			enumerable: false,
+			value: this.persist.bind(this)
+		});
+
 		this[insert] = this[insert].bind(this);
 		this[del] = this[del].bind(this);
 

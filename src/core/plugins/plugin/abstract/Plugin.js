@@ -58,7 +58,7 @@ const Plugin = Dedupe(Mixin(superclass => class extends mix(superclass).with(Ass
 		return super.assign(stageManager(Object.assign({}, stages, {
 			setMetadata: () => {
 				Object.keys(this).forEach(key => {
-					if(key !== "$loki" && key !== "meta" && key !== "persist" && key !== "type")
+					if(key !== "$loki" && key !== "meta" && key !== "type")
 						delete this[key];
 				});
 
