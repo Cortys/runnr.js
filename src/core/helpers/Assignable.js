@@ -1,6 +1,6 @@
 "use strict";
 
-const { Mixin } = require("mixwith");
+const { Mixin } = require("@runnr/mixin");
 
 const PromiseQueue = require("./PromiseQueue");
 const generateLock = require("./generateLock");

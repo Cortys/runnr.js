@@ -1,6 +1,6 @@
 "use strict";
 
-const { mix, Mixin } = require("mixwith");
+const { mix, Mixin } = require("@runnr/mixin");
 
 const Plugin = require("./Plugin");
 const { graph, GraphContainer } = require("../../../graph");

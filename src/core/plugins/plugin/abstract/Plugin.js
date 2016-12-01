@@ -1,12 +1,11 @@
 "use strict";
 
 const owe = require("owe.js");
-const { mix, Mixin } = require("mixwith");
+const { mix, Mixin, Dedupe } = require("@runnr/mixin");
 
 const Persistable = require("../../../store/Persistable");
 const UpdateEmitter = require("../../../events/UpdateEmitter");
 const Assignable = require("../../../helpers/Assignable");
-const Dedupe = require("../../../helpers/Dedupe");
 const filterObject = require("../../../helpers/filterObject");
 
 const { stageManager } = require("../../../managers");

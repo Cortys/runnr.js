@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra-promise");
-const { mixins } = require("mixwith");
+const { mixins } = require("@runnr/mixin");
 
 const abstract = require("./abstract");
 

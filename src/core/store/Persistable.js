@@ -1,6 +1,6 @@
 "use strict";
 
-const MixinFactory = require("../helpers/MixinFactory");
+const { MixinFactory } = require("@runnr/mixin");
 
 const UpdateEmitter = require("../events/UpdateEmitter");
 
