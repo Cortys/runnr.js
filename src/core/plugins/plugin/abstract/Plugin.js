@@ -2,9 +2,9 @@
 
 const owe = require("owe.js");
 const { mix, Mixin, Dedupe } = require("@runnr/mixin");
+const { UpdateEmitter } = require("@runnr/events");
 
 const Persistable = require("../../../store/Persistable");
-const UpdateEmitter = require("../../../events/UpdateEmitter");
 const Assignable = require("../../../helpers/Assignable");
 const filterObject = require("../../../helpers/filterObject");
 

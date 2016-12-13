@@ -36,9 +36,10 @@
 		"owe-fs": "0.11.x",
 		"owe-events": "0.11.x",
 
+		"@runnr/mixin": "0.1.0",
+		"@runnr/events": "0.1.0",
 		"fs-extra-promise": "0.4.1",
 		"lokijs": "runnr/LokiJS#v2.0.0",
-		"@runnr/mixin": "0.1.0",
 		"normalize-package-data": "2.3.5",
 		"npm": "4.0.3",
 		"read-package-json": "2.0.4",
@@ -48,7 +49,7 @@
 		"uuid": "3.0.1"
 	},
 	"devDependencies": {
-		"eslint": "3.12.0",
+		"eslint": "3.12.1",
 		"eslint-config-cortys": "1.x"
 	}
 }

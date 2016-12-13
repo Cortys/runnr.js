@@ -2,9 +2,9 @@
 
 const owe = require("owe.js");
 const { mixins } = require("@runnr/mixin");
+const { UpdateEmitter } = require("@runnr/events");
 
 const Persistable = require("../store/Persistable");
-const UpdateEmitter = require("../events/UpdateEmitter");
 const PromiseQueue = require("../helpers/PromiseQueue");
 const internalize = require("../helpers/internalize");
 const generateLock = require("../helpers/generateLock");

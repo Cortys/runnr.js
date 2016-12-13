@@ -1,8 +1,7 @@
 "use strict";
 
 const { MixinFactory } = require("@runnr/mixin");
-
-const UpdateEmitter = require("../events/UpdateEmitter");
+const { UpdateEmitter } = require("@runnr/events");
 
 const insert = Symbol("insert");
 const del = Symbol("delete");
