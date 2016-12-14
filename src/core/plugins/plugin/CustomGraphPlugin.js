@@ -1,8 +1,7 @@
 "use strict";
 
 const { mixins } = require("@runnr/mixin");
-
-const internalize = require("../../helpers/internalize");
+const { internalize } = require("@runnr/helpers");
 
 const abstract = require("./abstract");
 

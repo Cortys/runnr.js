@@ -5,7 +5,7 @@ const Loki = require("lokijs");
 
 const { stageManager } = require("../managers");
 
-const loaded = require("../helpers/generateLock")();
+const loaded = require("@runnr/helpers").generateLock();
 
 const store = new Loki(config.fromUserData("store.json"));
 

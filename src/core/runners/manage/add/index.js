@@ -1,10 +1,10 @@
 "use strict";
 
 const owe = require("owe.js");
+const { generateLock } = require("@runnr/helpers");
 
 const Runner = require("../../Runner");
 const Persistable = require("../../../store/Persistable");
-const generateLock = require("../../../helpers/generateLock");
 const manager = require("../../../managers").taskManager;
 
 function add(runner) {

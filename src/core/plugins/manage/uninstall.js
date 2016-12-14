@@ -2,11 +2,11 @@
 
 const owe = require("owe.js");
 const path = require("path");
+const { generateLock } = require("@runnr/helpers");
 
 const npm = require("../../npm");
 const Persistable = require("../../store/Persistable");
 
-const generateLock = require("../../helpers/generateLock");
 const manager = require("../../managers").taskManager;
 
 function uninstall(plugin) {
