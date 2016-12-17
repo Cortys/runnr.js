@@ -1,8 +1,10 @@
 "use strict";
 
+const { taskManager, stageManager } = require("@runnr/managers");
+
 module.exports = {
-	taskManager: require("./taskManager")(),
-	stageManager: require("./stageManager")({
+	taskManager: taskManager(),
+	stageManager: stageManager({
 		stages: [
 			"setMetadata", // Set all data that can be directly derived from the preset.
 			"initializeDatabase", // Build indices and check constraints.

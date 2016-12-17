@@ -39,6 +39,7 @@
 		"@runnr/mixin": "0.1.0",
 		"@runnr/helpers": "0.1.0",
 		"@runnr/events": "0.1.0",
+		"@runnr/managers": "0.1.0",
 		"fs-extra-promise": "0.4.1",
 		"lokijs": "runnr/LokiJS#v2.0.0",
 		"normalize-package-data": "2.3.5",
