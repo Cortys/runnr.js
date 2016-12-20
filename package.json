@@ -43,9 +43,9 @@
 		"fs-extra-promise": "0.4.1",
 		"lokijs": "runnr/LokiJS#v2.0.0",
 		"normalize-package-data": "2.3.5",
-		"npm": "4.0.3",
+		"npm": "4.0.5",
 		"read-package-json": "2.0.4",
-		"resolve": "1.1.7",
+		"resolve": "1.2.0",
 		"sandboxed-module": "2.0.3",
 		"semver": "^5.0",
 		"uuid": "3.0.1"
