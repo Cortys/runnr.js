@@ -43,7 +43,7 @@
 		"fs-extra-promise": "0.4.1",
 		"lokijs": "runnr/LokiJS#v2.0.0",
 		"normalize-package-data": "2.3.5",
-		"npm": "4.0.5",
+		"npm": "4.1.1",
 		"read-package-json": "2.0.4",
 		"resolve": "1.2.0",
 		"sandboxed-module": "2.0.3",
@@ -51,7 +51,7 @@
 		"uuid": "3.0.1"
 	},
 	"devDependencies": {
-		"eslint": "3.12.2",
+		"eslint": "3.13.1",
 		"eslint-config-cortys": "1.x"
 	}
 }
